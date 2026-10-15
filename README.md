@@ -65,13 +65,12 @@ Investment Machine/
 │   ├── real_performance_series.json   # 39个月真实复权净值与调仓事件标记
 │   └── portfolio_lookthrough_data.json # 组合资产地理/行业/十大重仓与风控指标
 │
-├── engine/                             # 极速编译与导出引擎
-│   ├── builder.py                      # 模块化极速 HTML 编译器 (< 50ms)
-│   └── exporter.py                     # Playwright 高清 A4 横向 PDF 渲染与云端同步
+├── engine/                             # 自动化核心引擎
+│   ├── report_generator.py             # 跨月份统一报告与穿透编译生成器 (矢量SVG图表)
+│   ├── exporter.py                     # Playwright 2x Retina 矢量 PDF 导出与云端自动同步
+│   └── pdf_section_matcher.py          # 官方研报智能章节动态定位匹配器
 │
-└── output/                             # 正式输出交付文件
-    ├── HR_模板投资组合_月度备忘录_2026-09-03.pdf
-    └── previews/                       # 6页高清预览切片 (page_1.png ~ page_6.png)
+└── output/                             # 正式输出交付文件 (中英双语备忘录与独立Factsheet)
 ```
 
 ---

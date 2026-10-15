@@ -201,10 +201,12 @@ src/
    - 修改某一页（如 Slide 3 或 Slide 5）：**直接且仅修改** `src/components/slideX.html`，单文件仅几十至一百多行，杜绝打开或重写两千多行庞大 HTML 的开销与风险。
    - 修改中英双语文案：直接修改 `src/data/i18n.js`。
    - 修改图表逻辑：直接修改 `src/js/main.js`。
-2. **一键极速编译 (`build_report.py`)**：
-   - 执行 `python build_report.py`（编译仅耗时 **~10ms**），瞬间自动拼装生成生产交付物 `iFAST_Equity_Growth_Monthly_Report_Landscape.html`。
+2. **一键极速编译 (`engine/report_generator.py`)**：
+   - 执行 `python engine/report_generator.py`（编译仅耗时 **~15ms**），瞬间自动拼装生成生产交付物 `output/iFAST_Equity_Growth_Monthly_Report_<YYYY-MM>.html` 及独立穿透 Factsheet。
 3. **数据同步自动化 (`sync_googlesheet_to_report.py`)**：
-   - 从 Google Sheet 抓取最新数据后，会自动调用 `build_report.build()`，实现全链路自动化更新。
+   - 从 Google Sheet 抓取最新数据后，会自动调用 `engine.report_generator.generate_report()`，实现全链路自动化更新。
+4. **一键导出 4 份正式交付 PDF (`engine/exporter.py`)**：
+   - 执行 `python -c "from engine.exporter import export_all_deliverables; export_all_deliverables()"`，自动输出中英双语备忘录与 Factsheet 并实时同步至 Google Drive。
 
 ---
 
@@ -217,4 +219,5 @@ When executing monthly report updates:
 - [ ] 4. Verify naming conventions: strictly `Taiwan (China)` / `中国台湾` and `Hong Kong (China)` / `中国香港`.
 - [ ] 5. Cross-check holdings against user-submitted monthly fund factsheets in `G:\我的云端硬盘\0. 工作\2. 投资分析计划 01102026\3. Monthly Report\<Next_Month YYYY>\`; calculate look-through pure exposures (e.g. gold).
 - [ ] 6. Present drafted attribution to the user for explicit confirmation before final publication.
-- [ ] 7. Run `python build_report.py` to verify build integrity and visual rendering in both languages.
+- [ ] 7. Run `python engine/report_generator.py` to compile the report HTMLs.
+- [ ] 8. Export deliverables via `engine/exporter.py` or Dashboard (http://localhost:8080).

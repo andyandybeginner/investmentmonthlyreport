@@ -150,10 +150,10 @@ def run_sync():
         
     print("✅ real_performance_series.json updated successfully!")
 
-    # 3. Trigger Master Report Builder
+    # 3. Trigger Production Report Generator
     try:
-        import build_report
-        build_report.build()
+        from engine.report_generator import generate_report
+        generate_report()
         print("✅ Report re-compiled with latest Google Sheet data successfully!")
     except Exception as e:
         print(f"⚠️ Report build warning: {e}")

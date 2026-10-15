@@ -720,10 +720,6 @@ def generate_report(month="2026-09"):
         f.write(final_html)
     with open(latest_html_file, "w", encoding="utf-8") as f:
         f.write(final_html)
-    if "2026-08" in report_month:
-        root_aug_file = os.path.join(BASE_DIR, "iFAST_Equity_Growth_Monthly_Report_August2026.html")
-        with open(root_aug_file, "w", encoding="utf-8") as f:
-            f.write(final_html)
 
     # Also trigger standalone factsheets (Chinese and English)
     from generate_portfolio_factsheet import generate_standalone_factsheet

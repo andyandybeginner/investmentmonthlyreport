@@ -105,9 +105,11 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
                 if os.path.exists(latest):
                     filepath = latest
                 else:
-                    filepath = os.path.join(BASE_DIR, 'iFAST_Equity_Growth_Monthly_Report_August2026.html')
+                    out_files = [f for f in os.listdir(os.path.join(BASE_DIR, 'output')) if f.endswith('.html')]
+                    if out_files:
+                        filepath = os.path.join(BASE_DIR, 'output', sorted(out_files)[-1])
 
-            if os.path.exists(filepath):
+            if filepath and os.path.exists(filepath):
                 self.send_response(200)
                 self.send_header('Content-Type', 'text/html; charset=utf-8')
                 self.end_headers()
@@ -117,12 +119,12 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
 
         # 3. Dynamic Standalone Factsheet Previews
         elif clean_path in ['/preview-factsheet-zh', '/preview-factsheet-en']:
-            month = query.get('month', ['2026-08'])[0]
+            month = query.get('month', ['2026-09'])[0]
             is_en = (clean_path == '/preview-factsheet-en')
             suffix = "EN" if is_en else "ZH"
             filepath = os.path.join(BASE_DIR, f'HR_Portfolio_Lookthrough_Factsheet_{month}_{suffix}.html')
             if not os.path.exists(filepath):
-                filepath = os.path.join(BASE_DIR, f'HR_Portfolio_Lookthrough_Factsheet_2026-08_{suffix}.html')
+                filepath = os.path.join(BASE_DIR, f'HR_Portfolio_Lookthrough_Factsheet_2026-09_{suffix}.html')
 
             if os.path.exists(filepath):
                 self.send_response(200)
