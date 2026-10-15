@@ -71,8 +71,15 @@ export const PerformanceChart: React.FC<PerformanceChartProps> = ({
     { val: 0.9, label: '90%' },
   ];
 
-  // Pick ~8 evenly spaced indices
-  const xIndices = Array.from({ length: n }, (_, i) => i).filter((i) => i % 5 === 0);
+  // Pick evenly spaced indices, always guaranteeing index 0 (Inception) and index n - 1 (Latest Valuation Month)
+  const step = Math.max(1, Math.floor(n / 6));
+  const ticksSet = new Set<number>();
+  ticksSet.add(0);
+  for (let i = step; i < n - 1; i += step) {
+    ticksSet.add(i);
+  }
+  ticksSet.add(n - 1);
+  const xIndices = Array.from(ticksSet).sort((a, b) => a - b);
 
   return (
     <svg
@@ -129,8 +136,8 @@ export const PerformanceChart: React.FC<PerformanceChartProps> = ({
               y={margin.top + plotH + 13}
               fontSize="8.5px"
               fill="#64748b"
-              textAnchor={idx === 0 ? 'start' : 'middle'}
-              fontWeight="500"
+              textAnchor={idx === 0 ? 'start' : idx === n - 1 ? 'end' : 'middle'}
+              fontWeight={idx === 0 || idx === n - 1 ? 'bold' : '500'}
               fontFamily="system-ui, sans-serif"
             >
               {dStr}

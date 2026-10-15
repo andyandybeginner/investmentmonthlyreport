@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { PortfolioState, FundHolding, RecommendationType, Language } from '../../types';
 import { getDictionary } from '../../i18n';
+import { sliceTimeSeriesByReportMonth, MONTH_PRESETS } from '../../utils/performance';
 import { 
   FileText, 
   Calendar, 
@@ -43,9 +44,83 @@ export const Dashboard: React.FC<DashboardProps> = ({
     }, 2500);
   };
 
+  // Dynamic time series slice info calculated from selected report month and settle date
+  const timeSliceInfo = sliceTimeSeriesByReportMonth(
+    portfolio.month,
+    portfolio.settle_date,
+    portfolio.time_series
+  );
+
+  // Handle report month selection (presets or custom)
+  const handleSelectMonth = (newMonth: string) => {
+    const preset = MONTH_PRESETS[newMonth];
+    const newSettleDate = preset?.settle_date || portfolio.settle_date;
+    const sliceInfo = sliceTimeSeriesByReportMonth(newMonth, newSettleDate, portfolio.time_series);
+
+    if (preset) {
+      const updatedHoldings = portfolio.holdings.map(h => {
+        const retInfo = preset.holdings_returns[h.id];
+        if (retInfo) {
+          return {
+            ...h,
+            return_1m: retInfo.return_1m,
+            contrib_1m: retInfo.contrib_1m
+          };
+        }
+        return h;
+      });
+
+      setPortfolio(prev => ({
+        ...prev,
+        month: preset.month,
+        settle_date: preset.settle_date,
+        valuation_date_zh: preset.valuation_date_zh,
+        valuation_date_en: preset.valuation_date_en,
+        ref_pdf_name: preset.ref_pdf_name,
+        slide3_topic_title_zh: preset.slide3_topic_title_zh,
+        slide3_topic_title_en: preset.slide3_topic_title_en,
+        qualitative_view: preset.qualitative_view,
+        qualitative_view_en: preset.qualitative_view_en,
+        rebalance_verdict: preset.rebalance_verdict,
+        rebalance_note: preset.rebalance_note,
+        rebalance_note_en: preset.rebalance_note_en,
+        holdings: updatedHoldings,
+        cum_current: sliceInfo.cumCurrent,
+        cum_past: sliceInfo.cumPast,
+        cum_sp500: sliceInfo.cumSp500,
+        cum_msci: sliceInfo.cumMsci,
+        alpha_vs_msci: sliceInfo.alphaVsMsci,
+        monthly_return_1m: sliceInfo.monthlyReturn1m,
+      }));
+    } else {
+      setPortfolio(prev => ({
+        ...prev,
+        month: newMonth,
+        cum_current: sliceInfo.cumCurrent,
+        cum_past: sliceInfo.cumPast,
+        cum_sp500: sliceInfo.cumSp500,
+        cum_msci: sliceInfo.cumMsci,
+        alpha_vs_msci: sliceInfo.alphaVsMsci,
+        monthly_return_1m: sliceInfo.monthlyReturn1m,
+      }));
+    }
+  };
+
   // Section 1: Update metadata & PDF pages
   const handleMetaChange = (field: keyof PortfolioState, value: any) => {
-    setPortfolio(prev => ({ ...prev, [field]: value }));
+    setPortfolio(prev => {
+      const nextState = { ...prev, [field]: value };
+      if (field === 'settle_date' || field === 'month') {
+        const sliceInfo = sliceTimeSeriesByReportMonth(nextState.month, nextState.settle_date, nextState.time_series);
+        nextState.cum_current = sliceInfo.cumCurrent;
+        nextState.cum_past = sliceInfo.cumPast;
+        nextState.cum_sp500 = sliceInfo.cumSp500;
+        nextState.cum_msci = sliceInfo.cumMsci;
+        nextState.alpha_vs_msci = sliceInfo.alphaVsMsci;
+        nextState.monthly_return_1m = sliceInfo.monthlyReturn1m;
+      }
+      return nextState;
+    });
   };
 
   // Section 4: Update fund conviction
@@ -166,6 +241,31 @@ export const Dashboard: React.FC<DashboardProps> = ({
               className="w-full px-3 py-2 text-sm font-semibold rounded-lg border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="e.g. 2026-09"
             />
+            <div className="flex items-center gap-1.5 mt-2">
+              <span className="text-[11px] text-slate-500 font-medium">快速预设:</span>
+              <button
+                type="button"
+                onClick={() => handleSelectMonth('2026-08')}
+                className={`px-2 py-0.5 text-xs font-bold rounded border transition ${
+                  portfolio.month === '2026-08'
+                    ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
+                    : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-300'
+                }`}
+              >
+                2026-08 (8月 / 39期)
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSelectMonth('2026-09')}
+                className={`px-2 py-0.5 text-xs font-bold rounded border transition ${
+                  portfolio.month === '2026-09'
+                    ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
+                    : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-300'
+                }`}
+              >
+                2026-09 (9月 / 40期)
+              </button>
+            </div>
             <span className="text-[11px] text-slate-400 mt-1 block">
               当前为 10 月初出具的 9 月份投资咨询备忘录
             </span>
@@ -290,12 +390,12 @@ export const Dashboard: React.FC<DashboardProps> = ({
             <span className="text-xs font-bold text-slate-500 block mb-1">动态时间序列期数</span>
             <div className="flex items-baseline gap-2">
               <span className="text-xl font-black text-slate-900 mono-num">
-                {portfolio.time_series.length} 期
+                {timeSliceInfo.periodsCount} 期
               </span>
-              <span className="text-xs text-emerald-600 font-bold">系统自动识别</span>
+              <span className="text-xs text-emerald-600 font-bold">系统自适应截取</span>
             </div>
-            <p className="text-[11px] text-slate-500 mt-2">
-              起始于 2023-07，截至最新结账日，全周期 0 缺失值
+            <p className="text-[11px] text-slate-500 mt-2 leading-relaxed">
+              根据选定汇报月度 [{portfolio.month}] 与结算截止日 [{timeSliceInfo.targetChartDate}] 动态计算截取：时序区间为 {timeSliceInfo.startDate} 至 {timeSliceInfo.endDate}，共计 {timeSliceInfo.periodsCount} 个月（完全由汇报日期决定，非固定写死）。
             </p>
           </div>
 
@@ -310,19 +410,19 @@ export const Dashboard: React.FC<DashboardProps> = ({
           </div>
 
           <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-            <span className="text-xs font-bold text-slate-500 block mb-1">基准收益与阿尔法对比</span>
+            <span className="text-xs font-bold text-slate-500 block mb-1">当期基准收益与阿尔法对比</span>
             <div className="flex items-center gap-3 mt-1">
               <div>
                 <span className="text-[10px] text-slate-400 block">当前组合累计</span>
-                <span className="text-sm font-black text-rose-600 mono-num">+{portfolio.cum_current.toFixed(2)}%</span>
+                <span className="text-sm font-black text-rose-600 mono-num">+{timeSliceInfo.cumCurrent.toFixed(2)}%</span>
               </div>
               <div className="border-l border-slate-300 pl-3">
                 <span className="text-[10px] text-slate-400 block">MSCI 全球</span>
-                <span className="text-sm font-black text-slate-600 mono-num">+{portfolio.cum_msci.toFixed(2)}%</span>
+                <span className="text-sm font-black text-slate-600 mono-num">+{timeSliceInfo.cumMsci.toFixed(2)}%</span>
               </div>
               <div className="border-l border-slate-300 pl-3">
                 <span className="text-[10px] text-slate-400 block">阿尔法超额</span>
-                <span className="text-sm font-black text-emerald-600 mono-num">+{portfolio.alpha_vs_msci.toFixed(2)}%</span>
+                <span className="text-sm font-black text-emerald-600 mono-num">+{timeSliceInfo.alphaVsMsci.toFixed(2)}%</span>
               </div>
             </div>
           </div>
