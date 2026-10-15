@@ -19,7 +19,7 @@ DEFAULT_DRIVE_DIR = r"G:\我的云端硬盘\0. 工作\2. 投资分析计划 0110
 def render_html_to_pdf(html_path, output_pdf, title="HR 模板投资组合", lang="zh"):
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
-        page = browser.new_page(viewport={"width": 1400, "height": 990})
+        page = browser.new_page(viewport={"width": 1400, "height": 990}, device_scale_factor=2)
         page.goto(f"file:///{html_path.replace(os.sep, '/')}", wait_until="networkidle")
         page.wait_for_timeout(800)
 

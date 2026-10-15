@@ -33,6 +33,11 @@ let currentLang = 'zh';
                 window.s3ChartInstance.options.scales.y.title.text = lang === 'zh' ? '年化回报率 Return' : 'Return';
                 window.s3ChartInstance.update();
             }
+
+            // Update SVG vector text elements with data-zh and data-en
+            document.querySelectorAll('svg text[data-zh][data-en]').forEach(el => {
+                el.textContent = (lang === 'zh') ? el.getAttribute('data-zh') : el.getAttribute('data-en');
+            });
         }
 
         // Dynamic Settle Date Month Derivation
@@ -259,9 +264,11 @@ let currentLang = 'zh';
             }
         };
 
-        // Slide 1 Real 4-Line Cumulative Performance Chart
-        const ctxS1Line = document.getElementById('lsSlide1RealLineChart').getContext('2d');
-        new Chart(ctxS1Line, {
+        // Slide 1 Real 4-Line Cumulative Performance Chart (Canvas fallback if not native SVG)
+        const s1Canvas = document.getElementById('lsSlide1RealLineChart');
+        if (s1Canvas && s1Canvas.tagName.toLowerCase() === 'canvas') {
+            const ctxS1Line = s1Canvas.getContext('2d');
+            new Chart(ctxS1Line, {
             type: 'line',
             plugins: [reconstituteMarkerPlugin],
             data: {
@@ -337,11 +344,16 @@ let currentLang = 'zh';
                 }
             }
         });
+    }
 
-        // Slide 3 Frontier Chart (Verbatim Replication from iFAST Horizon Page 12)
-        const ctxS3 = document.getElementById('lsFrontierChart').getContext('2d');
-        
-        const frontierDataLabelsPlugin = {
+
+        // Slide 3 Frontier Chart (Canvas fallback if not native SVG)
+        const s3Canvas = document.getElementById('lsFrontierChart');
+        if (s3Canvas && s3Canvas.tagName.toLowerCase() === 'canvas') {
+            const ctxS3 = s3Canvas.getContext('2d');
+            
+            const frontierDataLabelsPlugin = {
+
             id: 'frontierDataLabels',
             afterDatasetsDraw(chart) {
                 const { ctx } = chart;
@@ -498,6 +510,8 @@ let currentLang = 'zh';
                 }
             }
         });
+    }
+
 
         // Annotation Engine Logic for all 5 Slides
         let isDrawingMode = false;

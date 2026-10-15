@@ -30,6 +30,279 @@ def compute_sequence_month_count(month_str):
     except Exception:
         return 40
 
+def generate_performance_svg(dates, cur, past, sp500, msci, events=None, width=520, height=185):
+    margin_l = 36
+    margin_r = 14
+    margin_t = 20
+    margin_b = 20
+
+    plot_w = width - margin_l - margin_r
+    plot_h = height - margin_t - margin_b
+
+    y_min = 0.90
+    y_max = 2.05
+    n = len(dates)
+
+    def get_x(i):
+        return margin_l + (plot_w * i) / (n - 1) if n > 1 else margin_l
+
+    def get_y(val):
+        v = max(y_min, min(y_max, val))
+        return margin_t + plot_h * (y_max - v) / (y_max - y_min)
+
+    def points_to_spline(pts, tension=0.15):
+        if not pts:
+            return ""
+        if len(pts) == 1:
+            return f"M {pts[0][0]:.2f} {pts[0][1]:.2f}"
+        path = [f"M {pts[0][0]:.2f} {pts[0][1]:.2f}"]
+        for i in range(len(pts) - 1):
+            p0 = pts[i - 1] if i > 0 else pts[i]
+            p1 = pts[i]
+            p2 = pts[i + 1]
+            p3 = pts[i + 2] if i + 2 < len(pts) else p2
+            cp1_x = p1[0] + (p2[0] - p0[0]) * tension
+            cp1_y = p1[1] + (p2[1] - p0[1]) * tension
+            cp2_x = p2[0] - (p3[0] - p1[0]) * tension
+            cp2_y = p2[1] - (p3[1] - p1[1]) * tension
+            path.append(f"C {cp1_x:.2f} {cp1_y:.2f}, {cp2_x:.2f} {cp2_y:.2f}, {p2[0]:.2f} {p2[1]:.2f}")
+        return " ".join(path)
+
+    cur_pts = [(get_x(i), get_y(v)) for i, v in enumerate(cur)]
+    past_pts = [(get_x(i), get_y(v)) for i, v in enumerate(past)]
+    sp_pts = [(get_x(i), get_y(v)) for i, v in enumerate(sp500)]
+    msci_pts = [(get_x(i), get_y(v)) for i, v in enumerate(msci)]
+
+    cur_d = points_to_spline(cur_pts)
+    past_d = points_to_spline(past_pts)
+    sp_d = points_to_spline(sp_pts)
+    msci_d = points_to_spline(msci_pts)
+
+    y_ticks = [
+        (2.0, "200%"),
+        (1.8, "180%"),
+        (1.6, "160%"),
+        (1.4, "140%"),
+        (1.2, "120%"),
+        (1.0, "100%"),
+        (0.9, "90%")
+    ]
+
+    svg_parts = [
+        f'<svg id="lsSlide1RealLineChart" viewBox="0 0 {width} {height}" class="w-full h-full block" xmlns="http://www.w3.org/2000/svg">'
+    ]
+
+    for val, label in y_ticks:
+        y = get_y(val)
+        is_baseline = (val == 1.0)
+        stroke_color = "#cbd5e1" if is_baseline else "#e2e8f0"
+        stroke_width = "1.2" if is_baseline else "0.8"
+        dash = "" if is_baseline else ' stroke-dasharray="3,3"'
+        svg_parts.append(f'<line x1="{margin_l}" y1="{y:.2f}" x2="{width - margin_r}" y2="{y:.2f}" stroke="{stroke_color}" stroke-width="{stroke_width}"{dash}/>')
+        svg_parts.append(f'<text x="{margin_l - 6}" y="{y + 3:.2f}" font-family="system-ui, -apple-system, sans-serif" font-size="8.5px" fill="#64748b" text-anchor="end" font-weight="500">{label}</text>')
+
+    x_indices = [i for i in range(0, n, 5)]
+
+    for idx in x_indices:
+        x = get_x(idx)
+        d_str = dates[idx]
+        svg_parts.append(f'<line x1="{x:.2f}" y1="{margin_t + plot_h}" x2="{x:.2f}" y2="{margin_t + plot_h + 3}" stroke="#94a3b8" stroke-width="0.8"/>')
+        anchor = "start" if idx == 0 else "middle"
+        svg_parts.append(f'<text x="{x:.2f}" y="{margin_t + plot_h + 13}" font-family="system-ui, -apple-system, sans-serif" font-size="8.5px" fill="#64748b" text-anchor="{anchor}" font-weight="500">{d_str}</text>')
+
+    # 4 Performance Curves
+    # 1. MSCI World (Gray dashed)
+    svg_parts.append(f'<path d="{msci_d}" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-dasharray="3,3" stroke-linecap="round" stroke-linejoin="round"/>')
+
+    # 2. S&P 500 (Black dashed)
+    svg_parts.append(f'<path d="{sp_d}" fill="none" stroke="#0f172a" stroke-width="1.8" stroke-dasharray="3,3" stroke-linecap="round" stroke-linejoin="round"/>')
+
+    # 3. Past Portfolio (Blue dashed) - HIGHLY VISIBLE
+    svg_parts.append(f'<path d="{past_d}" fill="none" stroke="#2563eb" stroke-width="2.2" stroke-dasharray="5,4" stroke-linecap="round" stroke-linejoin="round"/>')
+
+    # 4. Current Portfolio (Red solid)
+    svg_parts.append(f'<path d="{cur_d}" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>')
+
+    if events is None:
+        events = [
+            {"date": "2023-07", "status": "Restructure"},
+            {"date": "2025-07", "status": "Restructure"},
+            {"date": "2026-01", "status": "Restructure"}
+        ]
+
+    for evt in events:
+        e_date = evt.get("date", "")
+        if e_date not in dates:
+            continue
+        e_idx = dates.index(e_date)
+        e_pt = cur_pts[e_idx]
+        px, py = e_pt
+
+        is_rebal = "rebalance" in evt.get("status", "").lower()
+        color_rgb = "16, 185, 129" if is_rebal else "245, 158, 11"
+        color_solid = "#059669" if is_rebal else "#d97706"
+        badge_bg = "#10b981" if is_rebal else "#f59e0b"
+        text_str = "Rebalance" if is_rebal else "Restructure"
+
+        # 1. Vertical timeline line
+        svg_parts.append(f'<line x1="{px:.2f}" y1="{margin_t + plot_h}" x2="{px:.2f}" y2="{py:.2f}" stroke="rgba({color_rgb}, 0.7)" stroke-width="1.2" stroke-dasharray="3,3"/>')
+
+        # 2. Outer 50% circle
+        svg_parts.append(f'<circle cx="{px:.2f}" cy="{py:.2f}" r="10.5" fill="rgba({color_rgb}, 0.45)" stroke="{color_solid}" stroke-width="1.8"/>')
+
+        # Inner white anchor core
+        svg_parts.append(f'<circle cx="{px:.2f}" cy="{py:.2f}" r="2.8" fill="#ffffff" stroke="{color_solid}" stroke-width="1.2"/>')
+
+        # 3. Label badge tag: "Restructure" / "Rebalance"
+        tw = 46 if not is_rebal else 42
+        bw = tw + 8
+        bh = 13
+        bx = px
+        if e_idx == 0:
+            bx = px + bw / 2 - 2
+        
+        by = py + 18 if (py - 18 < margin_t) else py - 16
+
+        svg_parts.append(f'<rect x="{bx - bw / 2:.2f}" y="{by - bh / 2:.2f}" width="{bw}" height="{bh}" rx="3" fill="{badge_bg}" stroke="{color_solid}" stroke-width="0.8"/>')
+        svg_parts.append(f'<text x="{bx:.2f}" y="{by + 3.2:.2f}" font-family="system-ui, -apple-system, sans-serif" font-size="8px" font-weight="bold" fill="#0f172a" text-anchor="middle">{text_str}</text>')
+
+    svg_parts.append('</svg>')
+    return "\n".join(svg_parts)
+
+def generate_frontier_svg(lang="zh", width=580, height=280):
+    margin_l = 45
+    margin_r = 30
+    margin_t = 25
+    margin_b = 32
+
+    plot_w = width - margin_l - margin_r
+    plot_h = height - margin_t - margin_b
+
+    x_min = 6.0
+    x_max = 21.0
+    y_min = -4.0
+    y_max = 18.0
+
+    def get_x(v):
+        return margin_l + plot_w * (v - x_min) / (x_max - x_min)
+
+    def get_y(v):
+        return margin_t + plot_h * (y_max - v) / (y_max - y_min)
+
+    d_2025 = [
+        {"x": 10.5, "y": -2.5, "label": "100% Bonds", "zh": "100% 债券"},
+        {"x": 12.1, "y": 2.5, "label": "25/75", "zh": "25/75"},
+        {"x": 13.9, "y": 6.8, "label": "50/50", "zh": "50/50"},
+        {"x": 15.2, "y": 8.9, "label": "60/40", "zh": "60/40"},
+        {"x": 16.0, "y": 10.4, "label": "70/30", "zh": "70/30"},
+        {"x": 17.3, "y": 12.1, "label": "80/20", "zh": "80/20"},
+        {"x": 19.3, "y": 15.8, "label": "100% Stocks", "zh": "100% 股票"}
+    ]
+
+    d_2020 = [
+        {"x": 8.5, "y": 6.8, "label": "100% Bonds", "zh": "100% 债券"},
+        {"x": 7.8, "y": 8.4, "label": "25/75", "zh": "25/75"},
+        {"x": 8.8, "y": 9.8, "label": "50/50", "zh": "50/50"},
+        {"x": 10.0, "y": 10.2, "label": "60/40", "zh": "60/40"},
+        {"x": 11.8, "y": 10.7, "label": "70/30", "zh": "70/30"},
+        {"x": 13.2, "y": 11.2, "label": "80/20", "zh": "80/20"},
+        {"x": 15.6, "y": 12.3, "label": "100% Stocks", "zh": "100% 股票"}
+    ]
+
+    def make_path(pts):
+        coords = [(get_x(p["x"]), get_y(p["y"])) for p in pts]
+        d_str = f"M {coords[0][0]:.2f} {coords[0][1]:.2f}"
+        for i in range(len(coords) - 1):
+            p0 = coords[i - 1] if i > 0 else coords[i]
+            p1 = coords[i]
+            p2 = coords[i + 1]
+            p3 = coords[i + 2] if i + 2 < len(coords) else p2
+            tension = 0.12
+            cp1_x = p1[0] + (p2[0] - p0[0]) * tension
+            cp1_y = p1[1] + (p2[1] - p0[1]) * tension
+            cp2_x = p2[0] - (p3[0] - p1[0]) * tension
+            cp2_y = p2[1] - (p3[1] - p1[1]) * tension
+            d_str += f" C {cp1_x:.2f} {cp1_y:.2f}, {cp2_x:.2f} {cp2_y:.2f}, {p2[0]:.2f} {p2[1]:.2f}"
+        return d_str
+
+    path_2025 = make_path(d_2025)
+    path_2020 = make_path(d_2020)
+
+    svg = [
+        f'<svg id="lsFrontierChart" viewBox="0 0 {width} {height}" class="w-full h-full block" xmlns="http://www.w3.org/2000/svg">'
+    ]
+
+    # Grid Y
+    for y_val in [-4, 0, 4, 8, 12, 16]:
+        y = get_y(y_val)
+        is_zero = (y_val == 0)
+        stroke = "#94a3b8" if is_zero else "#e2e8f0"
+        sw = "1.2" if is_zero else "0.8"
+        dash = "" if is_zero else ' stroke-dasharray="3,3"'
+        svg.append(f'<line x1="{margin_l}" y1="{y:.2f}" x2="{width - margin_r}" y2="{y:.2f}" stroke="{stroke}" stroke-width="{sw}"{dash}/>')
+        svg.append(f'<text x="{margin_l - 6}" y="{y + 3.5:.2f}" font-family="system-ui, -apple-system, sans-serif" font-size="9px" fill="#64748b" text-anchor="end" font-weight="500">{y_val}%</text>')
+
+    # Grid X
+    for x_val in range(6, 22, 2):
+        x = get_x(x_val)
+        svg.append(f'<line x1="{x:.2f}" y1="{margin_t}" x2="{x:.2f}" y2="{margin_t + plot_h}" stroke="#e2e8f0" stroke-width="0.8" stroke-dasharray="3,3"/>')
+        svg.append(f'<text x="{x:.2f}" y="{margin_t + plot_h + 14}" font-family="system-ui, -apple-system, sans-serif" font-size="9px" fill="#64748b" text-anchor="middle" font-weight="500">{x_val}%</text>')
+
+    # Axis Labels with bilingual attributes
+    x_axis_label_zh = "年化波动率 / 风险 (%)"
+    x_axis_label_en = "Annualized Volatility / Risk (%)"
+    y_axis_label_zh = "年化回报率 (%)"
+    y_axis_label_en = "Annualized Return (%)"
+    x_lbl = x_axis_label_zh if lang == "zh" else x_axis_label_en
+    y_lbl = y_axis_label_zh if lang == "zh" else y_axis_label_en
+
+    svg.append(f'<text x="{margin_l + plot_w / 2}" y="{height - 4}" font-family="system-ui, -apple-system, sans-serif" font-size="9.5px" fill="#475569" text-anchor="middle" font-weight="bold" data-zh="{x_axis_label_zh}" data-en="{x_axis_label_en}">{x_lbl}</text>')
+    svg.append(f'<text x="{margin_l + 8}" y="{margin_t - 8}" font-family="system-ui, -apple-system, sans-serif" font-size="9.5px" fill="#475569" text-anchor="start" font-weight="bold" data-zh="{y_axis_label_zh}" data-en="{y_axis_label_en}">{y_lbl}</text>')
+
+    # 1986-2020 Curve (Blue)
+    svg.append(f'<path d="{path_2020}" fill="none" stroke="#1e3a8a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>')
+    for idx, p in enumerate(d_2020):
+        px, py = get_x(p["x"]), get_y(p["y"])
+        svg.append(f'<circle cx="{px:.2f}" cy="{py:.2f}" r="4.5" fill="#1e3a8a" stroke="#ffffff" stroke-width="1.5"/>')
+        lbl = p["zh"] if lang == "zh" else p["label"]
+        if idx == 0:
+            tx, ty, anchor = px - 8, py + 6, "end"
+        elif idx == 1: # 25/75
+            tx, ty, anchor = px - 8, py - 6, "end"
+        elif idx == 2: # 50/50
+            tx, ty, anchor = px, py - 11, "middle"
+        elif idx == 3: # 60/40
+            tx, ty, anchor = px + 6, py - 10, "start"
+        elif idx == 4: # 70/30
+            tx, ty, anchor = px, py - 11, "middle"
+        elif idx == 5: # 80/20
+            tx, ty, anchor = px, py - 11, "middle"
+        elif idx == len(d_2020) - 1:
+            tx, ty, anchor = px + 8, py - 4, "start"
+        else:
+            tx, ty, anchor = px + 6, py - 6, "start"
+        svg.append(f'<text x="{tx:.2f}" y="{ty:.2f}" font-family="system-ui, -apple-system, sans-serif" font-size="8.5px" font-weight="bold" fill="#1e3a8a" text-anchor="{anchor}" data-zh="{p["zh"]}" data-en="{p["label"]}">{lbl}</text>')
+
+    # 2021-2025 Curve (Red)
+    svg.append(f'<path d="{path_2025}" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>')
+    for idx, p in enumerate(d_2025):
+        px, py = get_x(p["x"]), get_y(p["y"])
+        svg.append(f'<circle cx="{px:.2f}" cy="{py:.2f}" r="4.5" fill="#dc2626" stroke="#ffffff" stroke-width="1.5"/>')
+        lbl = p["zh"] if lang == "zh" else p["label"]
+        if idx == 0:
+            tx, ty, anchor = px - 8, py + 8, "end"
+        elif idx == len(d_2025) - 1:
+            tx, ty, anchor = px + 8, py + 4, "start"
+        elif idx == 3: # 60/40
+            tx, ty, anchor = px + 8, py + 4, "start"
+        else:
+            tx, ty, anchor = px + 7, py + 3, "start"
+        svg.append(f'<text x="{tx:.2f}" y="{ty:.2f}" font-family="system-ui, -apple-system, sans-serif" font-size="8.5px" font-weight="bold" fill="#dc2626" text-anchor="{anchor}" data-zh="{p["zh"]}" data-en="{p["label"]}">{lbl}</text>')
+
+
+    svg.append('</svg>')
+    return "\n".join(svg)
+
 def generate_report(month="2026-09"):
     print(f"🚀 Starting Unified Report Generator for month: {month}...")
 
@@ -295,6 +568,19 @@ def generate_report(month="2026-09"):
     slide1_html = re.sub(r'<span class="text-xs font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded border border-slate-200 shadow-xs">参考组合资产规模:[^<]+</span>', '', slide1_html)
     slide1_html = re.sub(r'底层\s*\d+\s*只优选基金构成与月度行情穿透', f'底层 {len(active_funds)} 只优选基金构成与月度行情穿透', slide1_html)
 
+    # Dynamic Legend Return Numbers in Slide 1
+    slide1_html = re.sub(r'<span id="lg_val_cur"[^>]*>[^<]+</span>', f'<span id="lg_val_cur" class="font-mono text-slate-900">+{m_cur["cum"]:.1f}%</span>', slide1_html)
+    slide1_html = re.sub(r'<span id="lg_val_past"[^>]*>[^<]+</span>', f'<span id="lg_val_past" class="font-mono text-slate-900">+{m_past["cum"]:.1f}%</span>', slide1_html)
+    slide1_html = re.sub(r'<span id="lg_val_acwi"[^>]*>[^<]+</span>', f'<span id="lg_val_acwi" class="font-mono text-slate-900">+{m_msci["cum"]:.1f}%</span>', slide1_html)
+    slide1_html = re.sub(r'<span id="lg_val_sp"[^>]*>[^<]+</span>', f'<span id="lg_val_sp" class="font-mono text-slate-900">+{m_sp["cum"]:.1f}%</span>', slide1_html)
+
+    # Pure Native Vector SVG for Slide 1 Performance Chart (Guarantees 100% Vector Sharpness in PDF & Web)
+    s1_chart_svg = generate_performance_svg(chart_dates, chart_cur, chart_past, chart_sp, chart_msci, chart_events)
+    if '<canvas id="lsSlide1RealLineChart"></canvas>' in slide1_html:
+        slide1_html = slide1_html.replace('<canvas id="lsSlide1RealLineChart"></canvas>', s1_chart_svg)
+    elif '<svg id="lsSlide1RealLineChart"' in slide1_html:
+        slide1_html = re.sub(r'<svg id="lsSlide1RealLineChart".*?</svg>', s1_chart_svg, slide1_html, flags=re.DOTALL)
+
     # Dynamic Fund Table rows in Slide 1
     role_map = {
         "FULLERTON": ("全天候底仓", "35.00%", "f_role_1"),
@@ -368,6 +654,14 @@ def generate_report(month="2026-09"):
     slide3_html = re.sub(r'data-i18n="s3_tag">[^<]+<', f'data-i18n="s3_tag">月度专题研读 · {year_str}年{month_num_zh}月<', slide3_html)
     slide3_html = re.sub(r'data-i18n="s3_title">[^<]+<', f'data-i18n="s3_title">{slide3_topic_title}<', slide3_html)
 
+    # Pure Native Vector SVG for Slide 3 Frontier Chart (if slide3.html template is used)
+    if "slide3.html" in slide3_template:
+        s3_frontier_svg = generate_frontier_svg(lang="zh")
+        if '<canvas id="lsFrontierChart"></canvas>' in slide3_html:
+            slide3_html = slide3_html.replace('<canvas id="lsFrontierChart"></canvas>', s3_frontier_svg)
+        elif '<svg id="lsFrontierChart"' in slide3_html:
+            slide3_html = re.sub(r'<svg id="lsFrontierChart".*?</svg>', s3_frontier_svg, slide3_html, flags=re.DOTALL)
+
     # 8. Dynamic Slide 4 (Conviction Matrix)
     slide4_html = re.sub(r'\d+月份信念审查决策矩阵', f'{month_num_zh}月份信念审查决策矩阵', slide4_html)
     slide4_html = re.sub(r'\d+月回报', f'{month_num_zh}月回报', slide4_html)
@@ -400,14 +694,9 @@ def generate_report(month="2026-09"):
     with open(os.path.join(BASE_DIR, "src", "js", "main.js"), "r", encoding="utf-8") as f:
         main_js = f.read()
 
-    # Inject chart datasets
-    main_js = re.sub(r'labels:\s*\[[^\]]+\]', f'labels: {json.dumps(chart_dates)}', main_js, count=1)
-    main_js = re.sub(r'data:\s*\[1\.0,\s*1\.0056[^\]]+\]', f'data: {json.dumps(chart_cur)}', main_js, count=1)
-    main_js = re.sub(r'data:\s*\[1\.0,\s*1\.0056[^\]]+\]', f'data: {json.dumps(chart_past)}', main_js, count=1)
-    main_js = re.sub(r'data:\s*\[1\.0,\s*1\.0224[^\]]+\]', f'data: {json.dumps(chart_msci)}', main_js, count=1)
-    main_js = re.sub(r'data:\s*\[1\.0,\s*1\.0129[^\]]+\]', f'data: {json.dumps(chart_sp)}', main_js, count=1)
     # Ensure all double curly braces are single curly braces for valid JS
     main_js = main_js.replace('{{', '{').replace('}}', '}')
+
 
     # 10. Assemble 5-Slide HTML (Strictly exclude Slide 6 from the Monthly Memo)
     final_html = base_html.replace("{{TOP_NAV}}", top_nav)
