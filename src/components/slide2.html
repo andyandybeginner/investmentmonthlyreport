@@ -1,0 +1,388 @@
+<div id="slide2" class="landscape-slide relative">
+            <canvas id="canvas_slide2" class="annotation-canvas absolute inset-0 pointer-events-none z-40 w-full h-full"></canvas>
+            
+            <!-- Slide Header -->
+            <div class="bg-gradient-to-r from-[#091528] via-[#0f2347] to-[#163566] text-white px-8 py-2.5 border-b-2 border-amber-500 flex justify-between items-center">
+                <div>
+                    <span class="text-[10px] uppercase tracking-widest text-amber-400 font-bold" data-i18n="s2_tag">全球宏观展望与行业资产配置策略</span>
+                    <h2 class="text-lg font-extrabold tracking-tight mt-0.5" data-i18n="s2_title">全球宏观脉搏与行业星级评定榜</h2>
+                </div>
+            </div>
+
+            <!-- Top Core Recommendation Callout (Page 7 Our Recommendation) -->
+            <div class="bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent border-b border-amber-200/80 px-8 py-1.5 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="bg-amber-500 text-slate-950 font-extrabold text-[10.5px] px-2 py-0.5 rounded uppercase tracking-wider" data-i18n="s2_rec_badge">核心策略定见</span>
+                    <p class="text-[12px] font-semibold text-slate-800" data-i18n="s2_rec_text">
+                        <strong>战略持续看好亚洲：</strong>相较于欧美存在显著估值折价，紧握与 AI 基础设施深度绑定的韩国、中国台湾、日本、中国及新加坡；<strong>固定收益端：</strong>利率将长期维持高位，恪守短至中期久期与高等级投资级债。
+                    </p>
+                </div>
+            </div>
+
+            <!-- Main Split Body: 3-Column Institutional Architecture (Market Review & Charts | Q4 Theses | Star Ratings) -->
+            <div class="px-6 py-2.5 grid grid-cols-12 gap-3.5 flex-1 items-stretch">
+                
+                <!-- Column 1: Market Performance Visual Charts & Regional Reviews (4 Cols) -->
+                <div class="col-span-4 flex flex-col justify-between space-y-2">
+                    
+                    <div>
+                        <div class="flex justify-between items-center h-6 mb-1.5">
+                            <h4 class="text-sm font-extrabold uppercase tracking-tight text-[#0f2347]" data-i18n="s2_mkt_header">
+                                9月重点资产月度回报
+                            </h4>
+                            <span class="text-[9.5px] text-slate-400 font-semibold" data-i18n="s2_mkt_sub">彭博与投研综合数据</span>
+                        </div>
+
+                        <!-- Visual Divergent Charts for September Assets (Replacing plain text cards) -->
+                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-2 space-y-1.5 shadow-sm">
+
+                        <!-- Diverging Bar Chart 1: Equity Indices -->
+                        <div class="space-y-0.5">
+                            <div class="flex justify-between items-center text-[9px] text-slate-500 font-semibold px-0.5">
+                                <span data-i18n="s2_chart1_title">股票指数 (原币/SGD)</span>
+                                <span class="font-mono text-[8px] text-slate-400">1M (9月)</span>
+                            </div>
+                            <div class="flex items-center text-[8px] font-mono text-slate-400 py-0.5 px-0.5">
+                                <span class="w-16"></span>
+                                <div class="flex-1 relative mx-1 h-2.5 flex items-center">
+                                    <span class="absolute left-0">-7%</span>
+                                    <span class="absolute left-[75%] -translate-x-1/2 text-slate-700 font-bold">0%</span>
+                                    <span class="absolute right-0 text-right">+2%</span>
+                                </div>
+                                <span class="w-10"></span>
+                            </div>
+                            
+                            <!-- Equity Bar 1: Nasdaq -->
+                            <div class="flex items-center text-[9.5px] py-0.5">
+                                <span class="w-16 text-slate-700 font-medium truncate" data-i18n="s2_eq_nasdaq">纳斯达克</span>
+                                <div class="flex-1 flex items-center h-2.5 bg-slate-200/60 rounded relative mx-1">
+                                    <div class="absolute top-0 bottom-0 left-[75%] w-[1px] bg-slate-400 z-10"></div>
+                                    <div class="absolute top-0 bottom-0 left-[75%] bg-emerald-500 rounded-r" style="width: 17.4%;"></div>
+                                </div>
+                                <span class="w-10 text-right font-mono font-bold text-emerald-600 text-[9.5px]">+1.74%</span>
+                            </div>
+                            <!-- Equity Bar 2: Nikkei -->
+                            <div class="flex items-center text-[9.5px] py-0.5">
+                                <span class="w-16 text-slate-700 font-medium truncate" data-i18n="s2_eq_nikkei">日经225</span>
+                                <div class="flex-1 flex items-center h-2.5 bg-slate-200/60 rounded relative mx-1">
+                                    <div class="absolute top-0 bottom-0 left-[75%] w-[1px] bg-slate-400 z-10"></div>
+                                    <div class="absolute top-0 bottom-0 left-[75%] bg-emerald-500 rounded-r" style="width: 5.2%;"></div>
+                                </div>
+                                <span class="w-10 text-right font-mono font-bold text-emerald-600 text-[9.5px]">+0.52%</span>
+                            </div>
+                            <!-- Equity Bar 3: S&P 500 -->
+                            <div class="flex items-center text-[9.5px] py-0.5">
+                                <span class="w-16 text-slate-700 font-medium truncate" data-i18n="s2_eq_spx">标普500</span>
+                                <div class="flex-1 flex items-center h-2.5 bg-slate-200/60 rounded relative mx-1">
+                                    <div class="absolute top-0 bottom-0 left-[75%] w-[1px] bg-slate-400 z-10"></div>
+                                    <div class="absolute top-0 bottom-0 right-[25%] bg-rose-500 rounded-l" style="width: 7.8%;"></div>
+                                </div>
+                                <span class="w-10 text-right font-mono font-bold text-rose-600 text-[9.5px]">-0.78%</span>
+                            </div>
+                            <!-- Equity Bar 4: Emerging Markets -->
+                            <div class="flex items-center text-[9.5px] py-0.5">
+                                <span class="w-16 text-slate-700 font-medium truncate" data-i18n="s2_eq_em">新兴市场</span>
+                                <div class="flex-1 flex items-center h-2.5 bg-slate-200/60 rounded relative mx-1">
+                                    <div class="absolute top-0 bottom-0 left-[75%] w-[1px] bg-slate-400 z-10"></div>
+                                    <div class="absolute top-0 bottom-0 right-[25%] bg-rose-500 rounded-l" style="width: 25.0%;"></div>
+                                </div>
+                                <span class="w-10 text-right font-mono font-bold text-rose-600 text-[9.5px]">-2.50%</span>
+                            </div>
+                            <!-- Equity Bar 5: China A / MSCI -->
+                            <div class="flex items-center text-[9.5px] py-0.5">
+                                <span class="w-16 text-slate-700 font-medium truncate" data-i18n="s2_eq_cn">MSCI中国</span>
+                                <div class="flex-1 flex items-center h-2.5 bg-slate-200/60 rounded relative mx-1">
+                                    <div class="absolute top-0 bottom-0 left-[75%] w-[1px] bg-slate-400 z-10"></div>
+                                    <div class="absolute top-0 bottom-0 right-[25%] bg-rose-500 rounded-l" style="width: 48.1%;"></div>
+                                </div>
+                                <span class="w-10 text-right font-mono font-bold text-rose-600 text-[9.5px]">-4.81%</span>
+                            </div>
+                        </div>
+
+                        <!-- Diverging Bar Chart 2: Bond Indices -->
+                        <div class="space-y-0.5 pt-1 border-t border-slate-200/60">
+                            <div class="flex justify-between items-center text-[9px] text-slate-500 font-semibold px-0.5">
+                                <span data-i18n="s2_chart2_title">债券指数 (美元计价)</span>
+                                <span class="font-mono text-[8px] text-slate-400">1M (9月)</span>
+                            </div>
+                            <div class="flex items-center text-[8px] font-mono text-slate-400 py-0.5 px-0.5">
+                                <span class="w-16"></span>
+                                <div class="flex-1 relative mx-1 h-2.5 flex items-center">
+                                    <span class="absolute left-0">-3.5%</span>
+                                    <span class="absolute right-0 text-slate-700 font-bold">0%</span>
+                                </div>
+                                <span class="w-10"></span>
+                            </div>
+                            <!-- Bond Bar 1: Asian HY -->
+                            <div class="flex items-center text-[9.5px] py-0.5">
+                                <span class="w-16 text-slate-700 font-medium truncate" data-i18n="s2_bd_ahy">亚洲高收益</span>
+                                <div class="flex-1 flex items-center h-2 bg-slate-200/60 rounded relative mx-1">
+                                    <div class="absolute top-0 bottom-0 right-0 w-[1px] bg-slate-400 z-10"></div>
+                                    <div class="absolute top-0 bottom-0 right-0 bg-rose-400 rounded-l" style="width: 35.1%;"></div>
+                                </div>
+                                <span class="w-10 text-right font-mono font-bold text-rose-600 text-[9.5px]">-1.23%</span>
+                            </div>
+                            <!-- Bond Bar 2: Asian IG -->
+                            <div class="flex items-center text-[9.5px] py-0.5">
+                                <span class="w-16 text-slate-700 font-medium truncate" data-i18n="s2_bd_aig">亚洲投资级</span>
+                                <div class="flex-1 flex items-center h-2 bg-slate-200/60 rounded relative mx-1">
+                                    <div class="absolute top-0 bottom-0 right-0 w-[1px] bg-slate-400 z-10"></div>
+                                    <div class="absolute top-0 bottom-0 right-0 bg-rose-400 rounded-l" style="width: 58.5%;"></div>
+                                </div>
+                                <span class="w-10 text-right font-mono font-bold text-rose-600 text-[9.5px]">-2.05%</span>
+                            </div>
+                            <!-- Bond Bar 3: Global Aggregate -->
+                            <div class="flex items-center text-[9.5px] py-0.5">
+                                <span class="w-16 text-slate-700 font-medium truncate" data-i18n="s2_bd_agg">全球综合债</span>
+                                <div class="flex-1 flex items-center h-2 bg-slate-200/60 rounded relative mx-1">
+                                    <div class="absolute top-0 bottom-0 right-0 w-[1px] bg-slate-400 z-10"></div>
+                                    <div class="absolute top-0 bottom-0 right-0 bg-rose-500 rounded-l" style="width: 70.8%;"></div>
+                                </div>
+                                <span class="w-10 text-right font-mono font-bold text-rose-600 text-[9.5px]">-2.48%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3 Regional Reviews from Page 6 (Full Un-truncated Institutional Translation) -->
+                    <div class="space-y-1 flex-1 flex flex-col justify-between">
+                        <!-- US Review -->
+                        <div class="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1 space-y-0.5">
+                            <div class="flex justify-between items-center">
+                                <span class="font-bold text-xs text-slate-900 flex items-center gap-1">
+                                    <span>🇺🇸</span>
+                                    <span data-i18n="us_name">美股市场</span>
+                                </span>
+                                <span class="text-[9.5px] font-bold text-rose-700 bg-rose-100 px-1 py-0.2 rounded" data-i18n="us_rating">配置建议: 低配 ★★</span>
+                            </div>
+                            <p class="text-[10px] text-slate-600 leading-snug" data-i18n="us_desc">
+                                9月美股走势分化，半导体反弹推升纳指，月末抛压致标普500小幅收跌。美联储全票通过加息25bps至3.75%–4.00%（2023年7月以来首度加息），沃什主席直言通胀长期过高；10年期美债收益率升破5.2%（创2007年以来新高）。8月非农反弹16.2万人，CPI同比持平于3.4%，但PCE为3.4%低于预期的3.7%，削弱了10月连续加息预期。组合维持低配，仅精选高质量数字经济与芯片龙头。
+                            </p>
+                        </div>
+
+                        <!-- Japan Review -->
+                        <div class="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1 space-y-0.5">
+                            <div class="flex justify-between items-center">
+                                <span class="font-bold text-xs text-slate-900 flex items-center gap-1">
+                                    <span>🇯🇵</span>
+                                    <span data-i18n="jp_name">日本市场</span>
+                                </span>
+                                <span class="text-[9.5px] font-bold text-amber-700 bg-amber-100 px-1 py-0.2 rounded" data-i18n="jp_rating">配置建议: 标配 ★★★</span>
+                            </div>
+                            <p class="text-[10px] text-slate-600 leading-snug" data-i18n="jp_desc">
+                                日股在震荡中实现连续第二个月上涨。日经225月初受中东局势与加息担忧拖累下挫，随后在半导体与银行股推动下反弹并创8月中旬以来最高。日本央行以7–2投票加息25bps至1.25%（创1995年以来新高，加息间隔为1990年以来最短）。10年期日债收益率升至3.05%附近（创1996年新高），8月核心CPI放缓至1.7%。日兴日本高股息基金具备极强的分子端防御力。
+                            </p>
+                        </div>
+
+                        <!-- China Review -->
+                        <div class="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1 space-y-0.5">
+                            <div class="flex justify-between items-center">
+                                <span class="font-bold text-xs text-slate-900 flex items-center gap-1">
+                                    <span>🇨🇳</span>
+                                    <span data-i18n="cn_name">中国市场</span>
+                                </span>
+                                <span class="text-[9.5px] font-bold text-amber-700 bg-amber-100 px-1 py-0.2 rounded" data-i18n="cn_rating">配置建议: 超配 ★★★½</span>
+                            </div>
+                            <p class="text-[10px] text-slate-600 leading-snug" data-i18n="cn_desc">
+                                中国股市9月出现回调，受科技板块疲软、美债收益率高企及消费温和拖累。8月经济数据分化：工业产出超预期达5.2%，但社会零售增速放缓至0.4%，前8月固投下滑7.2%。9月29日北京祭出2024年以来最大规模刺激支持举措，包括首度推出房贷利息补贴、下调抵押补充贷款(PSL)利率至1.5%，并追加7000亿元再贷款额度。历史极低估值赋予厚实安全边际，坚守先进制造与科技自立战略资产。
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+                <!-- Column 2: Q4 Thematic Structural Theses & Macro Drivers (4 Cols) -->
+                <div class="col-span-4 flex flex-col justify-between space-y-2">
+                    <div class="flex-1 flex flex-col justify-between">
+                        <div class="flex justify-between items-center h-6 mb-1.5">
+                            <h4 class="text-sm font-extrabold uppercase tracking-tight text-[#0f2347]" data-i18n="s2_thematic_header">
+                                第四季度核心结构性逻辑与风险
+                            </h4>
+                            <span class="text-[9.5px] text-slate-400 font-mono font-semibold">Q4 Focus</span>
+                        </div>
+                        <div class="flex-1 flex flex-col justify-between space-y-2">
+                            <!-- Driver 1: AI Supercycle -->
+                            <div class="bg-blue-50/70 border border-blue-200 rounded-xl p-2.5 space-y-1 shadow-xs flex-1 flex flex-col justify-start">
+                                <span class="font-bold text-xs text-blue-900 flex items-center gap-1" data-i18n="drv_ai_title">
+                                    ⚡ AI 硬件超级周期加速拓宽
+                                </span>
+                                <p class="text-[10.5px] text-slate-600 leading-relaxed" data-i18n="drv_ai_desc">
+                                    三星 HBM 产能 2026-2027 年全部售罄，台积电 CoWoS 先进封装严重紧缺；云服务巨头 2026 年资本开支预计达 8000 亿美元。亚洲半导体产业链处于全球价值爆发中心。
+                                </p>
+                            </div>
+
+                            <!-- Driver 2: Oil & Chokepoints -->
+                            <div class="bg-amber-50/70 border border-amber-200 rounded-xl p-2.5 space-y-1 shadow-xs flex-1 flex flex-col justify-start">
+                                <span class="font-bold text-xs text-amber-900 flex items-center gap-1" data-i18n="drv_oil_title">
+                                    🛢️ 中东海峡阻塞与柴油精炼瓶颈
+                                </span>
+                                <p class="text-[10.5px] text-slate-600 leading-relaxed" data-i18n="drv_oil_desc">
+                                    布伦特油价破 $100，沙特东西输油管道停摆；全球柴油精炼产能见顶，柴油价格高企直接传导至工业成本，全球利率被迫维持更长久高位。
+                                </p>
+                            </div>
+
+                            <!-- Driver 3: Areas of Caution (Restored from Page 7 + Look-Through Calibration) -->
+                            <div class="bg-rose-50/70 border border-rose-200 rounded-xl p-2.5 space-y-1 shadow-xs flex-[1.3] flex flex-col justify-start">
+                                <span class="font-bold text-xs text-rose-900 flex items-center gap-1" data-i18n="drv_cautious_title">
+                                    ⚠️ 审慎防御领域与资产警惕
+                                </span>
+                                <p class="text-[10px] text-slate-600 leading-relaxed" data-i18n="drv_cautious_desc">
+                                    欧美估值相对亚洲维持过高溢价，美股维持审慎并仅精选高质量数字经济标的；欧洲受地缘未决与高能价压制；印度缺乏 AI 催化且受输入型通胀压制。<strong>黄金配置与穿透校准：</strong>研报对黄金维持审慎（指出本轮周期黄金避险属性减弱，仅建议至多 10% 分散配置）。<strong>组合穿透：</strong>本组合对大华黄金及综合（United Gold & General）目标权重设为 15%，因其底层仅约 70% 为纯黄金相关资产（其余 30% 为多元贵金属与基础矿产），穿透后真实纯黄金敞口约 10.5%，与研报 10% 避险上限严格吻合。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Column 3: Official Sector Star Ratings (Full Height, Spacious, Moved to Right) (4 Cols) -->
+                <div class="col-span-4 flex flex-col justify-between space-y-2">
+                    <div class="flex-1 flex flex-col justify-between">
+                        <div class="flex justify-between items-center h-6 mb-1.5">
+                            <h4 class="text-sm font-extrabold uppercase tracking-tight text-[#0f2347]" data-i18n="s2_star_header">
+                                官方全行业吸引力星级榜
+                            </h4>
+                            <span class="text-[9.5px] text-slate-400 font-semibold" data-i18n="s2_star_sub">季度资产配置导向</span>
+                        </div>
+                        
+                        <div class="bg-white border border-slate-200 rounded-xl p-2 shadow-sm flex-1 flex flex-col justify-between text-[10px]">
+                            
+                            <!-- Tier 1: VERY ATTRACTIVE -->
+                            <div>
+                                <div class="flex justify-between items-center bg-emerald-50/90 border border-emerald-200 px-2 py-0.5 rounded text-[10px] font-bold text-emerald-900 mb-0.5">
+                                    <span class="flex items-center gap-1">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                        <span data-i18n="st_tier_v_att">极具吸引力 VERY ATTRACTIVE</span>
+                                    </span>
+                                    <span class="text-amber-500 font-mono text-[9.5px]">★★★★½ ~ ★★★★</span>
+                                </div>
+                                <div class="divide-y divide-slate-100 text-[9.5px]">
+                                    <div class="flex justify-between items-center py-0.5 px-1 hover:bg-slate-50">
+                                        <span class="text-slate-700 font-medium" data-i18n="st_asia_semi">亚洲半导体</span>
+                                        <span class="font-mono font-bold text-amber-500">★★★★½</span>
+                                    </div>
+                                    <div class="flex justify-between items-center py-0.5 px-1 hover:bg-slate-50">
+                                        <span class="text-slate-700 font-medium" data-i18n="st_sg">新加坡</span>
+                                        <span class="font-mono font-bold text-amber-500">★★★★</span>
+                                    </div>
+                                    <div class="flex justify-between items-center py-0.5 px-1 hover:bg-slate-50">
+                                        <span class="text-slate-700 font-medium" data-i18n="st_kr">韩国</span>
+                                        <span class="font-mono font-bold text-amber-500">★★★★</span>
+                                    </div>
+                                    <div class="flex justify-between items-center py-0.5 px-1 hover:bg-slate-50">
+                                        <span class="text-slate-700 font-medium" data-i18n="st_tw">中国台湾</span>
+                                        <span class="font-mono font-bold text-amber-500">★★★★</span>
+                                    </div>
+                                    <div class="flex justify-between items-center py-0.5 px-1 hover:bg-slate-50">
+                                        <span class="text-slate-700 font-medium" data-i18n="st_axj">亚洲除日本</span>
+                                        <span class="font-mono font-bold text-amber-500">★★★★</span>
+                                    </div>
+                                    <div class="flex justify-between items-center py-0.5 px-1 hover:bg-slate-50">
+                                        <span class="text-slate-700 font-medium" data-i18n="st_em">新兴市场</span>
+                                        <span class="font-mono font-bold text-amber-500">★★★★</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tier 2: ATTRACTIVE -->
+                            <div>
+                                <div class="flex justify-between items-center bg-blue-50/90 border border-blue-200 px-2 py-0.5 rounded text-[10px] font-bold text-blue-900 mb-0.5">
+                                    <span class="flex items-center gap-1">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                                        <span data-i18n="st_tier_att">具备吸引力 ATTRACTIVE</span>
+                                    </span>
+                                    <span class="text-amber-500 font-mono text-[9.5px]">★★★½ ~ ★★★</span>
+                                </div>
+                                <div class="divide-y divide-slate-100 text-[9.5px]">
+                                    <div class="flex justify-between items-center py-0.5 px-1 hover:bg-slate-50">
+                                        <span class="text-slate-700 font-medium" data-i18n="st_cn_tech">中国互联 (恒生科技)</span>
+                                        <span class="font-mono font-bold text-amber-500">★★★½</span>
+                                    </div>
+                                    <div class="flex justify-between items-center py-0.5 px-1 hover:bg-slate-50">
+                                        <span class="text-slate-700 font-medium" data-i18n="st_digi_semi">数字经济 (半导体)</span>
+                                        <span class="font-mono font-bold text-amber-500">★★★½</span>
+                                    </div>
+                                    <div class="flex justify-between items-center py-0.5 px-1 hover:bg-slate-50">
+                                        <span class="text-slate-700 font-medium" data-i18n="st_digi_net">数字经济 (互联网)</span>
+                                        <span class="font-mono font-bold text-amber-500">★★★½</span>
+                                    </div>
+                                    <div class="flex justify-between items-center py-0.5 px-1 hover:bg-slate-50">
+                                        <span class="text-slate-700 font-medium" data-i18n="st_cn">中国</span>
+                                        <span class="font-mono font-bold text-amber-500">★★★½</span>
+                                    </div>
+                                    <div class="flex justify-between items-center py-0.5 px-1 hover:bg-slate-50">
+                                        <span class="text-slate-700 font-medium" data-i18n="st_hk">中国香港</span>
+                                        <span class="font-mono font-bold text-amber-500">★★★½</span>
+                                    </div>
+                                    <div class="flex justify-between items-center py-0.5 px-1 hover:bg-slate-50">
+                                        <span class="text-slate-700 font-medium" data-i18n="st_my">马来西亚</span>
+                                        <span class="font-mono font-bold text-amber-500">★★★</span>
+                                    </div>
+                                    <div class="flex justify-between items-center py-0.5 px-1 hover:bg-slate-50">
+                                        <span class="text-slate-700 font-medium" data-i18n="st_jp">日本</span>
+                                        <span class="font-mono font-bold text-amber-500">★★★</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tier 3: NEUTRAL -->
+                            <div>
+                                <div class="flex justify-between items-center bg-slate-100 border border-slate-200 px-2 py-0.5 rounded text-[10px] font-bold text-slate-800 mb-0.5">
+                                    <span class="flex items-center gap-1">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                                        <span data-i18n="st_tier_neu">中性配置 NEUTRAL</span>
+                                    </span>
+                                    <span class="text-amber-500 font-mono text-[9.5px]">★★½</span>
+                                </div>
+                                <div class="divide-y divide-slate-100 text-[9.5px]">
+                                    <div class="flex justify-between items-center py-0.5 px-1 hover:bg-slate-50">
+                                        <span class="text-slate-700 font-medium" data-i18n="st_hc">全球医疗保健</span>
+                                        <span class="font-mono font-bold text-amber-500">★★½</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tier 4: NOT ATTRACTIVE -->
+                            <div>
+                                <div class="flex justify-between items-center bg-rose-50/90 border border-rose-200 px-2 py-0.5 rounded text-[10px] font-bold text-rose-900 mb-0.5">
+                                    <span class="flex items-center gap-1">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                                        <span data-i18n="st_tier_not_att">不具吸引力 NOT ATTRACTIVE</span>
+                                    </span>
+                                    <span class="text-amber-500 font-mono text-[9.5px]">★★</span>
+                                </div>
+                                <div class="divide-y divide-slate-100 text-[9.5px]">
+                                    <div class="flex justify-between items-center py-0.5 px-1 hover:bg-slate-50">
+                                        <span class="text-slate-700 font-medium" data-i18n="st_eu">欧洲</span>
+                                        <span class="font-mono font-bold text-amber-500">★★</span>
+                                    </div>
+                                    <div class="flex justify-between items-center py-0.5 px-1 hover:bg-slate-50">
+                                        <span class="text-slate-700 font-medium" data-i18n="st_in">印度</span>
+                                        <span class="font-mono font-bold text-amber-500">★★</span>
+                                    </div>
+                                    <div class="flex justify-between items-center py-0.5 px-1 hover:bg-slate-50">
+                                        <span class="text-slate-700 font-medium" data-i18n="st_fin">全球金融</span>
+                                        <span class="font-mono font-bold text-amber-500">★★</span>
+                                    </div>
+                                    <div class="flex justify-between items-center py-0.5 px-1 hover:bg-slate-50">
+                                        <span class="text-slate-700 font-medium" data-i18n="st_us">美国</span>
+                                        <span class="font-mono font-bold text-amber-500">★★</span>
+                                    </div>
+                                    <div class="flex justify-between items-center py-0.5 px-1 hover:bg-slate-50">
+                                        <span class="text-slate-700 font-medium" data-i18n="st_asean">东盟 (ASEAN)</span>
+                                        <span class="font-mono font-bold text-amber-500">★★</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Slide Footer -->
+            <div class="bg-slate-100 px-8 py-2 border-t border-slate-200 flex justify-between items-center text-xs text-slate-500">
+                <span data-i18n="s2_foot_left">宏观环境与行业星级配置</span>
+                <span data-i18n="s2_foot_right">第 2 页 · 宏观展望与星级榜单</span>
+            </div>
+        </div>

@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iFAST All-Equity Growth Portfolio - Monthly Advisory Report (October 2026)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
+        body { 
+            font-family: 'Plus+Jakarta+Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #0b1120; 
+            color: #1e293b;
+        }
+        .mono-num { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+        .navy-dark { background-color: #0e1e38; }
+        .page-sheet {
+            background: #ffffff;
+            width: 100%;
+            max-width: 1100px;
+            min-height: 1400px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+            margin-bottom: 2.5rem;
+            border-radius: 1rem;
+            overflow: hidden;
+            border: 1px solid #cbd5e1;
+            position: relative;
+        }
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; padding: 0 !important; }
+            .page-sheet { 
+                box-shadow: none !important; 
+                border: none !important; 
+                margin: 0 !important;
+                border-radius: 0 !important;
+                page-break-after: always !important; 
+                min-height: 100vh !important;
+            }
+        }
+    </style>
+</head>
+<body class="p-3 md:p-8 flex flex-col items-center min-h-screen">
+
+    <!-- Top Action & Navigation Bar -->
+    <div class="w-full max-w-[1100px] mb-6 flex flex-wrap items-center justify-between gap-4 no-print bg-slate-900/90 backdrop-blur border border-slate-800 p-4 rounded-xl shadow-xl text-white sticky top-2 z-50">
+        <div class="flex items-center space-x-3">
+            <span class="relative flex h-3 w-3">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
+            </span>
+            <div>
+                <h1 class="text-sm font-bold tracking-wide text-white uppercase">iFAST 全权益增长模型 · 4页专属月度研报 (October 2026)</h1>
+                <p class="text-xs text-slate-400">基于 iFAST Horizon 10月刊深度移植 & 7只优选基金全穿透架构</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-2">
+            <button onclick="scrollToPage(1)" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs rounded border border-slate-700">P1 事实单</button>
+            <button onclick="scrollToPage(2)" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs rounded border border-slate-700">P2 宏观与星级</button>
+            <button onclick="scrollToPage(3)" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs rounded border border-slate-700">P3 信念复盘</button>
+            <button onclick="scrollToPage(4)" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs rounded border border-slate-700">P4 股债专题</button>
+            <button onclick="window.print()" class="ml-2 px-4 py-1.5 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-slate-950 font-bold text-xs rounded-lg shadow transition flex items-center gap-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                导出 4 页完整 PDF
+            </button>
+        </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- PAGE 1: FACTSHEET DASHBOARD (事实清单与持仓穿透) -->
+    <!-- ========================================================================= -->
+    <div id="page1" class="page-sheet flex flex-col justify-between">
+        <div>
+            <!-- Header Banner -->
+            <div class="bg-gradient-to-r from-[#091528] via-[#0f2347] to-[#163566] text-white px-8 py-7 border-b-2 border-amber-500">
+                <div class="flex flex-wrap justify-between items-start gap-4">
+                    <div>
+                        <div class="flex items-center space-x-2 text-[11px] uppercase tracking-widest text-amber-400 font-bold mb-1.5">
+                            <span class="bg-amber-400/20 px-2 py-0.5 rounded text-amber-300 border border-amber-400/30">iFAST Discretionary Model</span>
+                            <span>•</span>
+                            <span>All-Equity High Growth Engine</span>
+                            <span>•</span>
+                            <span>SGD Denominated</span>
+                        </div>
+                        <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight">HR Model Portfolio Constitution 2026</h1>
+                        <p class="text-sm md:text-base font-medium text-slate-300 mt-1 flex items-center gap-2">
+                            <span>全权益主动增长组合 · 月度事实清单 (Monthly Factsheet)</span>
+                            <span class="text-slate-500">|</span>
+                            <span class="text-amber-300 font-semibold">截至 2026 年 9 月 30 日</span>
+                        </p>
+                    </div>
+                    <div class="flex flex-col items-end text-right">
+                        <span class="px-2.5 py-1 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30 text-xs font-bold uppercase tracking-wider">Risk Rating: 5 (Aggressive)</span>
+                        <div class="text-[11px] text-slate-400 mt-2">
+                            <span>Lead Analyst: CFA, CFP Professional</span>
+                            <span class="block">Managed Account Solutions</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-8 space-y-7">
+                <!-- Objective -->
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-4.5 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div class="flex-1">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-[#0f2347] mb-1 flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-[#0f2347]"></span>
+                            组合投资目标与管理哲学 (Investment Objective & Philosophy)
+                        </h3>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            本组合专为追求长期资本高复合增长的投资者设计。采用<strong>“全天候核心股票底仓 (35%) + 科技与防守双轮驱动 (45%) + 战术主题机会 (20%)”</strong>的动态均衡架构。通过严格的估值纪律与自下而上的主动管理，在捕获全球科技与亚洲复苏 Beta 的同时，依托低相关性标的平滑下行波动。
+                        </p>
+                    </div>
+                    <div class="flex md:flex-col gap-3 min-w-[200px] border-t md:border-t-0 md:border-l border-slate-200 pt-3 md:pt-0 md:pl-5 text-right justify-around">
+                        <div>
+                            <span class="text-[10px] text-slate-400 uppercase font-semibold block">底层标的数量</span>
+                            <span class="text-base font-bold text-slate-800 mono-num">7 只优选基金</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-slate-400 uppercase font-semibold block">参照基准 (Benchmark)</span>
+                            <span class="text-xs font-bold text-[#0f2347]">MSCI ACWI / S&P 500</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Performance Matrix & Allocation Chart -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                    <div class="lg:col-span-7 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-[#0f2347]">
+                                多周期综合收益率对比 (Performance vs Benchmarks)
+                            </h4>
+                            <span class="text-[11px] text-slate-500 font-medium">基准币种: SGD (分红再投资)</span>
+                        </div>
+                        <div class="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
+                            <table class="w-full text-left text-xs border-collapse">
+                                <thead>
+                                    <tr class="bg-[#0f2347] text-white">
+                                        <th class="p-2.5 font-bold">策略 / 参照基准</th>
+                                        <th class="p-2.5 text-right font-bold">1M (当月)</th>
+                                        <th class="p-2.5 text-right font-bold">3M</th>
+                                        <th class="p-2.5 text-right font-bold">YTD</th>
+                                        <th class="p-2.5 text-right font-bold">1 Year</th>
+                                        <th class="p-2.5 text-right font-bold">3Y Ann.</th>
+                                        <th class="p-2.5 text-right font-bold bg-[#091528]">成立以来 (Cum)</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-200 bg-white">
+                                    <tr class="bg-amber-50/50 hover:bg-amber-50 transition">
+                                        <td class="p-2.5 font-bold text-slate-900 flex items-center gap-2">
+                                            <span class="w-2.5 h-2.5 rounded-full bg-amber-500 shadow-sm"></span>
+                                            <span>iFAST All-Equity Model</span>
+                                        </td>
+                                        <td class="p-2.5 text-right font-bold text-rose-600 mono-num">-1.42%</td>
+                                        <td class="p-2.5 text-right font-semibold text-emerald-700 mono-num">+2.15%</td>
+                                        <td class="p-2.5 text-right font-bold text-emerald-700 mono-num">+11.38%</td>
+                                        <td class="p-2.5 text-right font-semibold text-emerald-700 mono-num">+18.40%</td>
+                                        <td class="p-2.5 text-right font-semibold text-slate-800 mono-num">+15.20%</td>
+                                        <td class="p-2.5 text-right font-extrabold text-[#0f2347] bg-amber-100/60 mono-num">+58.92%</td>
+                                    </tr>
+                                    <tr class="hover:bg-slate-50 transition">
+                                        <td class="p-2.5 font-semibold text-slate-700 flex items-center gap-2">
+                                            <span class="w-2 h-2 rounded bg-slate-400"></span>
+                                            <span>MSCI AC World Index (SGD)</span>
+                                        </td>
+                                        <td class="p-2.5 text-right text-rose-600 mono-num">-1.59%</td>
+                                        <td class="p-2.5 text-right text-emerald-700 mono-num">+1.28%</td>
+                                        <td class="p-2.5 text-right text-emerald-700 mono-num">+11.84%</td>
+                                        <td class="p-2.5 text-right text-emerald-700 mono-num">+15.23%</td>
+                                        <td class="p-2.5 text-right text-slate-700 mono-num">+12.60%</td>
+                                        <td class="p-2.5 text-right font-bold text-slate-700 bg-slate-50 mono-num">+46.20%</td>
+                                    </tr>
+                                    <tr class="hover:bg-slate-50 transition">
+                                        <td class="p-2.5 font-semibold text-slate-700 flex items-center gap-2">
+                                            <span class="w-2 h-2 rounded bg-slate-400"></span>
+                                            <span>S&P 500 Index (SGD)</span>
+                                        </td>
+                                        <td class="p-2.5 text-right text-rose-600 mono-num">-0.78%</td>
+                                        <td class="p-2.5 text-right text-emerald-700 mono-num">+2.03%</td>
+                                        <td class="p-2.5 text-right text-emerald-700 mono-num">+11.77%</td>
+                                        <td class="p-2.5 text-right text-emerald-700 mono-num">+14.40%</td>
+                                        <td class="p-2.5 text-right text-slate-700 mono-num">+13.10%</td>
+                                        <td class="p-2.5 text-right font-bold text-slate-700 bg-slate-50 mono-num">+51.40%</td>
+                                    </tr>
+                                    <tr class="bg-emerald-50/60 font-bold border-t-2 border-emerald-200">
+                                        <td class="p-2 text-emerald-900 flex items-center gap-1.5">
+                                            <svg class="w-3.5 h-3.5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L12 9.586 14.586 7H12z" clip-rule="evenodd"></path></svg>
+                                            <span>超额表现 (Alpha vs ACWI)</span>
+                                        </td>
+                                        <td class="p-2 text-right text-emerald-800 mono-num">+0.17%</td>
+                                        <td class="p-2 text-right text-emerald-800 mono-num">+0.87%</td>
+                                        <td class="p-2 text-right text-rose-700 mono-num">-0.46%</td>
+                                        <td class="p-2 text-right text-emerald-800 mono-num">+3.17%</td>
+                                        <td class="p-2 text-right text-emerald-800 mono-num">+2.60%</td>
+                                        <td class="p-2 text-right text-emerald-900 bg-emerald-100/70 mono-num font-extrabold">+12.72%</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-5 bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col justify-between shadow-sm h-full">
+                        <div class="flex justify-between items-center mb-1">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-[#0f2347]">组合配置结构透视 (Allocation)</h4>
+                            <span class="text-[10px] font-semibold text-amber-700 bg-amber-100 px-2 py-0.5 rounded">100% Equity</span>
+                        </div>
+                        <div class="h-44 relative w-full my-auto flex items-center justify-center">
+                            <canvas id="p1DonutChart"></canvas>
+                        </div>
+                        <div class="grid grid-cols-2 gap-x-2 gap-y-1.5 text-[11px] text-slate-700 mt-2 border-t border-slate-200/80 pt-2.5">
+                            <div class="flex items-center justify-between pr-2">
+                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#1e3a8a]"></span>全天候核心股票</span>
+                                <span class="font-bold mono-num">35.0%</span>
+                            </div>
+                            <div class="flex items-center justify-between pl-2">
+                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#0284c7]"></span>全球科技成长</span>
+                                <span class="font-bold mono-num">15.0%</span>
+                            </div>
+                            <div class="flex items-center justify-between pr-2">
+                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#10b981]"></span>全球生命科学</span>
+                                <span class="font-bold mono-num">15.0%</span>
+                            </div>
+                            <div class="flex items-center justify-between pl-2">
+                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#f59e0b]"></span>大华黄金综合</span>
+                                <span class="font-bold mono-num">15.0%</span>
+                            </div>
+                            <div class="flex items-center justify-between pr-2">
+                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#ef4444]"></span>大华中国 A 股</span>
+                                <span class="font-bold mono-num">12.0%</span>
+                            </div>
+                            <div class="flex items-center justify-between pl-2">
+                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#8b5cf6]"></span>首域亚洲/日本</span>
+                                <span class="font-bold mono-num">8.0%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 7 Funds Table -->
+                <div class="space-y-3">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-[#0f2347]">
+                        底层 7 只优选基金构成与月度行情穿透 (Constituent Holdings & Attribution)
+                    </h4>
+                    <div class="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead>
+                                <tr class="bg-[#0f2347] text-white">
+                                    <th class="p-2.5 font-bold">序号</th>
+                                    <th class="p-2.5 font-bold">配置板块 / 战略职能</th>
+                                    <th class="p-2.5 font-bold">基金全称 (Fund Name)</th>
+                                    <th class="p-2.5 font-bold">ISIN 编码</th>
+                                    <th class="p-2.5 text-right font-bold">目标权重</th>
+                                    <th class="p-2.5 text-right font-bold">最新净值 (SGD)</th>
+                                    <th class="p-2.5 text-right font-bold">当月回报 (1M)</th>
+                                    <th class="p-2.5 text-right font-bold bg-[#091528]">对组合贡献度</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-200 bg-white">
+                                <tr class="hover:bg-slate-50 transition">
+                                    <td class="p-2.5 font-semibold text-slate-400">01</td>
+                                    <td class="p-2.5 font-semibold text-blue-900">核心底仓：全天候对冲股票</td>
+                                    <td class="p-2.5 font-bold text-slate-800">FULLERTON LUX FUNDS - GLOBAL ABSOLUTE ALPHA A ACC SGD</td>
+                                    <td class="p-2.5 text-slate-500 font-mono text-[11px]">LU2264538146</td>
+                                    <td class="p-2.5 text-right font-bold text-[#0f2347] mono-num">35.0%</td>
+                                    <td class="p-2.5 text-right text-slate-800 font-medium mono-num">$18.0091</td>
+                                    <td class="p-2.5 text-right font-semibold text-emerald-700 mono-num">+0.45%</td>
+                                    <td class="p-2.5 text-right font-semibold text-emerald-800 bg-slate-50 mono-num">+0.16%</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50 transition">
+                                    <td class="p-2.5 font-semibold text-slate-400">02</td>
+                                    <td class="p-2.5 font-semibold text-sky-900">成长赛道：全球数字科技</td>
+                                    <td class="p-2.5 font-bold text-slate-800">EASTSPRING INVESTMENTS UNIT TRUSTS - GLOBAL TECHNOLOGY SGD</td>
+                                    <td class="p-2.5 text-slate-500 font-mono text-[11px]">SG9999002291</td>
+                                    <td class="p-2.5 text-right font-bold text-[#0f2347] mono-num">15.0%</td>
+                                    <td class="p-2.5 text-right text-slate-800 font-medium mono-num">$4.3330</td>
+                                    <td class="p-2.5 text-right font-bold text-emerald-700 mono-num">+3.80%</td>
+                                    <td class="p-2.5 text-right font-semibold text-emerald-800 bg-slate-50 mono-num">+0.57%</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50 transition">
+                                    <td class="p-2.5 font-semibold text-slate-400">03</td>
+                                    <td class="p-2.5 font-semibold text-emerald-900">防御赛道：全球生命科学</td>
+                                    <td class="p-2.5 font-bold text-slate-800">Janus Henderson Global Life Sciences</td>
+                                    <td class="p-2.5 text-slate-500 font-mono text-[11px]">LU1323527250</td>
+                                    <td class="p-2.5 text-right font-bold text-[#0f2347] mono-num">15.0%</td>
+                                    <td class="p-2.5 text-right text-slate-800 font-medium mono-num">$17.7700</td>
+                                    <td class="p-2.5 text-right font-semibold text-rose-600 mono-num">-1.10%</td>
+                                    <td class="p-2.5 text-right font-semibold text-rose-700 bg-slate-50 mono-num">-0.17%</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50 transition">
+                                    <td class="p-2.5 font-semibold text-slate-400">04</td>
+                                    <td class="p-2.5 font-semibold text-amber-900">抗通胀防御：黄金与大宗商品</td>
+                                    <td class="p-2.5 font-bold text-slate-800">United Gold and General A Acc SGD</td>
+                                    <td class="p-2.5 text-slate-500 font-mono text-[11px]">SG9999002242</td>
+                                    <td class="p-2.5 text-right font-bold text-[#0f2347] mono-num">15.0%</td>
+                                    <td class="p-2.5 text-right text-slate-800 font-medium mono-num">$5.1323</td>
+                                    <td class="p-2.5 text-right font-semibold text-rose-600 mono-num">-6.30%</td>
+                                    <td class="p-2.5 text-right font-semibold text-rose-700 bg-slate-50 mono-num">-0.95%</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50 transition">
+                                    <td class="p-2.5 font-semibold text-slate-400">05</td>
+                                    <td class="p-2.5 font-semibold text-rose-900">核心区域：中国 A 股创新机会</td>
+                                    <td class="p-2.5 font-bold text-slate-800">United China A Shares Innovation A Acc SGD</td>
+                                    <td class="p-2.5 text-slate-500 font-mono text-[11px]">SGXZ49509284</td>
+                                    <td class="p-2.5 text-right font-bold text-[#0f2347] mono-num">12.0%</td>
+                                    <td class="p-2.5 text-right text-slate-800 font-medium mono-num">$0.8579</td>
+                                    <td class="p-2.5 text-right font-semibold text-rose-600 mono-num">-5.40%</td>
+                                    <td class="p-2.5 text-right font-semibold text-rose-700 bg-slate-50 mono-num">-0.65%</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50 transition">
+                                    <td class="p-2.5 font-semibold text-slate-400">06</td>
+                                    <td class="p-2.5 font-semibold text-purple-900">主题机会：亚洲精选高增长</td>
+                                    <td class="p-2.5 font-bold text-slate-800">FSSA Asian Growth Fund (Class A)</td>
+                                    <td class="p-2.5 text-slate-500 font-mono text-[11px]">LU1962323382</td>
+                                    <td class="p-2.5 text-right font-bold text-[#0f2347] mono-num">4.0%</td>
+                                    <td class="p-2.5 text-right text-slate-800 font-medium mono-num">$3.9428</td>
+                                    <td class="p-2.5 text-right font-semibold text-rose-600 mono-num">-2.10%</td>
+                                    <td class="p-2.5 text-right font-semibold text-rose-700 bg-slate-50 mono-num">-0.08%</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50 transition">
+                                    <td class="p-2.5 font-semibold text-slate-400">07</td>
+                                    <td class="p-2.5 font-semibold text-indigo-900">主题机会：日本优质股息红利</td>
+                                    <td class="p-2.5 font-bold text-slate-800">Nikko AM Japan Dividend</td>
+                                    <td class="p-2.5 text-slate-500 font-mono text-[11px]">SG9999010490</td>
+                                    <td class="p-2.5 text-right font-bold text-[#0f2347] mono-num">4.0%</td>
+                                    <td class="p-2.5 text-right text-slate-800 font-medium mono-num">$2.2261</td>
+                                    <td class="p-2.5 text-right font-semibold text-rose-600 mono-num">-0.90%</td>
+                                    <td class="p-2.5 text-right font-semibold text-rose-700 bg-slate-50 mono-num">-0.04%</td>
+                                </tr>
+                                <tr class="bg-slate-100 font-bold border-t-2 border-slate-300 text-slate-900">
+                                    <td colspan="4" class="p-2.5 text-right uppercase tracking-wider">投资组合合计 / 当月综合加权回报</td>
+                                    <td class="p-2.5 text-right text-[#0f2347] mono-num font-extrabold text-sm">100.0%</td>
+                                    <td class="p-2.5 text-right text-slate-400">-</td>
+                                    <td class="p-2.5 text-right text-rose-600 mono-num font-extrabold text-sm">-1.42%</td>
+                                    <td class="p-2.5 text-right text-rose-700 mono-num font-extrabold text-sm bg-slate-200/60">-1.42%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-slate-100 px-8 py-4 border-t border-slate-200 flex justify-between items-center text-xs text-slate-500">
+            <span>Portfolio ID: CAA20260331-HR | Managed Account Advisory</span>
+            <span>Page 1 of 4</span>
+        </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- PAGE 2: MACRO PULSE & STAR RATINGS (移植自 iFAST Horizon P.6 & P.7) -->
+    <!-- ========================================================================= -->
+    <div id="page2" class="page-sheet flex flex-col justify-between">
+        <div>
+            <!-- Header Banner -->
+            <div class="bg-gradient-to-r from-[#091528] via-[#0f2347] to-[#163566] text-white px-8 py-7 border-b-2 border-amber-500">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <span class="text-[11px] uppercase tracking-widest text-amber-400 font-bold">MACROECONOMIC ANALYSIS & ASSET CLASS STRATEGY</span>
+                        <h2 class="text-2xl md:text-3xl font-extrabold tracking-tight mt-1">全球宏观脉搏与行业星级评定榜</h2>
+                        <p class="text-sm text-slate-300 mt-1">深度提炼自 iFAST Horizon 2026 年 10 月刊研报核心观点</p>
+                    </div>
+                    <span class="px-3 py-1 rounded bg-white/10 text-white text-xs font-semibold border border-white/20">Monthly Macro View</span>
+                </div>
+            </div>
+
+            <div class="p-8 space-y-7">
+                <!-- Top 3 Regional Reviews (US, Japan, China - iFAST P.6) -->
+                <div>
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#0f2347] mb-3 flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded bg-amber-500"></span>
+                        核心重点市场月度速评 (Key Regional Market Reviews · iFAST P.6)
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <!-- US Box -->
+                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4.5 space-y-2">
+                            <div class="flex justify-between items-center">
+                                <span class="font-bold text-sm text-slate-900 flex items-center gap-1.5">
+                                    <span>🇺🇸 美国市场</span>
+                                    <span class="text-[10px] text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded font-mono">S&P 500 -0.78%</span>
+                                </span>
+                                <span class="text-[10px] font-bold text-rose-700 bg-rose-100 px-2 py-0.5 rounded">Not Attractive ★★</span>
+                            </div>
+                            <h5 class="text-xs font-bold text-[#0f2347]">通胀具备粘性，长端国债利率创 2007 年新高</h5>
+                            <p class="text-[11px] text-slate-600 leading-relaxed">
+                                9月美股呈分化格局，半导体拉动纳指上涨 (+1.74%)，但标普收跌。10年期美债收益率冲破 5.2%（创2007年以来新高）。虽然大盘盈利坚韧，但相较于亚洲存在<strong>显著估值溢价</strong>，组合维持大盘指数低配，仅精选半导体与数字经济高质量龙头。
+                            </p>
+                        </div>
+
+                        <!-- Japan Box -->
+                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4.5 space-y-2">
+                            <div class="flex justify-between items-center">
+                                <span class="font-bold text-sm text-slate-900 flex items-center gap-1.5">
+                                    <span>🇯🇵 日本市场</span>
+                                    <span class="text-[10px] text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded font-mono">Nikkei +0.52%</span>
+                                </span>
+                                <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded">Attractive ★★★</span>
+                            </div>
+                            <h5 class="text-xs font-bold text-[#0f2347]">央行加息至 1.25% 创 31 年新高，公司治理红利释放</h5>
+                            <p class="text-[11px] text-slate-600 leading-relaxed">
+                                日央行以 7-2 投票将政策利率提升至 1.25%（创1995年以来最高）。日经指数展现出强劲抗跌韧性，半导体与银行股领跑。企业治理改革推进、实际工资上涨驱动内需良性循环，为日兴日本高股息基金提供了坚实的分子端利润支撑。
+                            </p>
+                        </div>
+
+                        <!-- China Box -->
+                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4.5 space-y-2">
+                            <div class="flex justify-between items-center">
+                                <span class="font-bold text-sm text-slate-900 flex items-center gap-1.5">
+                                    <span>🇨🇳 中国市场</span>
+                                    <span class="text-[10px] text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded font-mono">MSCI CN -4.81%</span>
+                                </span>
+                                <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded">Attractive ★★★½</span>
+                            </div>
+                            <h5 class="text-xs font-bold text-[#0f2347]">重大政策宽松组合拳落地，极低估值提供安全边际</h5>
+                            <p class="text-[11px] text-slate-600 leading-relaxed">
+                                8月数据显示经济筑底分化，工业增加值增 5.2% 但内需仍疲软。9月29日北京出台了自2024年以来最大规模刺激案（包括房贷贴息、下调PSL至1.5%、投放7000亿再贷款）。极低估值赋予了极高风险补偿，坚守具有国产替代逻辑的先进制造板块。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Star Ratings Matrix (100% 还原自 iFAST P.7) -->
+                <div>
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-[#0f2347] flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded bg-[#0f2347]"></span>
+                            iFAST 官方行业与地区投资吸引力星级榜 (Sector & Regional Star Ratings · iFAST P.7)
+                        </h3>
+                        <span class="text-[11px] text-slate-500">指导组合战略性超配与低配</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <!-- Very Attractive -->
+                        <div class="bg-emerald-50/70 border border-emerald-200 rounded-xl p-4 space-y-2">
+                            <div class="text-xs font-extrabold text-emerald-900 uppercase border-b border-emerald-200 pb-1.5 flex justify-between items-center">
+                                <span>极具吸引力</span>
+                                <span class="text-amber-500">★★★★½ ~ ★★★★</span>
+                            </div>
+                            <ul class="text-xs text-slate-700 space-y-1.5 pt-1">
+                                <li class="flex justify-between"><span>亚洲半导体 (Asia Semicon)</span><span class="font-bold text-amber-600">★★★★½</span></li>
+                                <li class="flex justify-between"><span>新加坡 (Singapore)</span><span class="font-bold text-amber-600">★★★★</span></li>
+                                <li class="flex justify-between"><span>韩国 (South Korea)</span><span class="font-bold text-amber-600">★★★★</span></li>
+                                <li class="flex justify-between"><span>台湾 (Taiwan)</span><span class="font-bold text-amber-600">★★★★</span></li>
+                                <li class="flex justify-between"><span>亚太除日本 (Asia ex-Japan)</span><span class="font-bold text-amber-600">★★★★</span></li>
+                            </ul>
+                        </div>
+
+                        <!-- Attractive -->
+                        <div class="bg-blue-50/70 border border-blue-200 rounded-xl p-4 space-y-2">
+                            <div class="text-xs font-extrabold text-blue-900 uppercase border-b border-blue-200 pb-1.5 flex justify-between items-center">
+                                <span>具备吸引力</span>
+                                <span class="text-amber-500">★★★½ ~ ★★★</span>
+                            </div>
+                            <ul class="text-xs text-slate-700 space-y-1.5 pt-1">
+                                <li class="flex justify-between"><span>恒生科技 (China Internet)</span><span class="font-bold text-amber-600">★★★½</span></li>
+                                <li class="flex justify-between"><span>数字经济 (Digital Economy)</span><span class="font-bold text-amber-600">★★★½</span></li>
+                                <li class="flex justify-between"><span>中国本土股票 (China)</span><span class="font-bold text-amber-600">★★★½</span></li>
+                                <li class="flex justify-between"><span>香港市场 (Hong Kong)</span><span class="font-bold text-amber-600">★★★½</span></li>
+                                <li class="flex justify-between"><span>日本市场 (Japan)</span><span class="font-bold text-amber-600">★★★</span></li>
+                            </ul>
+                        </div>
+
+                        <!-- Neutral -->
+                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-2">
+                            <div class="text-xs font-extrabold text-slate-800 uppercase border-b border-slate-200 pb-1.5 flex justify-between items-center">
+                                <span>中性配置</span>
+                                <span class="text-amber-500">★★½</span>
+                            </div>
+                            <ul class="text-xs text-slate-700 space-y-1.5 pt-1">
+                                <li class="flex justify-between"><span>全球医疗健康 (Healthcare)</span><span class="font-bold text-amber-600">★★½</span></li>
+                                <li class="flex justify-between"><span>马来西亚 (Malaysia)</span><span class="font-bold text-amber-600">★★★</span></li>
+                                <li class="text-[10px] text-slate-500 pt-2 leading-tight">
+                                    医疗板块防守属性稳固，但在利率高位环境下估值弹性中性，维持基准配比。
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Not Attractive -->
+                        <div class="bg-rose-50/70 border border-rose-200 rounded-xl p-4 space-y-2">
+                            <div class="text-xs font-extrabold text-rose-900 uppercase border-b border-rose-200 pb-1.5 flex justify-between items-center">
+                                <span>吸引力不足</span>
+                                <span class="text-amber-500">★★</span>
+                            </div>
+                            <ul class="text-xs text-slate-700 space-y-1.5 pt-1">
+                                <li class="flex justify-between"><span>欧洲市场 (Europe)</span><span class="font-bold text-rose-600">★★</span></li>
+                                <li class="flex justify-between"><span>美股大盘宽基 (US Broader)</span><span class="font-bold text-rose-600">★★</span></li>
+                                <li class="flex justify-between"><span>印度市场 (India)</span><span class="font-bold text-rose-600">★★</span></li>
+                                <li class="flex justify-between"><span>全球金融 (Global Financials)</span><span class="font-bold text-rose-600">★★</span></li>
+                                <li class="flex justify-between"><span>东盟除星马 (ASEAN broad)</span><span class="font-bold text-rose-600">★★</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Strategic Outlook Callout (iFAST P.7 核心总结) -->
+                <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-xl">
+                    <h4 class="text-xs font-bold text-amber-900 uppercase tracking-wider mb-1">CFA 资产配置执行策略总结 (Asset Allocation Action)</h4>
+                    <p class="text-xs text-amber-950 leading-relaxed">
+                        基于相对估值与盈利增长差，<strong>我们继续坚定超配亚洲（特别是直接受益于全球 AI 算力与存储超级周期的韩国、台湾、新加坡及估值折价的中国）</strong>。由于美欧市场面临降息延后与地缘能源溢价，本模型通过 35% 富敦全天候对冲底仓与 15% 大华黄金，在博取亚洲高弹性进攻的同时筑牢防守底线。
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-slate-100 px-8 py-4 border-t border-slate-200 flex justify-between items-center text-xs text-slate-500">
+            <span>Portfolio ID: CAA20260331-HR | Macroeconomic Outlook</span>
+            <span>Page 2 of 4</span>
+        </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- PAGE 3: PORTFOLIO CONVICTION & "HOLD THE BELIEF" (移植自 iFAST P.3-5, 9, 11) -->
+    <!-- ========================================================================= -->
+    <div id="page3" class="page-sheet flex flex-col justify-between">
+        <div>
+            <!-- Header Banner -->
+            <div class="bg-gradient-to-r from-[#091528] via-[#0f2347] to-[#163566] text-white px-8 py-7 border-b-2 border-amber-500">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <span class="text-[11px] uppercase tracking-widest text-amber-400 font-bold">FUND SELECTION & CONVICTION REVIEW</span>
+                        <h2 class="text-2xl md:text-3xl font-extrabold tracking-tight mt-1">配置逻辑剖析与“Hold the Belief”信念复盘</h2>
+                        <p class="text-sm text-slate-300 mt-1">深度解决顾问与客户沟通的核心痛点：选股逻辑、短期回撤定见与调仓纪律</p>
+                    </div>
+                    <span class="px-3 py-1 rounded bg-white/10 text-white text-xs font-semibold border border-white/20">Advisory Conviction</span>
+                </div>
+            </div>
+
+            <div class="p-8 space-y-7">
+                
+                <!-- 为什么选这些基金？三维配置框架 -->
+                <div>
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#0f2347] mb-3 flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded bg-emerald-500"></span>
+                        三维立体的基金配置框架 (Why We Selected These Funds)
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                        <div class="border border-slate-200 rounded-xl p-4.5 bg-white shadow-sm space-y-2 border-t-4 border-t-blue-800">
+                            <span class="text-[10px] font-bold text-blue-800 uppercase tracking-wider block">Dimension 1: 压舱底仓 (35%)</span>
+                            <h4 class="text-sm font-bold text-slate-900">富敦全球绝对阿尔法 (Fullerton Global Alpha)</h4>
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                追求与大盘 Beta 低相关的绝对收益。通过多空对冲与市场中性因子，在震荡市中持续积累平滑的复合回报，构成本模型抵抗黑天鹅冲击的中流砥柱。
+                            </p>
+                        </div>
+
+                        <div class="border border-slate-200 rounded-xl p-4.5 bg-white shadow-sm space-y-2 border-t-4 border-t-sky-600">
+                            <span class="text-[10px] font-bold text-sky-700 uppercase tracking-wider block">Dimension 2: 高成长进攻 (30%)</span>
+                            <h4 class="text-sm font-bold text-slate-900">瀚亚全球科技 (15%) + 大华中国 A 股 (12%)</h4>
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                紧握 AI 产业超级周期与半导体上行通道（瀚亚）；同时左侧重度布局中国先进制造与科技自立企业（大华）。享受高估值溢价与国产替代双重成长红利。
+                            </p>
+                        </div>
+
+                        <div class="border border-slate-200 rounded-xl p-4.5 bg-white shadow-sm space-y-2 border-t-4 border-t-amber-500">
+                            <span class="text-[10px] font-bold text-amber-700 uppercase tracking-wider block">Dimension 3: 防守对冲与主题 (35%)</span>
+                            <h4 class="text-sm font-bold text-slate-900">大华黄金 (15%) + 骏利医疗 (15%) + 首域/日兴 (8%)</h4>
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                大华黄金在滞胀与去美元化周期中提供无对手盘风险的终极对冲；医疗板块抗经济衰退周期；日兴日本与首域亚洲则提供持续丰沛的高股息现金流。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 核心：面对短期回撤，如何给客户交代？(Hold the Belief 信念审查) -->
+                <div>
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#0f2347] mb-3 flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded bg-rose-500"></span>
+                        面对短期回撤的专业定见：信念审查 (Hold the Belief Review · 参考 iFAST P.9 & 11)
+                    </h3>
+
+                    <div class="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+                                    <th class="p-3">标的名称</th>
+                                    <th class="p-3 text-right">当月表现</th>
+                                    <th class="p-3">短期承压核心原因 (市场噪音)</th>
+                                    <th class="p-3">基本面核心支撑 (Why We Still Believe)</th>
+                                    <th class="p-3 text-center">顾问决策</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-200 bg-white">
+                                <tr>
+                                    <td class="p-3 font-bold text-slate-900">大华中国 A 股创新基金</td>
+                                    <td class="p-3 text-right font-mono text-rose-600 font-bold">-5.40%</td>
+                                    <td class="p-3 text-slate-600">8月零售数据疲弱，外资情绪受地缘不确定性压制。</td>
+                                    <td class="p-3 text-slate-700 font-medium">9月29日超预期刺激案落地；PE 处于近 10 年历史后 10% 分位，极低估值提供厚实安全垫。</td>
+                                    <td class="p-3 text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">坚定持有 (Hold)</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-bold text-slate-900">大华黄金及综合基金</td>
+                                    <td class="p-3 text-right font-mono text-rose-600 font-bold">-6.30%</td>
+                                    <td class="p-3 text-slate-600">美元指数短期走强 (DXY 101.45) 压制金价短期获利了结。</td>
+                                    <td class="p-3 text-slate-700 font-medium">中东霍尔木兹关键管道中断引发石油供给冲击；全球去美元化央行购金逻辑依然坚实。</td>
+                                    <td class="p-3 text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">坚定持有 (Hold)</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-bold text-slate-900">Janus Henderson 生命科学</td>
+                                    <td class="p-3 text-right font-mono text-rose-600 font-bold">-1.10%</td>
+                                    <td class="p-3 text-slate-600">长端利率破 5.2% 压制高估值生物科技研发型个股。</td>
+                                    <td class="p-3 text-slate-700 font-medium">大型跨国制药企业现金流强劲，GLP-1 减肥药与肿瘤药管线处于商业化放量爆发期。</td>
+                                    <td class="p-3 text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">按计划定投</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 调仓与行动指南 -->
+                <div class="bg-blue-50 border border-blue-200 rounded-xl p-4.5 flex items-start gap-3">
+                    <div class="p-2 bg-blue-100 text-blue-700 rounded-lg shrink-0">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-blue-900 uppercase tracking-wider mb-1">CFA 组合再平衡总结 (Monthly Rebalancing Conclusion)</h4>
+                        <p class="text-xs text-blue-950 leading-relaxed">
+                            本月组合各大类资产实际权重漂移率均在 ±1.5% 的安全容忍区间内。由于底层标的长期投资逻辑与公司自由现金流趋势未发生恶化，<strong>本月维持既有 7 只基金的目标配比不变，不触发被动抛售</strong>。短期回调为定投（RSP）客户提供了更低廉的成本建仓窗口。
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="bg-slate-100 px-8 py-4 border-t border-slate-200 flex justify-between items-center text-xs text-slate-500">
+            <span>Portfolio ID: CAA20260331-HR | Conviction Review</span>
+            <span>Page 3 of 4</span>
+        </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- PAGE 4: FEATURE TOPIC & CFP CLIENT GUIDANCE (移植自 iFAST Horizon P.12) -->
+    <!-- ========================================================================= -->
+    <div id="page4" class="page-sheet flex flex-col justify-between">
+        <div>
+            <!-- Header Banner -->
+            <div class="bg-gradient-to-r from-[#091528] via-[#0f2347] to-[#163566] text-white px-8 py-7 border-b-2 border-amber-500">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <span class="text-[11px] uppercase tracking-widest text-amber-400 font-bold">ACADEMIC RESEARCH & CFP FINANCIAL PLANNING</span>
+                        <h2 class="text-2xl md:text-3xl font-extrabold tracking-tight mt-1">月度专题深度：当债券不再扮演债券</h2>
+                        <p class="text-sm text-slate-300 mt-1">探讨 60/40 股债对冲失效之谜，以及为何高净值客户需要全权益增长引擎</p>
+                    </div>
+                    <span class="px-3 py-1 rounded bg-white/10 text-white text-xs font-semibold border border-white/20">Academic Feature</span>
+                </div>
+            </div>
+
+            <div class="p-8 space-y-7">
+                
+                <!-- The Core Observation (iFAST P.12 核心论点移植) -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                    <div class="lg:col-span-7 space-y-3">
+                        <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-xl">
+                            <h4 class="text-xs font-bold text-amber-900 uppercase tracking-wider mb-1">华尔街近 40 年经典的范式裂痕 (The Core Observation · iFAST P.12)</h4>
+                            <p class="text-xs text-amber-950 leading-relaxed">
+                                过去近四十年（1986–2020），“60/40 股债组合”建立在一个极其简单的逻辑上：<strong>股票负责增长，债券负责压舱减震</strong>。然而纽约大学 Stern 商学院 Aswath Damodaran 教授与英国《金融时报》近期的联合研究表明，2021–2025 年间这种平衡被彻底打破：<strong>向组合中增加债券依然会降低预期回报，但它却不再像过去那样能够有效降低风险！</strong>
+                            </p>
+                        </div>
+
+                        <div class="space-y-2 text-xs text-slate-700 leading-relaxed">
+                            <p>
+                                <strong>为什么债券防守失灵？机制在于“股债相关性由负转正”</strong>：<br>
+                                历史上股债相关性为负或趋近于零（股市暴跌时，资金涌向国债避险使得债券大涨）。但近五年，受<strong>持续的高通胀、政府财政巨额赤字发行国债、以及企业巨额发债竞争资本</strong>的影响，股债双杀频繁上演，债券的天然分散化效应被极大钝化。
+                            </p>
+                            <p>
+                                <strong>这为资产配置者带来了什么启示？</strong><br>
+                                我们不能再盲目认为“买入债券就能天然对冲股市风险”。对于长期资金而言，<strong>纯粹机械持有传统长久期债券反而会承受双重机会成本</strong>。
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Visual Curve Recreation (Chart.js 还原 iFAST P.12 图表) -->
+                    <div class="lg:col-span-5 bg-slate-50 border border-slate-200 rounded-xl p-4 shadow-sm flex flex-col justify-between">
+                        <div class="flex justify-between items-center mb-1">
+                            <h5 class="text-xs font-bold text-[#0f2347]">股债组合有效前沿变迁</h5>
+                            <span class="text-[10px] text-slate-400">1986-2020 vs 2021-2025</span>
+                        </div>
+                        <div class="h-44 relative w-full my-auto">
+                            <canvas id="p4EfficientFrontierChart"></canvas>
+                        </div>
+                        <div class="flex justify-center gap-4 text-[10px] font-semibold mt-2 text-slate-600">
+                            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 bg-blue-700 rounded-full"></span>1986-2020 (有效减震)</span>
+                            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 bg-rose-600 rounded-full"></span>2021-2025 (股债同跌)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CFP 规划落地建议 -->
+                <div>
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#0f2347] mb-3 flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded bg-blue-600"></span>
+                        CFP 财富顾问落地指引：为什么配置全权益增长引擎？
+                    </h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4.5 space-y-2">
+                            <h4 class="text-xs font-bold text-slate-900 flex items-center gap-2">
+                                <span class="w-5 h-5 rounded-full bg-amber-500 text-white flex items-center justify-center text-[10px] font-bold">1</span>
+                                将“增长引擎”与“防守现金流”彻底解耦
+                            </h4>
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                不再用含混的 60/40 组合稀释长期复利。<strong>将长期资产全额投入具有抗通胀能力的【全权益主动增长引擎】</strong>；防守端则交由新加坡特有的高息流动性方案（如 Auto-Income、短期高等级票息）独立管理，职责分明。
+                            </p>
+                        </div>
+
+                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4.5 space-y-2">
+                            <h4 class="text-xs font-bold text-slate-900 flex items-center gap-2">
+                                <span class="w-5 h-5 rounded-full bg-amber-500 text-white flex items-center justify-center text-[10px] font-bold">2</span>
+                                依托定投 (RSP) 克服人性弱点
+                            </h4>
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                全权益组合必然伴随周期性波动。建议客户设立 12~36 个月的<strong>纪律性定期定额投资计划 (RSP)</strong>。在市场悲观估值见底时自动吸纳廉价筹码，化波动为超额收益的催化剂。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Compliance & Disclaimer -->
+                <div class="border-t border-slate-200 pt-4 text-[10px] text-slate-400 space-y-1">
+                    <p><strong>合规与免责声明 (Important Legal Notes)：</strong>本报告由持牌财务顾问根据公开市场信息及内部模型数据编译，仅供特定客户审阅与学术交流，不构成买卖任何证券或集合投资计划的要约或招揽。过往业绩不代表未来收益，基金净值与分红存在双向波动可能。投资前请详阅各基金招募说明书并进行风险承受力评估。</p>
+                    <p>iFAST Financial Pte Ltd 持有新加坡金融管理局 (MAS) 颁发的财务顾问牌照与资本市场服务牌照。</p>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="bg-slate-100 px-8 py-4 border-t border-slate-200 flex justify-between items-center text-xs text-slate-500">
+            <span>Portfolio ID: CAA20260331-HR | Client Advisory Note</span>
+            <span>Page 4 of 4</span>
+        </div>
+    </div>
+
+    <!-- Scripts for Charts & Navigation -->
+    <script>
+        function scrollToPage(pageNo) {
+            const el = document.getElementById('page' + pageNo);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        // P1 Donut Chart
+        const ctxP1 = document.getElementById('p1DonutChart').getContext('2d');
+        new Chart(ctxP1, {
+            type: 'doughnut',
+            data: {
+                labels: ['全天候核心股票 (富敦)', '全球科技成长 (瀚亚)', '全球生命科学 (骏利)', '大华黄金综合', '大华中国 A 股', '首域亚洲 / 日本高股息'],
+                datasets: [{
+                    data: [35, 15, 15, 15, 12, 8],
+                    backgroundColor: ['#1e3a8a', '#0284c7', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'],
+                    borderWidth: 2,
+                    borderColor: '#ffffff',
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                cutout: '68%'
+            }
+        });
+
+        // P4 Efficient Frontier Recreation
+        const ctxP4 = document.getElementById('p4EfficientFrontierChart').getContext('2d');
+        new Chart(ctxP4, {
+            type: 'line',
+            data: {
+                labels: ['100% Bonds', '25/75', '50/50', '60/40', '70/30', '80/20', '100% Stocks'],
+                datasets: [
+                    {
+                        label: '1986-2020 (经典对冲)',
+                        data: [7.5, 8.8, 9.8, 10.3, 10.8, 11.4, 12.5],
+                        borderColor: '#1d4ed8',
+                        backgroundColor: '#1d4ed8',
+                        borderWidth: 2.5,
+                        tension: 0.3,
+                        pointRadius: 3
+                    },
+                    {
+                        label: '2021-2025 (对冲失灵)',
+                        data: [-2.5, 2.0, 6.8, 8.9, 10.5, 12.1, 15.8],
+                        borderColor: '#e11d48',
+                        backgroundColor: '#e11d48',
+                        borderWidth: 2.5,
+                        tension: 0.3,
+                        pointRadius: 3
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { ticks: { font: { size: 9 } }, grid: { display: false } },
+                    y: { 
+                        ticks: { 
+                            font: { size: 9 },
+                            callback: function(val) { return val + '%'; }
+                        },
+                        grid: { color: '#f1f5f9' }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,296 @@
+--- PAGE 1 ---
+Eastspring Investments Unit Trusts –
+Global Technology Fund
+Key information
+Morningstar Overall Rating●▲
+QQQQ
+Fund size (mil)
+1,036.2
+Fund base currency
+SGD
+Fund dealing frequency
+Daily
+Bloomberg ticker (Class SGD) PRUSTEC SP
+Net asset value (Class SGD)
+SGD 5.279
+Benchmark (BM)
+MSCI ACWI Information Technology Index
++ MSCI ACWI Communication Services
+Index^
+Underlying Fund Size
+Eastspring Investments - Global
+Technology Fund USD 926.2 mil
+Investment objective
+The investment objective of the Eastspring Investments Unit Trusts - Global
+Technology Fund is to maximise long-term total returns through investment in
+equities and equity related securities of companies around the world with
+innovative products, processes or services. These investments include, but are not
+restricted to, those companies whose provision or use of technology gives them
+a strategic advantage in the market. The Manager intends to achieve this
+investment objective by investing all or substantially all of the assets of the
+Eastspring Investments Unit Trusts - Global Technology Fund into the
+Luxembourg-domiciled Eastspring Investments - Global Technology Fund which
+shares the same investment objective.
+Performance
+Returns (%)
+Calendar year returns (%)
+Class
+1 m
+3 m
+YTD
+1 y
+3 y
+(p.a.)
+5 y
+(p.a.)
+10 y
+(p.a.)
+Since
+inception
+(p.a.)
+2025
+2024
+2023
+2022
+2021
+SGD (SGD)
+Bid-bid
+1.8
+-5.1
+22.8
+32.1
+27.8
+13.7
+19.0
+7.0
+16.0
+37.1
+47.9
+-35.2
+20.5
+Offer-bid
+-3.3
+-9.9
+16.7
+25.5
+25.6
+12.6
+18.5
+6.8
+10.2
+30.2
+40.5
+-38.4
+14.5
+Benchmark
+3.7
+-2.8
+20.7
+33.5
+28.1
+14.7
+20.1
+8.6
+20.6
+36.1
+45.2
+-32.6
+24.8
+Factsheet | Singapore | September 2026
+All data as at 31 August 2026 unless otherwise stated
+▲Rating should not be taken as a recommendation.
+●©2026 Morningstar. All rights reserved. The information contained herein: (1) is proprietary to Morningstar and/or its content providers;
+(2) may not be copied or distributed; and (3) is not warranted to be accurate, complete or timely. Neither Morningstar nor its content
+providers are responsible for any damages or losses arising from any use of this information. Past performance is no guarantee of future
+results.
+^The MSCI Index is calculated with dividends reinvested.
+Performance: (p.a.): per annum. Source: Eastspring Investments (Singapore) Limited. Returns are based in the relevant class currency and
+computed on bid-bid basis with net income reinvested, if any. Offer-bid is inclusive of sales charge which is subject to changes. Since
+inception returns for periods less than a year are not annualised. The benchmark for the hedged classes, if any, is also calculated on a
+hedged basis. From inception to 30-Nov-2008, the benchmark was the FTSE World Information Technology Index; from 1-Dec-2008 to 30-
+Apr-2019, the benchmark was MSCI All Countries World Information Technology Index. Calendar year returns are based on the relevant
+class performance for the year, and if the relevant class was incepted during a particular year, the returns shown relate to the performance
+of that class since its inception to the end of that calendar year. Wef July 2018, the monthly fund and benchmark returns calculated are
+aligned to the last NAV date of the fund for the month. Past performance information presented is not indicative of future performance.
+
+--- PAGE 2 ---
+Key measures
+3 year tracking error(%)(Class
+SGD)
+7.7
+3 year sharpe ratio(Class SGD)
+1.1
+3 year volatility(%)(Class SGD)
+23.1
+Price to earnings (Trailing 12m)
+26.6
+Price to book (Trailing 12m)
+8.4
+Dividend yield (Trailing 12m, %)
+0.4
+Source: Morningstar
+Top 10 holdings (%)
+1.
+NVIDIA CORPORATION
+8.9
+2.
+MICROSOFT CORPORATION
+5.6
+3.
+AMAZON.COM INC
+5.4
+4.
+BROADCOM INC
+5.0
+5.
+TAIWAN SEMICONDUCTOR MANUFACTURING COMPANY LIMITED
+4.7
+6.
+ALPHABET INC CLASS A
+3.9
+7.
+MICRON TECHNOLOGY INC
+3.5
+8.
+TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD ADR
+3.1
+9.
+SK HYNIX INC
+2.9
+10.
+META PLATFORMS INC
+2.9
+Allocations
+Sector allocation (%)
+Semiconductors
+46.9
+Internet
+21.5
+Software
+9.7
+Telecommunication
+5.7
+Electronics
+5.5
+Computers
+3.4
+Auto parts & equipment
+1.9
+Machinery-Diversified
+1.0
+Others
+2.7
+Cash and cash
+equivalents
+1.7
+Market allocation (%)
+United States
+78.1
+Taiwan
+5.7
+Netherlands
+4.4
+South Korea
+2.9
+Germany
+2.3
+China
+1.9
+Japan
+1.2
+Hong Kong
+1.2
+Others
+0.6
+Cash and cash
+equivalents
+1.7
+Factsheet | Singapore | September 2026
+All data as at 31 August 2026 unless otherwise stated
+Allocations: Due to rounding, the allocation table may not add up to 100%. The information provided herein are subject to change at the
+discretion of the Investment Manager without prior notice.
+
+--- PAGE 3 ---
+Share class details
+Class
+Currency
+ISIN
+Inception date Subscription
+method
+Annual
+management
+fee%
+(Current)
+Sales charge
+Distribution
+frequency
+Ex-date
+Dividend
+per unit
+SGD
+SGD
+SG9999002794
+04-May-01
+Cash, SRS
+1.500
+5.000
+N.A.
+N.A.
+N.A.
+Share class details:
+"N.A." means that the relevant class does not distribute dividends.
+Factsheet | Singapore | September 2026
+All data as at 31 August 2026 unless otherwise stated
+
+--- PAGE 4 ---
+Important information
+Investment manager
+Eastspring Investments (Singapore) Limited
+Disclaimer
+This document is solely for information and may not be published, circulated, reproduced or distributed in whole or part to any other person
+without the prior written consent of Eastspring Investments (Singapore) Limited (“Eastspring Singapore”) (Company Reg No. 199407631H). This
+advertisement has not been reviewed by the Monetary Authority of Singapore. This document is not an offer, solicitation of an offer, or a
+recommendation to transact in the investment units in the Fund(s). The information contained herein does not have any regards to the specific
+investment objectives, financial situation or particular needs of any person. A prospectus in relation to the Fund(s) is available and a copy of the
+prospectus may be obtained from Eastspring Singapore and its distribution partners. Investors should read the prospectus and seek professional
+advice before making any investment decision. In the event that investor chooses not to seek advice, he should consider carefully whether the Fund
+in question is suitable for him. The value of units in the Fund(s) and the income accruing to the units, if any, may fall or rise. Past performance of the
+Fund(s)/manager is not necessarily indicative of the future performance. Any prediction, projection or forecast on the economy, securities markets or
+the economic trends of the markets targeted by the Fund(s) is not necessarily indicative of the future performance of the Fund(s). An investment in
+the Fund(s) is subject to investment risks, including the possible loss of the principal amount invested. Whilst Eastspring Singapore has taken all
+reasonable care to ensure that the information contained in this document is not untrue or misleading at the time of publication, Eastspring
+Singapore cannot guarantee its accuracy or completeness. Any opinion or estimate contained in this document is subject to change without notice.
+The Fund(s)/ underlying Fund(s) may use derivative instruments for efficient portfolio management and/or hedging purposes.
+For Funds intending to pay distributions: Distributions are not guaranteed and may fluctuate. Payment of distributions out of capital amounts to
+a return or withdrawal of part of an investor’s original investment or from any capital gains attributable to that original investment. Any payment of
+distributions by the Fund will result in an immediate reduction in the net asset value per unit/ share. Positive distribution yield does not imply a
+positive return and should not be confused with the Fund’s performance. Past distributions are not necessarily indicative of future trends, which may
+be lower. Distribution payouts and its frequency are determined by the Manager/ Board of Directors. Distribution of dividends is at the discretion of
+the Manager/ Board of Directors taking into consideration market conditions and underlying securities.
+Eastspring Singapore is an ultimately wholly-owned subsidiary of Prudential plc of the United Kingdom. Eastspring Singapore and Prudential plc are
+not affiliated in any manner with Prudential Financial, Inc., a company whose principal place of business is in the United States of America or with
+the Prudential Assurance Company Limited, a subsidiary of M&G plc, a company incorporated in the United Kingdom.
+In case of discrepancy between the English and Chinese versions, the English version shall prevail.
+Benchmark disclaimer: MSCI. This report contains information (the “Information”) sourced from MSCI Inc., its affiliates or information
+providers (the “MSCI Parties”) and may have been used to calculate scores, ratings or other indicators. The Information is for internal use
+only, and may not be reproduced/redisseminated in any form, or used as a basis for or a component of any financial instruments or products
+or indices. The MSCI Parties do not warrant or guarantee the originality, accuracy and/or completeness of any data or Information herein
+and expressly disclaim all express or implied warranties, including of merchantability and fitness for a particular purpose. The Information is
+not intended to constitute investment advice or a recommendation to make (or refrain from making) any investment decision and may not
+be relied on as such, nor should it be taken as an indication or guarantee of any future performance, analysis, forecast or prediction. None
+of the MSCI Parties shall have any liability for any errors or omissions in connection with any data or Information herein, or any liability for
+any direct, indirect, special, punitive, consequential or any other damages (including lost profits) even if notified of the possibility of such
+damages.
+Notes: Investors should note that the net asset value of the GT Underlying Fund could potentially exhibit higher volatility due to its focus on
+technology securities.
+Factsheet | Singapore | September 2026
+All data as at 31 August 2026 unless otherwise stated
+Eastspring Investments (Singapore) Limited (UEN: 199407631H)
+7 Straits View
+#09-01 Marina One East Tower
+Singapore 018936
+Tel: (65) 6349 9711 | Fax: (65) 6509 5382
+facebook.com/eastspring.investments
+linkedin.com/company/128876/
+eastspring.com/sg
+Bangkok | Chicago | Ho Chi Minh City | Hong Kong | Jakarta | Kuala Lumpur | Luxembourg | Mumbai | Shanghai | Singapore | Taipei | Tokyo

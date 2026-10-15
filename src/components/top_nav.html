@@ -1,0 +1,41 @@
+<!-- Top Action & Navigation Bar -->
+<div class="w-full max-w-[1400px] mb-6 flex flex-wrap items-center justify-between gap-4 no-print bg-slate-900/90 backdrop-blur border border-slate-800 p-4 rounded-xl shadow-xl text-white sticky top-2 z-50">
+    <div class="flex items-center space-x-3">
+        <span class="relative flex h-3 w-3">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
+        </span>
+        <div>
+            <h1 id="nav_title" class="text-sm font-bold tracking-wide text-white uppercase" data-i18n="nav_title">HR 模板投资组合 · 16:9 机构横版备忘录</h1>
+            <p id="nav_sub" class="text-xs text-slate-400" data-i18n="nav_sub">已规范合规称谓，支持中英文一键切换、6页超清长图与当前语言打印</p>
+        </div>
+    </div>
+
+    <!-- Slide Navigation Quick Links -->
+    <div class="hidden lg:flex items-center space-x-1 text-xs bg-slate-800/80 p-1 rounded-lg border border-slate-700">
+        <button onclick="scrollToSlide(1)" class="px-2.5 py-1 rounded hover:bg-slate-700 text-slate-300 hover:text-white transition" data-i18n="nav_s1">Slide 1 备忘录</button>
+        <button onclick="scrollToSlide(2)" class="px-2.5 py-1 rounded hover:bg-slate-700 text-slate-300 hover:text-white transition" data-i18n="nav_s2">Slide 2 宏观脉搏</button>
+        <button onclick="scrollToSlide(3)" class="px-2.5 py-1 rounded hover:bg-slate-700 text-slate-300 hover:text-white transition" data-i18n="nav_s3">Slide 3 深度专栏</button>
+        <button onclick="scrollToSlide(4)" class="px-2.5 py-1 rounded hover:bg-slate-700 text-slate-300 hover:text-white transition" data-i18n="nav_s4">Slide 4 坚守定见</button>
+        <button onclick="scrollToSlide(5)" class="px-2.5 py-1 rounded hover:bg-slate-700 text-slate-300 hover:text-white transition" data-i18n="nav_s5">Slide 5 法律声明</button>
+        <button onclick="scrollToSlide(6)" class="px-2.5 py-1 rounded hover:bg-slate-700 text-slate-300 hover:text-white transition" data-i18n="nav_s6">Slide 6 组合穿透</button>
+    </div>
+
+    <div class="flex items-center space-x-3">
+        <!-- Language Switcher -->
+        <div class="flex items-center bg-slate-800 rounded-lg p-1 border border-slate-700">
+            <button id="lang_zh" onclick="switchLanguage('zh')" class="px-2.5 py-1 text-xs font-bold rounded-md bg-amber-500 text-slate-950 transition shadow">中文</button>
+            <button id="lang_en" onclick="switchLanguage('en')" class="px-2.5 py-1 text-xs font-bold rounded-md text-slate-300 hover:text-white transition">English</button>
+        </div>
+
+        <!-- Print & Export Buttons -->
+        <button id="btnPrintPdf" onclick="exportPDF()" class="flex items-center space-x-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg border border-slate-700 transition active:scale-95 shadow">
+            <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+            <span id="btn_print_pdf" data-i18n="btn_print_pdf">导出 PDF</span>
+        </button>
+        <button id="btnLongPng" onclick="exportLongImage()" class="flex items-center space-x-1.5 px-3 py-1.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 text-xs font-bold rounded-lg shadow-md transition transform active:scale-95">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+            <span id="btn_long_png" data-i18n="btn_long_png">导出 6页长图 (PNG)</span>
+        </button>
+    </div>
+</div>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR 模板投资组合 · 月度投资咨询备忘录</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- html2canvas for 1-click snapshot & 5-slide long image -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
+        body { 
+            font-family: 'Plus+Jakarta+Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background-color: #0b1120; 
+            color: #1e293b;
+        }
+        .mono-num { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+        
+        .landscape-slide {
+            background: #ffffff;
+            width: 1400px;
+            height: 788px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            margin-bottom: 2.5rem;
+            border-radius: 1rem;
+            overflow: hidden;
+            border: 1px solid #cbd5e1;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        @media print {
+            @page {
+                size: 297mm 210mm;
+                margin: 0;
+            }
+            .no-print { display: none !important; }
+            html, body { 
+                width: 297mm !important;
+                height: 210mm !important;
+                background: white !important; 
+                padding: 0 !important; 
+                margin: 0 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            #reportCanvasContainer {
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            .landscape-slide { 
+                box-shadow: none !important; 
+                border: none !important; 
+                margin: 0 !important;
+                border-radius: 0 !important;
+                width: 297mm !important;
+                height: 210mm !important;
+                max-width: 297mm !important;
+                max-height: 210mm !important;
+                box-sizing: border-box !important;
+                break-after: page !important;
+                page-break-after: always !important; 
+                overflow: hidden !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: space-between !important;
+            }
+            .landscape-slide:last-child {
+                break-after: auto !important;
+                page-break-after: auto !important;
+            }
+        }
+    </style>
+</head>
+<body class="p-3 md:p-8 flex flex-col items-center min-h-screen">
+
+        <!-- INJECT: TOP_NAV -->
+    {{TOP_NAV}}
+
+    <!-- Long Image Container Wrapping All 5 Slides -->
+    <div id="reportCanvasContainer" class="flex flex-col items-center">
+        <!-- INJECT: SLIDE_1 -->
+        {{SLIDE_1}}
+
+        <!-- INJECT: SLIDE_2 -->
+        {{SLIDE_2}}
+
+        <!-- INJECT: SLIDE_3 -->
+        {{SLIDE_3}}
+
+        <!-- INJECT: SLIDE_4 -->
+        {{SLIDE_4}}
+
+        <!-- INJECT: SLIDE_5 -->
+        {{SLIDE_5}}
+
+        <!-- INJECT: SLIDE_6 -->
+        {{SLIDE_6}}
+    </div>
+
+    <!-- INJECT: ANNOTATION_TOOLBAR -->
+    {{ANNOTATION_TOOLBAR}}
+
+    <!-- Scripts Section -->
+    <script>
+        // INJECT: I18N
+        {{I18N_JS}}
+
+        // INJECT: MAIN_JS
+        {{MAIN_JS}}
+    </script>
+</body>
+</html>

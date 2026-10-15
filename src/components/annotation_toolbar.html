@@ -1,0 +1,23 @@
+<!-- Floating Annotation Toolbar -->
+    <div id="annotationToolbar" class="no-print fixed bottom-6 right-6 z-[100] bg-slate-900/95 backdrop-blur-md border border-slate-700/80 p-3 rounded-2xl shadow-2xl text-white flex items-center gap-3 transition-all">
+        <div class="flex items-center gap-1.5 pr-2 border-r border-slate-700">
+            <button id="togglePenBtn" onclick="toggleDrawingMode()" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs rounded-xl shadow transition flex items-center gap-1.5">
+                <span id="penIcon">✏️</span>
+                <span id="penText" data-i18n="tb_pen_btn">开启画笔批注</span>
+            </button>
+        </div>
+        
+        <div id="penOptions" class="flex items-center gap-2">
+            <button onclick="setPenColor('#ef4444', 3)" title="红笔" class="w-6 h-6 rounded-full bg-rose-500 border-2 border-white hover:scale-110 transition shadow"></button>
+            <button onclick="setPenColor('#2563eb', 3)" title="蓝笔" class="w-6 h-6 rounded-full bg-blue-600 border border-slate-600 hover:scale-110 transition shadow"></button>
+            <button onclick="setPenColor('rgba(250, 204, 21, 0.45)', 14)" title="荧光黄高亮" class="w-6 h-6 rounded-full bg-amber-300 border border-slate-600 hover:scale-110 transition shadow"></button>
+            
+            <span class="text-slate-600">|</span>
+            <button onclick="clearCurrentCanvas()" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs rounded-lg transition border border-slate-700" data-i18n="tb_clear">
+                🧹 擦除
+            </button>
+            <button onclick="takeSnapshot()" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow transition flex items-center gap-1">
+                📸 <span data-i18n="tb_snapshot">单页截图标注</span>
+            </button>
+        </div>
+    </div>

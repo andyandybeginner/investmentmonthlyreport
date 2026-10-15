@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+
+# System and Agent Logs
+.system_generated/
+*.log
+.DS_Store
+Thumbs.db
+
+# Heavy Binary Artifacts and Archives
+archive/
+*.db
+output/previews/
+
+# Node / Front-end (if any)
+node_modules/
+npm-debug.log*
+
+# User credentials or secret tokens
+credentials*.json
+token.json
+.env

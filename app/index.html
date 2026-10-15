@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR 模板投资组合 · 投研工作流控制台</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif; }
+        .mono-num { font-family: 'JetBrains Mono', monospace; }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col">
+
+    <!-- Top Navigation Header -->
+    <header class="bg-[#091528] border-b border-slate-700/80 px-8 py-4 flex justify-between items-center sticky top-0 z-50 shadow-md">
+        <div class="flex items-center gap-4">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-amber-300 flex items-center justify-center shadow-lg shadow-amber-500/20">
+                <span class="text-slate-950 font-black text-xl tracking-tighter">HR</span>
+            </div>
+            <div>
+                <div class="flex items-center gap-2">
+                    <h1 class="text-base font-extrabold tracking-tight text-white">HR 模板投资组合 · 投研工作流控制中心</h1>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-400/10 text-amber-400 border border-amber-400/30">SOP 2.0 准则</span>
+                </div>
+                <p class="text-xs text-slate-400">Institutional Advisory Memorandum Automation Engine</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700 text-xs">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span class="text-slate-300">本地服务运行中</span>
+            </div>
+            <a href="/preview" target="_blank" class="px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs flex items-center gap-1.5 transition shadow-sm">
+                <span>浏览最新备忘录</span>
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Dashboard Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-6 py-8 space-y-8">
+        
+        <!-- Welcome & Quick Stats Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="bg-slate-800/60 border border-slate-700 rounded-2xl p-4 flex flex-col justify-between">
+                <span class="text-xs font-semibold text-slate-400">当前参考报告月</span>
+                <div class="text-xl font-black text-amber-400 mt-1">2026年8月</div>
+                <span class="text-[11px] text-slate-500 mt-1">结算日：2026-09-03</span>
+            </div>
+            <div class="bg-slate-800/60 border border-slate-700 rounded-2xl p-4 flex flex-col justify-between">
+                <span class="text-xs font-semibold text-slate-400">参考组合资产规模</span>
+                <div class="text-xl font-black text-white mono-num mt-1">$183,380.86 SGD</div>
+                <span class="text-[11px] text-emerald-400 mt-1 font-semibold">当月收益: +0.35%</span>
+            </div>
+            <div class="bg-slate-800/60 border border-slate-700 rounded-2xl p-4 flex flex-col justify-between">
+                <span class="text-xs font-semibold text-slate-400">累计收益 (39个月)</span>
+                <div class="text-xl font-black text-emerald-400 mono-num mt-1">+83.38%</div>
+                <span class="text-[11px] text-amber-300 mt-1 font-semibold">超额 Alpha: +14.66%</span>
+            </div>
+            <div class="bg-slate-800/60 border border-slate-700 rounded-2xl p-4 flex flex-col justify-between">
+                <span class="text-xs font-semibold text-slate-400">全局基准锚定</span>
+                <div class="text-xl font-black text-blue-400 mt-1">MSCI ACWI / S&P</div>
+                <span class="text-[11px] text-slate-400 mt-1">严格杜绝基准混淆</span>
+            </div>
+        </div>
+
+        <!-- Section 1: Latest Monthly Update Files & Source Paths -->
+        <section class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-6 shadow-xl">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-700/80 mb-5">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center font-bold text-sm">📁</div>
+                    <div>
+                        <h2 class="text-base font-bold text-white">1. 最新 Monthly Update 文件定位与研报索引</h2>
+                        <p class="text-xs text-slate-400">自动检测 Google Drive 云端挂载路径中的月报与底层 7 只基金 Factsheet</p>
+                    </div>
+                </div>
+                <span class="text-xs font-mono text-slate-400 bg-slate-900/60 px-3 py-1 rounded-md border border-slate-700">G:\我的云端硬盘\0. 工作\2. 投资分析计划 01102026\3. Monthly Report</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                <!-- Monthly Updates -->
+                <div class="bg-slate-900/60 rounded-xl p-4 border border-slate-700/60 space-y-3">
+                    <span class="font-bold text-amber-400 flex items-center gap-2">
+                        <span>📰</span> iFAST 官方月度投资研报 (Monthly Investment Updates)
+                    </span>
+                    <ul class="space-y-2 text-slate-300">
+                        <li class="flex items-center justify-between p-2 rounded bg-slate-800/60 border border-slate-700/50">
+                            <div>
+                                <strong class="text-white block">iFAST Monthly Investment Update Sep 2026.pdf</strong>
+                                <span class="text-[11px] text-slate-400">用于生成 8 月备忘录 · P.4 宏观与星级榜 · P.5-6 新加坡基金专题</span>
+                            </div>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">当前引用</span>
+                        </li>
+                        <li class="flex items-center justify-between p-2 rounded bg-slate-800/40 border border-slate-700/30">
+                            <div>
+                                <strong class="text-slate-300 block">iFAST Monthly Investment Update October 2026.pdf</strong>
+                                <span class="text-[11px] text-slate-400">用于生成 9 月备忘录 · P.7 宏观展望 · P.12 当债券不再扮演债券</span>
+                            </div>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-700 text-slate-400">已归档就绪</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Factsheets Folders -->
+                <div class="bg-slate-900/60 rounded-xl p-4 border border-slate-700/60 space-y-3">
+                    <span class="font-bold text-blue-400 flex items-center gap-2">
+                        <span>📊</span> 底层 7 只基金官方月度 Factsheet 存储目录
+                    </span>
+                    <ul class="space-y-2 text-slate-300">
+                        <li class="p-2 rounded bg-slate-800/60 border border-slate-700/50 flex justify-between items-center">
+                            <div>
+                                <strong class="text-white">...\3. Monthly Report\Sep 2026\</strong>
+                                <p class="text-[11px] text-slate-400">对应 8 月备忘录穿透核算（7 只基金 Factsheet 均已就绪）</p>
+                            </div>
+                            <span class="text-emerald-400 font-mono font-bold">7 / 7 文件</span>
+                        </li>
+                        <li class="p-2 rounded bg-slate-800/40 border border-slate-700/30 flex justify-between items-center">
+                            <div>
+                                <strong class="text-slate-300">...\3. Monthly Report\Oct 2026\</strong>
+                                <p class="text-[11px] text-slate-400">对应 9 月备忘录穿透核算（7 只基金 Factsheet 均已就绪）</p>
+                            </div>
+                            <span class="text-blue-400 font-mono font-bold">7 / 7 文件</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Data Structure & Pipeline Mapping -->
+        <section class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-6 shadow-xl">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-700/80 mb-5">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center font-bold text-sm">🗄️</div>
+                    <div>
+                        <h2 class="text-base font-bold text-white">2. 引用的底层数据结构与映射字典</h2>
+                        <p class="text-xs text-slate-400">主 Google Sheet 工作表架构与专属价格列表取值规则</p>
+                    </div>
+                </div>
+                <span class="text-xs font-mono text-slate-400 bg-slate-900/60 px-3 py-1 rounded-md border border-slate-700">Sheet ID: 1VXy6RGThyuQIBwYg9VF3NbWc7wXyfLFQcMGPgEf2Q4I</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                <!-- Engine Tab -->
+                <div class="bg-slate-900/60 rounded-xl p-4 border border-slate-700/60 space-y-2">
+                    <span class="font-bold text-white flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded bg-rose-500"></span> Calculation_Engine 工作表
+                    </span>
+                    <p class="text-slate-400 text-[11.5px] leading-relaxed">
+                        记录 39 个月完整复权净值时间序列。<strong>F 列</strong>为当前重组组合净值，<strong>H 列</strong>为标普 500 同成立日回报，<strong>I 列</strong>为 MSCI 全球指数同成立日回报。
+                    </p>
+                </div>
+
+                <!-- Individual Fund Price List Rule -->
+                <div class="bg-slate-900/60 rounded-xl p-4 border border-slate-700/60 space-y-2">
+                    <span class="font-bold text-amber-400 flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded bg-amber-500"></span> 专属 Price List 取值红线 (Tab 12-18)
+                    </span>
+                    <p class="text-slate-400 text-[11.5px] leading-relaxed">
+                        底层基金当月回报率 (1M) <strong>严禁从总表简单相除</strong>，必须穿透各标的独立 Price List（如大华黄金自然月暴涨 +24.00%），以报告月末对上月末最后有效收盘价计算。
+                    </p>
+                </div>
+
+                <!-- Look-Through Rule -->
+                <div class="bg-slate-900/60 rounded-xl p-4 border border-slate-700/60 space-y-2">
+                    <span class="font-bold text-emerald-400 flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded bg-emerald-500"></span> 资产穿透与宏观冲突校准
+                    </span>
+                    <p class="text-slate-400 text-[11.5px] leading-relaxed">
+                        大华黄金配比 15%，Factsheet 穿透底层仅 72.08% 纯黄金，实际真实纯黄金敞口为 <strong>10.46%</strong>，与研报 10% 避险上限完全一致，无需盲目削减。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Manager Qualitative Input & Conviction Workspace -->
+        <section class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-6 shadow-xl">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-700/80 mb-5">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold text-sm">✍️</div>
+                    <div>
+                        <h2 class="text-base font-bold text-white">3. 顾问专属定见与月度归因协同工作区</h2>
+                        <p class="text-xs text-slate-400">第一页归因说明与第四页调仓信念可在此录入初始定见，系统将自动融合生成</p>
+                    </div>
+                </div>
+                <button id="btnSaveInput" onclick="saveManagerInput()" class="px-4 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition flex items-center gap-1.5 shadow-sm">
+                    <span>保存定见设定</span>
+                </button>
+            </div>
+
+            <div class="space-y-4 text-xs">
+                <!-- Field 1: Manager Market View -->
+                <div>
+                    <label class="block font-bold text-slate-300 mb-1.5 flex items-center justify-between">
+                        <span>第一页 · 月度归因核心观点 (Manager's Qualitative Market Attribution)</span>
+                        <span class="text-[11px] text-slate-400 font-normal">支持直接输入您的核心宏观与标的定见</span>
+                    </label>
+                    <textarea id="inpQualitativeView" rows="3" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-slate-200 text-xs focus:ring-2 focus:ring-amber-500 focus:outline-none leading-relaxed">8月受长端美债收益率攀升至5.3%创2007年新高影响，全球科技成长股出现估值分母端短期压制，组合科技板块回调；然而大华黄金单月暴涨+24.00%（穿透真实纯黄金敞口10.46%），发挥了极其卓越的非对称抗通胀与避险压舱石效应，驱动组合全月实现+0.35%正收益，跑赢标普500同期表现。</textarea>
+                </div>
+
+                <!-- Field 2: Rebalance Directive -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1.5">第四页 · 月度顾问决策定见</label>
+                        <select id="selRebalanceVerdict" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-slate-200 text-xs focus:ring-2 focus:ring-amber-500 focus:outline-none font-bold">
+                            <option value="坚持持有" selected>坚持持有 (Maintain Hold)</option>
+                            <option value="审慎削减">审慎削减 (Trim Exposure)</option>
+                            <option value="主动调仓">主动调仓 (Rebalance / Reconstitute)</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block font-bold text-slate-300 mb-1.5">调仓结论说明 (Rebalance Narrative)</label>
+                        <input id="inpRebalanceNote" type="text" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-slate-200 text-xs focus:ring-2 focus:ring-amber-500 focus:outline-none" value="实际权重漂移均在安全阈值内，大华黄金避险收益强劲平滑科技波动，8月维持既有 7 只标的目标配比不变，不触发被动赎回。">
+                    </div>
+                </div>
+
+                <!-- Conviction Table Summary -->
+                <div class="pt-2">
+                    <span class="block font-bold text-slate-300 mb-2">第四页 · 审查标的决策指令预览</span>
+                    <div class="bg-slate-900/60 rounded-xl border border-slate-700/60 overflow-hidden">
+                        <table class="w-full text-left">
+                            <thead class="bg-slate-800/80 text-slate-400 text-[11px] border-b border-slate-700/80">
+                                <tr>
+                                    <th class="p-2.5">审查标的</th>
+                                    <th class="p-2.5 text-right">月度回报</th>
+                                    <th class="p-2.5">短期市场杂音</th>
+                                    <th class="p-2.5">长期基本面支撑</th>
+                                    <th class="p-2.5 text-center">顾问决策</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-800 text-[11px] text-slate-300">
+                                <tr>
+                                    <td class="p-2.5 font-bold text-white">United Gold and General</td>
+                                    <td class="p-2.5 text-right text-emerald-400 mono-num font-bold">+24.00%</td>
+                                    <td class="p-2.5 text-slate-400">急涨后获利盘了结与美元反弹</td>
+                                    <td class="p-2.5">美债30年破5.3%，去美元化与央行购金需求坚实</td>
+                                    <td class="p-2.5 text-center"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">坚持持有</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2.5 font-bold text-white">EASTSPRING - Global Tech</td>
+                                    <td class="p-2.5 text-right text-rose-400 mono-num font-bold">-5.64%</td>
+                                    <td class="p-2.5 text-slate-400">长端利率攀升致使估值分母端压制</td>
+                                    <td class="p-2.5">英伟达业绩亮眼，AI基础设施开支高增，回调提供窗口</td>
+                                    <td class="p-2.5 text-center"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">坚持持有</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2.5 font-bold text-white">United China A Shares</td>
+                                    <td class="p-2.5 text-right text-rose-400 mono-num font-bold">-3.09%</td>
+                                    <td class="p-2.5 text-slate-400">宏观经济复苏温和，地产仍在出清</td>
+                                    <td class="p-2.5">在岸自主创新稳步突破，估值历史绝对低位</td>
+                                    <td class="p-2.5 text-center"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">坚持持有</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Fast Build & PDF Export Action Center -->
+        <section class="bg-gradient-to-br from-slate-800 to-slate-850 border border-slate-700/80 rounded-2xl p-6 shadow-xl">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-700/80 mb-5">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center font-bold text-sm">⚡</div>
+                    <div>
+                        <h2 class="text-base font-bold text-white">4. 极速编译与正式导出操作中心</h2>
+                        <p class="text-xs text-slate-400">解耦式模块化引擎，毫秒级快速生成，无需反复启动重量级无头浏览器</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-xs text-slate-400">选择期别：</span>
+                    <select id="selReportMonth" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-200 font-bold">
+                        <option value="2026-08" selected>2026年8月备忘录 (结算日 2026-09-03)</option>
+                        <option value="2026-09">2026年9月备忘录 (结算日 2026-10-05)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-4">
+                <button id="btnFastBuild" onclick="triggerFastBuild()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold text-xs transition flex items-center gap-2 shadow-lg shadow-amber-500/20">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    <span>⚡ 极速编译 HTML (<0.05秒)</span>
+                </button>
+
+                <a id="btnLivePreview" href="/preview" target="_blank" class="px-5 py-2.5 rounded-xl bg-slate-700 hover:bg-slate-600 text-white font-bold text-xs transition flex items-center gap-2 border border-slate-600">
+                    <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                    <span>在新标签页全屏预览</span>
+                </a>
+
+                <button id="btnExportPDF" onclick="triggerExportPDF()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs transition flex items-center gap-2 shadow-lg shadow-emerald-600/20">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    <span>导出官方高分 A4 PDF 并同步云端</span>
+                </button>
+            </div>
+
+            <!-- Console / Status Output Window -->
+            <div class="mt-5 bg-slate-950/80 rounded-xl border border-slate-800 p-4 font-mono text-[11.5px] text-slate-300 space-y-1" id="consoleBox">
+                <div class="text-slate-500">// 控制台输出就绪...</div>
+                <div class="text-emerald-400">✓ 系统已加载 2026年8月 备忘录配置与 39 期真实净值数据</div>
+                <div class="text-slate-400">✓ Google Drive 输出目录：G:\我的云端硬盘\0. 工作\2. 投资分析计划 01102026\3. Monthly Report</div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 border-t border-slate-800 px-8 py-4 text-center text-xs text-slate-500">
+        Alpha Wealth Financial Advisers · HR 模板投资组合自动化生成引擎 · MAS 289 法规合规体系
+    </footer>
+
+    <script>
+        function log(msg, color='text-slate-300') {
+            const box = document.getElementById('consoleBox');
+            const div = document.createElement('div');
+            div.className = color;
+            div.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+            box.appendChild(div);
+            box.scrollTop = box.scrollHeight;
+        }
+
+        async function saveManagerInput() {
+            const btn = document.getElementById('btnSaveInput');
+            btn.disabled = true;
+            btn.innerText = '正在保存...';
+            try {
+                const payload = {
+                    month: document.getElementById('selReportMonth').value,
+                    qualitative_view: document.getElementById('inpQualitativeView').value,
+                    rebalance_verdict: document.getElementById('selRebalanceVerdict').value,
+                    rebalance_note: document.getElementById('inpRebalanceNote').value
+                };
+                const res = await fetch('/api/save_manager_input', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                log(`✓ 顾问定见已成功持久化存储至配置文件！`, 'text-emerald-400');
+            } catch(e) {
+                log(`✗ 保存失败: ${e.message}`, 'text-rose-400');
+            } finally {
+                btn.disabled = false;
+                btn.innerText = '保存定见设定';
+            }
+        }
+
+        async function triggerFastBuild() {
+            const btn = document.getElementById('btnFastBuild');
+            btn.disabled = true;
+            btn.innerHTML = '<span>⚡ 正在编译...</span>';
+            log('🚀 触发极速编译流程...', 'text-amber-400');
+            const t0 = performance.now();
+            try {
+                const month = document.getElementById('selReportMonth').value;
+                const res = await fetch('/api/build_report', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ month: month })
+                });
+                const data = await res.json();
+                const dt = (performance.now() - t0).toFixed(1);
+                log(`✓ HTML 极速编译完成，耗时 ${dt} ms！输出: ${data.output_file}`, 'text-emerald-400');
+            } catch(e) {
+                log(`✗ 编译出错: ${e.message}`, 'text-rose-400');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg><span>⚡ 极速编译 HTML (<0.05秒)</span>';
+            }
+        }
+
+        async function triggerExportPDF() {
+            const btn = document.getElementById('btnExportPDF');
+            btn.disabled = true;
+            btn.innerHTML = '<span>🖨️ 正在渲染 A4 PDF...</span>';
+            log('🚀 启动 Playwright Chromium 渲染 A4 横向 PDF 并同步云端硬盘...', 'text-blue-400');
+            try {
+                const res = await fetch('/api/export_pdf', { method: 'POST' });
+                const data = await res.json();
+                log(`✓ PDF 渲染完成！本地: ${data.local_pdf}`, 'text-emerald-400');
+                log(`✓ Google Drive 状态: ${data.drive_status}`, 'text-emerald-300');
+                log(`✓ 已生成 ${data.pages_rendered} 页高清预览图至 output/previews/`, 'text-slate-300');
+            } catch(e) {
+                log(`✗ 导出出错: ${e.message}`, 'text-rose-400');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg><span>导出官方高分 A4 PDF 并同步云端</span>';
+            }
+        }
+    </script>
+</body>
+</html>

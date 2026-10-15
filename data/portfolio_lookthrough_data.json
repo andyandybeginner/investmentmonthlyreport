@@ -1,0 +1,252 @@
+{
+  "geography": [
+    {
+      "name": "United States",
+      "weight": 45.07
+    },
+    {
+      "name": "China",
+      "weight": 12.95
+    },
+    {
+      "name": "其他新兴及成熟市场",
+      "weight": 10.74
+    },
+    {
+      "name": "Canada",
+      "weight": 5.44
+    },
+    {
+      "name": "Cash & Equivalents",
+      "weight": 5.15
+    },
+    {
+      "name": "Taiwan",
+      "weight": 4.79
+    },
+    {
+      "name": "Japan",
+      "weight": 4.37
+    },
+    {
+      "name": "Australia",
+      "weight": 4.16
+    },
+    {
+      "name": "Singapore",
+      "weight": 2.93
+    },
+    {
+      "name": "Netherlands",
+      "weight": 2.31
+    },
+    {
+      "name": "South Korea",
+      "weight": 2.13
+    }
+  ],
+  "sectors": [
+    {
+      "name": "信息技术 (Technology)",
+      "weight": 29.45
+    },
+    {
+      "name": "医疗保健 (Health Care)",
+      "weight": 17.77
+    },
+    {
+      "name": "原材料与黄金采掘 (Materials & Gold)",
+      "weight": 16.23
+    },
+    {
+      "name": "金融服务 (Financials)",
+      "weight": 11.34
+    },
+    {
+      "name": "工业制造 (Industrials)",
+      "weight": 9.22
+    },
+    {
+      "name": "现金与对冲工具 (Cash & Equivalents)",
+      "weight": 5.15
+    },
+    {
+      "name": "通信与数字媒体 (Communication)",
+      "weight": 5.01
+    },
+    {
+      "name": "非必需消费 (Consumer Discretionary)",
+      "weight": 3.7
+    },
+    {
+      "name": "房地产与综合 (Real Estate & Others)",
+      "weight": 1.04
+    },
+    {
+      "name": "必需消费 (Consumer Staples)",
+      "weight": 0.69
+    },
+    {
+      "name": "能源 (Energy)",
+      "weight": 0.42
+    }
+  ],
+  "top_holdings": [
+    {
+      "rank": 1,
+      "name": "谷歌母公司 Alphabet Inc (GOOGL)",
+      "weight": 3.35,
+      "country": "美国",
+      "sector": "通信/AI",
+      "sources": [
+        "Fullerton (7.90%)",
+        "Eastspring (3.90%)"
+      ]
+    },
+    {
+      "rank": 2,
+      "name": "台积电 TSMC (Taiwan Semiconductor)",
+      "weight": 2.54,
+      "country": "中国台湾",
+      "sector": "晶圆代工龙头",
+      "sources": [
+        "Fullerton (2.80%)",
+        "Eastspring (7.80%)",
+        "FSSA (9.70%)"
+      ]
+    },
+    {
+      "rank": 3,
+      "name": "微软 Microsoft Corp (MSFT)",
+      "weight": 1.89,
+      "country": "美国",
+      "sector": "云软件/AI",
+      "sources": [
+        "Fullerton (3.00%)",
+        "Eastspring (5.60%)"
+      ]
+    },
+    {
+      "rank": 4,
+      "name": "赛默飞世尔 Thermo Fisher Scientific",
+      "weight": 1.8,
+      "country": "美国",
+      "sector": "生命科学仪器",
+      "sources": [
+        "Fullerton (3.90%)",
+        "Janus Henderson (2.92%)"
+      ]
+    },
+    {
+      "rank": 5,
+      "name": "Hon Hai Precision Industry (鸿海/富士康)",
+      "weight": 1.5,
+      "country": "中国台湾",
+      "sector": "科技制造",
+      "sources": [
+        "Fullerton (4.30%)"
+      ]
+    },
+    {
+      "rank": 6,
+      "name": "3M Co",
+      "weight": 1.47,
+      "country": "美国",
+      "sector": "工业多元",
+      "sources": [
+        "Fullerton (4.20%)"
+      ]
+    },
+    {
+      "rank": 7,
+      "name": "Eli Lilly and Co (礼来制药)",
+      "weight": 1.37,
+      "country": "美国",
+      "sector": "创新药/GLP-1",
+      "sources": [
+        "Janus Henderson (9.16%)"
+      ]
+    },
+    {
+      "rank": 8,
+      "name": "NVIDIA Corp (英伟达)",
+      "weight": 1.33,
+      "country": "美国",
+      "sector": "半导体/算力",
+      "sources": [
+        "Eastspring (8.90%)"
+      ]
+    },
+    {
+      "rank": 9,
+      "name": "Newmont Corp (纽蒙特黄金)",
+      "weight": 1.33,
+      "country": "美国",
+      "sector": "黄金矿业",
+      "sources": [
+        "United Gold (8.86%)"
+      ]
+    },
+    {
+      "rank": 10,
+      "name": "新加坡华侨银行 OCBC",
+      "weight": 1.27,
+      "country": "新加坡",
+      "sector": "财富管理/信贷",
+      "sources": [
+        "Fullerton (3.30%)",
+        "FSSA (3.00%)"
+      ]
+    },
+    {
+      "rank": 11,
+      "name": "CSX Corp",
+      "weight": 1.26,
+      "country": "美国",
+      "sector": "工业物流",
+      "sources": [
+        "Fullerton (3.60%)"
+      ]
+    },
+    {
+      "rank": 12,
+      "name": "Morgan Stanley (摩根士丹利)",
+      "weight": 1.23,
+      "country": "美国",
+      "sector": "金融服务",
+      "sources": [
+        "Fullerton (3.50%)"
+      ]
+    },
+    {
+      "rank": 13,
+      "name": "Johnson & Johnson (强生)",
+      "weight": 1.12,
+      "country": "美国",
+      "sector": "制药与医疗器械",
+      "sources": [
+        "Janus Henderson (7.47%)"
+      ]
+    },
+    {
+      "rank": 14,
+      "name": "UniCredit SpA (裕信银行)",
+      "weight": 1.05,
+      "country": "意大利",
+      "sector": "金融服务",
+      "sources": [
+        "Fullerton (3.00%)"
+      ]
+    },
+    {
+      "rank": 15,
+      "name": "中际旭创 (Zhongji Innolight)",
+      "weight": 0.94,
+      "country": "中国",
+      "sector": "光模块/AI算力底座",
+      "sources": [
+        "United China A (7.80%)"
+      ]
+    }
+  ]
+}
