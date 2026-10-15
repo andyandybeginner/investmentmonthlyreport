@@ -1,36 +1,48 @@
 {
+  "month": "2026-09",
+  "weights_used": {
+    "Eastspring": 17.4,
+    "Fullerton": 35.09,
+    "FSSA": 4.0,
+    "Nikko AM": 3.87,
+    "United China A": 12.24,
+    "Janus Henderson": 14.17,
+    "United Gold": 13.23
+  },
+  "top10_concentration": 18.36,
+  "max_single_stock": 3.45,
   "geography": [
     {
       "name": "United States",
-      "weight": 45.07
+      "weight": 46.06
     },
     {
       "name": "China",
-      "weight": 12.95
+      "weight": 13.16
     },
     {
       "name": "其他新兴及成熟市场",
-      "weight": 10.74
-    },
-    {
-      "name": "Canada",
-      "weight": 5.44
+      "weight": 10.43
     },
     {
       "name": "Cash & Equivalents",
-      "weight": 5.15
+      "weight": 5.14
     },
     {
       "name": "Taiwan",
-      "weight": 4.79
+      "weight": 4.94
+    },
+    {
+      "name": "Canada",
+      "weight": 4.8
     },
     {
       "name": "Japan",
-      "weight": 4.37
+      "weight": 4.28
     },
     {
       "name": "Australia",
-      "weight": 4.16
+      "weight": 3.67
     },
     {
       "name": "Singapore",
@@ -38,49 +50,49 @@
     },
     {
       "name": "Netherlands",
-      "weight": 2.31
+      "weight": 2.41
     },
     {
       "name": "South Korea",
-      "weight": 2.13
+      "weight": 2.2
     }
   ],
   "sectors": [
     {
       "name": "信息技术 (Technology)",
-      "weight": 29.45
+      "weight": 31.66
     },
     {
       "name": "医疗保健 (Health Care)",
-      "weight": 17.77
+      "weight": 16.96
     },
     {
       "name": "原材料与黄金采掘 (Materials & Gold)",
-      "weight": 16.23
+      "weight": 14.54
     },
     {
       "name": "金融服务 (Financials)",
-      "weight": 11.34
+      "weight": 11.36
     },
     {
       "name": "工业制造 (Industrials)",
-      "weight": 9.22
-    },
-    {
-      "name": "现金与对冲工具 (Cash & Equivalents)",
-      "weight": 5.15
+      "weight": 9.29
     },
     {
       "name": "通信与数字媒体 (Communication)",
-      "weight": 5.01
+      "weight": 5.17
+    },
+    {
+      "name": "现金与对冲工具 (Cash & Equivalents)",
+      "weight": 5.14
     },
     {
       "name": "非必需消费 (Consumer Discretionary)",
-      "weight": 3.7
+      "weight": 3.71
     },
     {
       "name": "房地产与综合 (Real Estate & Others)",
-      "weight": 1.04
+      "weight": 1.09
     },
     {
       "name": "必需消费 (Consumer Staples)",
@@ -95,7 +107,7 @@
     {
       "rank": 1,
       "name": "谷歌母公司 Alphabet Inc (GOOGL)",
-      "weight": 3.35,
+      "weight": 3.45,
       "country": "美国",
       "sector": "通信/AI",
       "sources": [
@@ -106,7 +118,7 @@
     {
       "rank": 2,
       "name": "台积电 TSMC (Taiwan Semiconductor)",
-      "weight": 2.54,
+      "weight": 2.73,
       "country": "中国台湾",
       "sector": "晶圆代工龙头",
       "sources": [
@@ -118,7 +130,7 @@
     {
       "rank": 3,
       "name": "微软 Microsoft Corp (MSFT)",
-      "weight": 1.89,
+      "weight": 2.03,
       "country": "美国",
       "sector": "云软件/AI",
       "sources": [
@@ -129,7 +141,7 @@
     {
       "rank": 4,
       "name": "赛默飞世尔 Thermo Fisher Scientific",
-      "weight": 1.8,
+      "weight": 1.78,
       "country": "美国",
       "sector": "生命科学仪器",
       "sources": [
@@ -139,8 +151,18 @@
     },
     {
       "rank": 5,
+      "name": "NVIDIA Corp (英伟达)",
+      "weight": 1.55,
+      "country": "美国",
+      "sector": "半导体/算力",
+      "sources": [
+        "Eastspring (8.90%)"
+      ]
+    },
+    {
+      "rank": 6,
       "name": "Hon Hai Precision Industry (鸿海/富士康)",
-      "weight": 1.5,
+      "weight": 1.51,
       "country": "中国台湾",
       "sector": "科技制造",
       "sources": [
@@ -148,7 +170,7 @@
       ]
     },
     {
-      "rank": 6,
+      "rank": 7,
       "name": "3M Co",
       "weight": 1.47,
       "country": "美国",
@@ -158,9 +180,9 @@
       ]
     },
     {
-      "rank": 7,
+      "rank": 8,
       "name": "Eli Lilly and Co (礼来制药)",
-      "weight": 1.37,
+      "weight": 1.3,
       "country": "美国",
       "sector": "创新药/GLP-1",
       "sources": [
@@ -168,29 +190,9 @@
       ]
     },
     {
-      "rank": 8,
-      "name": "NVIDIA Corp (英伟达)",
-      "weight": 1.33,
-      "country": "美国",
-      "sector": "半导体/算力",
-      "sources": [
-        "Eastspring (8.90%)"
-      ]
-    },
-    {
       "rank": 9,
-      "name": "Newmont Corp (纽蒙特黄金)",
-      "weight": 1.33,
-      "country": "美国",
-      "sector": "黄金矿业",
-      "sources": [
-        "United Gold (8.86%)"
-      ]
-    },
-    {
-      "rank": 10,
       "name": "新加坡华侨银行 OCBC",
-      "weight": 1.27,
+      "weight": 1.28,
       "country": "新加坡",
       "sector": "财富管理/信贷",
       "sources": [
@@ -199,7 +201,7 @@
       ]
     },
     {
-      "rank": 11,
+      "rank": 10,
       "name": "CSX Corp",
       "weight": 1.26,
       "country": "美国",
@@ -209,7 +211,7 @@
       ]
     },
     {
-      "rank": 12,
+      "rank": 11,
       "name": "Morgan Stanley (摩根士丹利)",
       "weight": 1.23,
       "country": "美国",
@@ -219,9 +221,19 @@
       ]
     },
     {
+      "rank": 12,
+      "name": "Newmont Corp (纽蒙特黄金)",
+      "weight": 1.17,
+      "country": "美国",
+      "sector": "黄金矿业",
+      "sources": [
+        "United Gold (8.86%)"
+      ]
+    },
+    {
       "rank": 13,
       "name": "Johnson & Johnson (强生)",
-      "weight": 1.12,
+      "weight": 1.06,
       "country": "美国",
       "sector": "制药与医疗器械",
       "sources": [
@@ -241,7 +253,7 @@
     {
       "rank": 15,
       "name": "中际旭创 (Zhongji Innolight)",
-      "weight": 0.94,
+      "weight": 0.95,
       "country": "中国",
       "sector": "光模块/AI算力底座",
       "sources": [

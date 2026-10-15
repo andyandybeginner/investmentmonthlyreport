@@ -6,6 +6,7 @@ Strictly separates Chinese and English template sources to guarantee 100% langua
 """
 
 import os
+import re
 import json
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -36,6 +37,14 @@ def generate_standalone_factsheet(month="2026-09", date_str="2026-10-05"):
     month_tag_en = f"{month_name_en} Look-Through"
     benchmark_date_en = f"{last_day} {month_name_en} {year_num} Official Factsheets"
 
+    # 0. Automatically recalculate look-through data dynamically based on the active month's weights
+    try:
+        from calc_portfolio_lookthrough import calculate_portfolio
+        lt_data = calculate_portfolio(month=month)
+    except Exception as e:
+        print(f"Notice: Lookthrough dynamic calculation: {e}")
+        lt_data = None
+
     # 1. Chinese Slide 6 Source
     zh_component_path = os.path.join(BASE_DIR, "src", "components", "slide6.html")
     with open(zh_component_path, "r", encoding="utf-8") as f:
@@ -58,6 +67,32 @@ def generate_standalone_factsheet(month="2026-09", date_str="2026-10-05"):
 
     slide6_en = slide6_en.replace("{{MONTH_TAG_EN}}", month_tag_en)
     slide6_en = slide6_en.replace("{{BENCHMARK_DATE_EN}}", benchmark_date_en)
+
+    # 3. Dynamic Injection of Recalculated Weights & Concentrations
+    if lt_data:
+        top10_c = f"{lt_data['top10_concentration']:.2f}%"
+        max_s = f"{lt_data['max_single_stock']:.2f}%"
+        weights_used = lt_data.get('weights_used', {})
+
+        slide6_zh = re.sub(r'Top 10 合计\s*[\d\.]+%', f'Top 10 合计 {top10_c}', slide6_zh)
+        slide6_zh = re.sub(r'最大单票\s*[\d\.]+%', f'最大单票 {max_s}', slide6_zh)
+
+        slide6_en = re.sub(r'Top 10 Aggregate\s*[\d\.]+%', f'Top 10 Aggregate {top10_c}', slide6_en)
+        slide6_en = re.sub(r'Max Single Stock\s*[\d\.]+%', f'Max Single Stock {max_s}', slide6_en)
+
+        fund_weight_targets = {
+            'Fullerton': weights_used.get('Fullerton', 35.0),
+            'Eastspring': weights_used.get('Eastspring', 15.0),
+            'Janus Henderson': weights_used.get('Janus Henderson', 15.0),
+            'United Gold': weights_used.get('United Gold', 15.0),
+            'United China A': weights_used.get('United China A', 12.0),
+            'FSSA': weights_used.get('FSSA', 4.0),
+            'Nikko AM': weights_used.get('Nikko AM', 4.0),
+        }
+        for fname_key, w_val in fund_weight_targets.items():
+            pattern = re.compile(rf'(>{fname_key}[^<]*</td>\s*<td[^>]*>)([\d\.]+%)(</td>)', re.IGNORECASE)
+            slide6_zh = pattern.sub(rf'\g<1>{w_val:.1f}%\g<3>', slide6_zh)
+            slide6_en = pattern.sub(rf'\g<1>{w_val:.1f}%\g<3>', slide6_en)
 
     # HTML Shell Builder
     def make_factsheet_html(content, title, lang="zh-CN"):

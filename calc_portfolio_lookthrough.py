@@ -7,12 +7,23 @@ Calculate Portfolio Look-Through Breakdown:
 - Risk Metrics (Weighted & Empirical)
 """
 
+import os
+import re
 import json
 from collections import defaultdict
 
-# Fund weights in HR Model Portfolio
-# Target weights
-fund_weights = {
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# ==============================================================================
+# Dynamic Fund Weight Resolver
+# Automatically pulls the latest target weights & actual weights from:
+# 1. Google Sheet sync cache (real_performance_series.json)
+# 2. Monthly config (config/config_<YYYY>_<MM>.json)
+# 3. Passed-in custom weights dictionary
+# User NEVER needs to manually modify this python script when weights change!
+# ==============================================================================
+
+DEFAULT_TARGET_WEIGHTS = {
     'Fullerton': 0.35,
     'Eastspring': 0.15,
     'Janus Henderson': 0.15,
@@ -22,8 +33,7 @@ fund_weights = {
     'Nikko AM': 0.04
 }
 
-# Current weights (2026-09-03)
-current_weights = {
+DEFAULT_CURRENT_WEIGHTS = {
     'Fullerton': 0.3460,
     'Eastspring': 0.1574,
     'Janus Henderson': 0.1479,
@@ -32,6 +42,82 @@ current_weights = {
     'FSSA': 0.0391,
     'Nikko AM': 0.0389
 }
+
+def resolve_fund_weights(month="2026-09", use_actual=False, custom_weights=None):
+    """
+    Dynamically loads the portfolio fund weights.
+    Returns normalized weights dictionary { 'Fullerton': 0.35, ... }.
+    """
+    if custom_weights and isinstance(custom_weights, dict):
+        tot = sum(custom_weights.values())
+        return {k: v / tot for k, v in custom_weights.items()} if tot > 0 else custom_weights
+
+    # 1. Try reading live Google Sheet synced data
+    try:
+        series_file = os.path.join(BASE_DIR, 'real_performance_series.json')
+        if os.path.exists(series_file):
+            with open(series_file, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                funds = data.get('funds_data', [])
+                if funds:
+                    res = {}
+                    for item in funds:
+                        name = item.get('name', '').upper()
+                        key = None
+                        if 'FULLERTON' in name: key = 'Fullerton'
+                        elif 'EASTSPRING' in name: key = 'Eastspring'
+                        elif 'JANUS' in name: key = 'Janus Henderson'
+                        elif 'GOLD' in name: key = 'United Gold'
+                        elif 'CHINA' in name: key = 'United China A'
+                        elif 'FSSA' in name: key = 'FSSA'
+                        elif 'NIKKO' in name: key = 'Nikko AM'
+                        if key:
+                            val = item.get('actual_w' if use_actual else 'target_w', 0.0)
+                            res[key] = val / 100.0 if val > 1.0 else val
+                    if len(res) == 7:
+                        tot = sum(res.values())
+                        return {k: v / tot for k, v in res.items()} if tot > 0 else res
+    except Exception:
+        pass
+
+    # 2. Try reading from config/config_<YYYY>_<MM>.json
+    try:
+        cfg_name = f"config_{month.replace('-', '_')}.json"
+        cfg_path = os.path.join(BASE_DIR, 'config', cfg_name)
+        if os.path.exists(cfg_path):
+            with open(cfg_path, 'r', encoding='utf-8') as f:
+                cfg = json.load(f)
+                holdings = cfg.get('manager_input', {}).get('holdings_conviction', [])
+                res = {}
+                for item in holdings:
+                    name = item.get('fund_name', '').upper()
+                    key = None
+                    if 'FULLERTON' in name: key = 'Fullerton'
+                    elif 'EASTSPRING' in name: key = 'Eastspring'
+                    elif 'JANUS' in name: key = 'Janus Henderson'
+                    elif 'GOLD' in name: key = 'United Gold'
+                    elif 'CHINA' in name: key = 'United China A'
+                    elif 'FSSA' in name: key = 'FSSA'
+                    elif 'NIKKO' in name: key = 'Nikko AM'
+                    if key:
+                        raw = item.get('current_weight' if use_actual else 'target_weight', '')
+                        if not raw and not use_actual:
+                            raw = item.get('current_weight', '')
+                        num = float(re.sub(r'[^\d\.]', '', str(raw))) if re.search(r'\d', str(raw)) else 0.0
+                        res[key] = num / 100.0 if num > 1.0 else num
+                if len(res) >= 5:
+                    tot = sum(res.values())
+                    if tot > 0:
+                        return {k: v / tot for k, v in res.items()}
+    except Exception:
+        pass
+
+    # 3. Fallback to default
+    return DEFAULT_CURRENT_WEIGHTS if use_actual else DEFAULT_TARGET_WEIGHTS
+
+# Dynamically initialized variables for top-level usage
+fund_weights = resolve_fund_weights(month="2026-09", use_actual=False)
+current_weights = resolve_fund_weights(month="2026-09", use_actual=True)
 
 # 1. GEOGRAPHICAL BREAKDOWN PER FUND (as reported in factsheets)
 fund_geo = {
@@ -311,12 +397,16 @@ holdings = {
     ]
 }
 
-def calculate_portfolio():
+def calculate_portfolio(custom_weights=None, month="2026-09", use_actual=False):
+    # Dynamically resolve weights
+    active_weights = resolve_fund_weights(month=month, use_actual=use_actual, custom_weights=custom_weights)
+
     # 1. Calculate Geographic Allocation
     geo_weighted = defaultdict(float)
-    for fund_name, weight in fund_weights.items():
-        for country, pct in fund_geo[fund_name].items():
-            geo_weighted[country] += weight * pct
+    for fund_name, weight in active_weights.items():
+        if fund_name in fund_geo:
+            for country, pct in fund_geo[fund_name].items():
+                geo_weighted[country] += weight * pct
 
     # Group small regions (< 2%) into "其他与新兴市场"
     geo_grouped = defaultdict(float)
@@ -330,10 +420,11 @@ def calculate_portfolio():
 
     # 2. Calculate Sector Allocation
     sector_weighted = defaultdict(float)
-    for fund_name, weight in fund_weights.items():
-        for sec, pct in fund_sectors[fund_name].items():
-            std_sec = sector_standard_mapping.get(sec, '其他')
-            sector_weighted[std_sec] += weight * pct
+    for fund_name, weight in active_weights.items():
+        if fund_name in fund_sectors:
+            for sec, pct in fund_sectors[fund_name].items():
+                std_sec = sector_standard_mapping.get(sec, '其他')
+                sector_weighted[std_sec] += weight * pct
 
     sorted_sectors = sorted(sector_weighted.items(), key=lambda x: x[1], reverse=True)
 
@@ -347,7 +438,7 @@ def calculate_portfolio():
     })
 
     for fund_name, h_list in holdings.items():
-        fw = fund_weights[fund_name]
+        fw = active_weights.get(fund_name, 0.0)
         for name, pct, country, sector, isin in h_list:
             # Map canonical name
             canon_name = name
@@ -370,8 +461,12 @@ def calculate_portfolio():
 
     sorted_stocks = sorted(stock_weights.items(), key=lambda x: x[1]['weight'], reverse=True)
 
+    top10_weight_sum = sum(data['weight'] * 100 for _, data in sorted_stocks[:10])
+    max_single_stock = sorted_stocks[0][1]['weight'] * 100 if sorted_stocks else 0.0
+
     print("\n" + "="*80)
-    print("🌍 总体投资组合·加权地理分布 (Geographical Allocation)")
+    print(f"🌍 总体投资组合·加权地理分布 (Geographical Allocation) [基准月份: {month}]")
+    print(f"   权重依据: {'实际权重' if use_actual else '目标配比'} -> {active_weights}")
     print("="*80)
     for c, pct in sorted_geo:
         print(f"  {c:<30} {pct:6.2f}%")
@@ -383,13 +478,17 @@ def calculate_portfolio():
         print(f"  {s:<35} {pct:6.2f}%")
 
     print("\n" + "="*80)
-    print("🏆 总体投资组合·穿透前十五大重仓 (Top 15 Look-Through Holdings)")
+    print(f"🏆 穿透前十大重仓合计: {top10_weight_sum:.2f}% | 最大单票: {max_single_stock:.2f}%")
     print("="*80)
     for idx, (name, data) in enumerate(sorted_stocks[:15]):
         print(f"  {idx+1:2d}. {name:<42} 穿透权重: {data['weight']*100:5.2f}% | 国家: {data['country']:<8} | 行业: {data['sector']:<18} | 来源: {', '.join(data['sources'])}")
 
     # Save to json for HTML generation
     res = {
+        'month': month,
+        'weights_used': {k: round(v * 100, 2) for k, v in active_weights.items()},
+        'top10_concentration': round(top10_weight_sum, 2),
+        'max_single_stock': round(max_single_stock, 2),
         'geography': [{'name': c, 'weight': round(pct, 2)} for c, pct in sorted_geo],
         'sectors': [{'name': s, 'weight': round(pct, 2)} for s, pct in sorted_sectors],
         'top_holdings': [
@@ -404,9 +503,11 @@ def calculate_portfolio():
         ]
     }
 
-    with open('portfolio_lookthrough_data.json', 'w', encoding='utf-8') as f:
+    out_file = os.path.join(BASE_DIR, 'portfolio_lookthrough_data.json')
+    with open(out_file, 'w', encoding='utf-8') as f:
         json.dump(res, f, ensure_ascii=False, indent=2)
-    print("\n✅ Saved results to portfolio_lookthrough_data.json")
+    print(f"\n✅ Saved results to {out_file}")
+    return res
 
 if __name__ == '__main__':
     calculate_portfolio()
