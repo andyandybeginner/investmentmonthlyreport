@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+}
+
+.mono-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+@media print {
+  @page {
+    size: 297mm 210mm;
+    margin: 0;
+  }
+  .no-print {
+    display: none !important;
+  }
+  html, body {
+    width: 297mm !important;
+    height: 210mm !important;
+    background: white !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  .landscape-slide {
+    box-shadow: none !important;
+    border: none !important;
+    margin: 0 !important;
+    width: 100% !important;
+    height: 100vh !important;
+    border-radius: 0 !important;
+    page-break-after: always !important;
+    break-after: page !important;
+  }
+}

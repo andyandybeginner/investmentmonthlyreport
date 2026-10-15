@@ -32,14 +32,72 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
         clean_path = url_parts.path
         query = urllib.parse.parse_qs(url_parts.query)
 
-        # 1. Main Dashboard
+        # 1. Main Dashboard & Frontend Single Page App
         if clean_path == '/':
+            dist_index = os.path.join(BASE_DIR, 'frontend', 'dist', 'index.html')
+            if os.path.exists(dist_index):
+                self.send_response(200)
+                self.send_header('Content-Type', 'text/html; charset=utf-8')
+                self.end_headers()
+                with open(dist_index, 'rb') as f:
+                    self.wfile.write(f.read())
+                return
             filepath = os.path.join(BASE_DIR, 'app', 'index.html')
             if os.path.exists(filepath):
                 self.send_response(200)
                 self.send_header('Content-Type', 'text/html; charset=utf-8')
                 self.end_headers()
                 with open(filepath, 'rb') as f:
+                    self.wfile.write(f.read())
+                return
+
+        # Vite Static Assets
+        elif clean_path.startswith('/assets/'):
+            asset_file = os.path.join(BASE_DIR, 'frontend', 'dist', clean_path.lstrip('/'))
+            if os.path.exists(asset_file) and os.path.isfile(asset_file):
+                self.send_response(200)
+                if asset_file.endswith('.js'):
+                    self.send_header('Content-Type', 'text/javascript; charset=utf-8')
+                elif asset_file.endswith('.css'):
+                    self.send_header('Content-Type', 'text/css; charset=utf-8')
+                elif asset_file.endswith('.svg'):
+                    self.send_header('Content-Type', 'image/svg+xml')
+                elif asset_file.endswith('.png'):
+                    self.send_header('Content-Type', 'image/png')
+                else:
+                    self.send_header('Content-Type', 'application/octet-stream')
+                self.send_header('Content-Length', str(os.path.getsize(asset_file)))
+                self.end_headers()
+                with open(asset_file, 'rb') as f:
+                    self.wfile.write(f.read())
+                return
+            else:
+                self.send_response(404)
+                self.end_headers()
+                return
+
+        # Named Direct Downloads
+        elif clean_path.startswith('/download/'):
+            target = clean_path.replace('/download/', '')
+            matched_file = None
+            out_dir = os.path.join(BASE_DIR, 'output')
+            if target == 'memo_zh':
+                matched_file = os.path.join(out_dir, 'HR_Model_Portfolio_Monthly_Memo_2026-09_ZH.pdf')
+            elif target == 'memo_en':
+                matched_file = os.path.join(out_dir, 'HR_Model_Portfolio_Monthly_Memo_2026-09_EN.pdf')
+            elif target == 'factsheet_zh':
+                matched_file = os.path.join(out_dir, 'HR_Model_Portfolio_Risk_Factsheet_2026-10-05.pdf')
+            elif target == 'factsheet_en':
+                matched_file = os.path.join(out_dir, 'HR_Model_Portfolio_Risk_Factsheet_2026-10-05.pdf')
+
+            if matched_file and os.path.exists(matched_file):
+                self.send_response(200)
+                self.send_header('Content-Type', 'application/pdf')
+                fn = os.path.basename(matched_file)
+                self.send_header('Content-Disposition', f'attachment; filename="{fn}"')
+                self.send_header('Content-Length', str(os.path.getsize(matched_file)))
+                self.end_headers()
+                with open(matched_file, 'rb') as f:
                     self.wfile.write(f.read())
                 return
 
@@ -277,6 +335,41 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
             }, ensure_ascii=False).encode('utf-8'))
             return
 
+        # 9. Portfolio State API for React Frontend
+        elif clean_path == '/api/portfolio_state':
+            month = query.get('month', ['2026-09'])[0]
+            perf_file = os.path.join(BASE_DIR, 'real_performance_series.json')
+            look_file = os.path.join(BASE_DIR, 'portfolio_lookthrough_data.json')
+            cfg_file = os.path.join(BASE_DIR, 'config', f'config_{month.replace("-", "_")}.json')
+            if not os.path.exists(cfg_file):
+                cfg_file = os.path.join(BASE_DIR, 'config', 'config_2026_09.json')
+            
+            perf_data = {}
+            if os.path.exists(perf_file):
+                with open(perf_file, 'r', encoding='utf-8') as f:
+                    perf_data = json.load(f)
+            
+            look_data = {}
+            if os.path.exists(look_file):
+                with open(look_file, 'r', encoding='utf-8') as f:
+                    look_data = json.load(f)
+                    
+            cfg_data = {}
+            if os.path.exists(cfg_file):
+                with open(cfg_file, 'r', encoding='utf-8') as f:
+                    cfg_data = json.load(f)
+
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json; charset=utf-8')
+            self.end_headers()
+            self.wfile.write(json.dumps({
+                "status": "success",
+                "performance": perf_data,
+                "lookthrough": look_data,
+                "config": cfg_data
+            }, ensure_ascii=False).encode('utf-8'))
+            return
+
         super().do_GET()
 
     def do_POST(self):
@@ -288,6 +381,20 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
             req_data = json.loads(body.decode('utf-8')) if body else {}
         except Exception:
             req_data = {}
+
+        # Live Google Sheet Sync
+        if clean_path == '/api/sync_googlesheet':
+            try:
+                import sync_googlesheet_to_report
+                sync_googlesheet_to_report.run_sync()
+                resp = {"status": "success", "message": "Google Sheet 同步已成功完成！"}
+            except Exception as e:
+                resp = {"status": "error", "message": str(e)}
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json; charset=utf-8')
+            self.end_headers()
+            self.wfile.write(json.dumps(resp, ensure_ascii=False).encode('utf-8'))
+            return
 
         # Save Configuration for the specified month
         if clean_path in ['/api/save_config', '/api/save_manager_input']:
