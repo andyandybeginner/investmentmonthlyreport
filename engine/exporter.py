@@ -9,6 +9,7 @@ Synchronizes directly to Google Drive and workspace.
 
 import os
 import shutil
+import json
 import fitz
 from playwright.sync_api import sync_playwright
 
@@ -70,18 +71,22 @@ def export_all_deliverables(options=None):
 
     # 1. Chinese Memorandum
     if options.get("export_memo_zh", True):
-        memo_html = os.path.join(BASE_DIR, "output", f"iFAST_Equity_Growth_Monthly_Report_{month}.html")
-        if not os.path.exists(memo_html):
-            memo_html = os.path.join(BASE_DIR, "iFAST_Equity_Growth_Monthly_Report_Latest.html")
-        if not os.path.exists(memo_html):
-            memo_html = os.path.join(BASE_DIR, "iFAST_Equity_Growth_Monthly_Report_August2026.html")
-
         # Load config to get exact settle_date if default
         cfg_file = os.path.join(BASE_DIR, "config", f"config_{month.replace('-', '_')}.json")
         if os.path.exists(cfg_file):
             with open(cfg_file, 'r', encoding='utf-8') as f:
                 c = json.load(f)
                 settle_date = c.get('settle_date', settle_date)
+
+        memo_html = os.path.join(BASE_DIR, "output", f"iFAST_Equity_Growth_Monthly_Report_{month}.html")
+        if not os.path.exists(memo_html):
+            from engine.report_generator import generate_report
+            generate_report(month=month)
+
+        if not os.path.exists(memo_html):
+            memo_html = os.path.join(BASE_DIR, "iFAST_Equity_Growth_Monthly_Report_Latest.html")
+        if not os.path.exists(memo_html):
+            memo_html = os.path.join(BASE_DIR, "iFAST_Equity_Growth_Monthly_Report_August2026.html")
 
         memo_pdf_name = f"HR_模板投资组合_月度备忘录_{settle_date}.pdf"
         memo_pdf_local = os.path.join(BASE_DIR, "output", memo_pdf_name)
@@ -95,7 +100,13 @@ def export_all_deliverables(options=None):
                     shutil.copy2(memo_pdf_local, drive_dest)
                 except Exception as e:
                     drive_dest = f"Copy error: {e}"
-            results.append({"type": "memo_zh", "name": memo_pdf_name, "local": memo_pdf_local, "drive": drive_dest})
+            results.append({
+                "type": "memo_zh",
+                "name": memo_pdf_name,
+                "local": memo_pdf_local,
+                "drive": drive_dest,
+                "download_url": f"/download?file={memo_pdf_name}"
+            })
 
     # 2. Standalone Factsheets (Chinese and English)
     from generate_portfolio_factsheet import generate_standalone_factsheet
@@ -112,7 +123,13 @@ def export_all_deliverables(options=None):
                 shutil.copy2(fs_zh_pdf_local, drive_dest)
             except Exception as e:
                 drive_dest = f"Copy error: {e}"
-        results.append({"type": "factsheet_zh", "name": fs_zh_pdf_name, "local": fs_zh_pdf_local, "drive": drive_dest})
+        results.append({
+            "type": "factsheet_zh",
+            "name": fs_zh_pdf_name,
+            "local": fs_zh_pdf_local,
+            "drive": drive_dest,
+            "download_url": f"/download?file={fs_zh_pdf_name}"
+        })
 
     if options.get("export_factsheet_en", True):
         fs_en_pdf_name = f"HR_Model_Portfolio_Risk_Factsheet_{settle_date}.pdf"
@@ -125,7 +142,13 @@ def export_all_deliverables(options=None):
                 shutil.copy2(fs_en_pdf_local, drive_dest)
             except Exception as e:
                 drive_dest = f"Copy error: {e}"
-        results.append({"type": "factsheet_en", "name": fs_en_pdf_name, "local": fs_en_pdf_local, "drive": drive_dest})
+        results.append({
+            "type": "factsheet_en",
+            "name": fs_en_pdf_name,
+            "local": fs_en_pdf_local,
+            "drive": drive_dest,
+            "download_url": f"/download?file={fs_en_pdf_name}"
+        })
 
     # Generate page previews for the Chinese memo if exported
     previews = []

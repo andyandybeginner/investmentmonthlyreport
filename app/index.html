@@ -101,11 +101,13 @@
             <!-- Dynamic Setting Inputs Grid (Editable Settings) -->
             <div class="mt-4 pt-3 border-t border-slate-700/60 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs">
                 <div class="bg-slate-900/60 rounded-xl p-2.5 border border-slate-700/50 flex flex-col justify-between space-y-1">
-                    <span class="text-slate-400 text-[11px] font-semibold">动态时间序列期数</span>
-                    <div class="flex items-center gap-1.5">
-                        <span class="text-slate-400 font-mono text-xs">第</span>
-                        <input id="inpSequenceCount" type="number" class="w-16 bg-slate-950/90 border border-slate-700 rounded px-2 py-1 text-xs font-extrabold text-amber-300 font-mono text-center" value="39">
-                        <span class="text-slate-400 font-mono text-xs">期走势 (成立日 2023-07)</span>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-400 text-[11px] font-semibold">动态时间序列期数</span>
+                        <span class="px-1.5 py-0.2 rounded text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-semibold">系统自动抓取</span>
+                    </div>
+                    <div class="flex items-center gap-1.5 py-0.5">
+                        <span id="badgeSequenceCount" class="font-mono text-sm font-extrabold text-amber-300 bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-800">第 39 期</span>
+                        <span class="text-slate-400 font-mono text-[11px]">(2023-07 成立至今)</span>
                     </div>
                 </div>
                 <div class="bg-slate-900/60 rounded-xl p-2.5 border border-slate-700/50 flex flex-col justify-between space-y-1">
@@ -152,15 +154,24 @@
                     <input id="inpGoogleSheetId" type="text" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-1.5 text-xs font-mono text-amber-300" value="1VXy6RGThyuQIBwYg9VF3NbWc7wXyfLFQcMGPgEf2Q4I">
                 </div>
                 <div>
-                    <label class="block text-slate-400 text-[11px] font-semibold mb-1">主组合时间序列计算表名 (Tab)</label>
-                    <input id="inpCalcEngineTab" type="text" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-1.5 text-xs font-mono text-slate-200" value="Calculation_Engine">
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="text-slate-400 text-[11px] font-semibold">主组合时间序列计算表名 (Tab)</label>
+                        <span class="px-1.5 py-0.2 rounded text-[10px] bg-slate-700/50 text-slate-300 border border-slate-600/50">系统预设</span>
+                    </div>
+                    <div class="w-full bg-slate-950 border border-slate-800 rounded-lg p-1.5 text-xs font-mono font-bold text-amber-400 flex items-center justify-between">
+                        <span>Calculation_Engine</span>
+                        <span class="text-slate-500 text-[10px] font-normal">固化计算引擎</span>
+                    </div>
                 </div>
                 <div>
-                    <label class="block text-slate-400 text-[11px] font-semibold mb-1">底层基金价格工作表检索逻辑</label>
-                    <select id="selTabStrategy" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-1.5 text-xs font-bold text-emerald-400">
-                        <option value="name" selected>按基金全名工作表精确匹配 (完全独立于Tab顺序)</option>
-                        <option value="index">按Tab物理顺位提取 (Tab 12-18)</option>
-                    </select>
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="text-slate-400 text-[11px] font-semibold">底层基金价格工作表检索规则</label>
+                        <span class="px-1.5 py-0.2 rounded text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">系统预设</span>
+                    </div>
+                    <div class="w-full bg-slate-950 border border-slate-800 rounded-lg p-1.5 text-xs font-bold text-emerald-400 flex items-center justify-between">
+                        <span>按基金全名工作表精确匹配</span>
+                        <span class="text-slate-500 text-[10px] font-normal">独立于Tab物理顺序</span>
+                    </div>
                 </div>
             </div>
 
@@ -333,6 +344,20 @@
                         </button>
                     </div>
                     <span class="text-[11px] text-slate-400">修改定见或文件后，一键生成全套交付物</span>
+                </div>
+
+                <!-- Export Results Banner (Shown after successful export) -->
+                <div id="exportResultsBanner" class="hidden mt-3 p-3.5 rounded-xl bg-emerald-950/50 border border-emerald-500/60 space-y-2.5 transition">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2 text-emerald-300 font-bold text-xs">
+                            <span class="text-base">🎉</span>
+                            <span>全套交付物 PDF 导出成功并已同步至网盘！点击下方按钮直接下载：</span>
+                        </div>
+                        <span id="exportTimestampBadge" class="text-[10px] font-mono text-emerald-400/80 bg-emerald-900/60 px-2 py-0.5 rounded border border-emerald-700/50"></span>
+                    </div>
+                    <div id="exportDownloadButtonsList" class="flex flex-wrap gap-2.5 pt-1">
+                        <!-- Populated dynamically with direct download links -->
+                    </div>
                 </div>
             </div>
         </section>
@@ -545,7 +570,7 @@
 
                 // Update Section 1 parameters
                 const seq = data.dynamic_sequence_months || (month === '2026-10' ? 41 : (month === '2026-09' ? 40 : 39));
-                if (document.getElementById('inpSequenceCount')) document.getElementById('inpSequenceCount').value = seq;
+                if (document.getElementById('badgeSequenceCount')) document.getElementById('badgeSequenceCount').textContent = `第 ${seq} 期`;
                 if (document.getElementById('inpSettleDate')) document.getElementById('inpSettleDate').value = data.settle_date || (month === '2026-10' ? '2026-11-04' : (month === '2026-09' ? '2026-10-05' : '2026-09-03'));
                 if (document.getElementById('inpValuationLabelZh')) document.getElementById('inpValuationLabelZh').value = data.valuation_date_zh || `${month}结算周期`;
                 if (document.getElementById('inpBenchmark')) document.getElementById('inpBenchmark').value = data.benchmark || 'MSCI ACWI / S&P 500';
@@ -555,8 +580,6 @@
 
                 // Update Section 2 parameters
                 if (document.getElementById('inpGoogleSheetId')) document.getElementById('inpGoogleSheetId').value = data.google_sheet_id || '1VXy6RGThyuQIBwYg9VF3NbWc7wXyfLFQcMGPgEf2Q4I';
-                if (document.getElementById('inpCalcEngineTab')) document.getElementById('inpCalcEngineTab').value = data.calc_engine_tab || 'Calculation_Engine';
-                if (document.getElementById('selTabStrategy')) document.getElementById('selTabStrategy').value = data.tab_strategy || 'name';
 
                 // Update Section 3 paths & checkboxes
                 if (data.google_drive_root || data.target_output_dir) {
@@ -901,20 +924,22 @@
                 report_month: month
             };
 
+            const autoSeq = currentConfig.dynamic_sequence_months || (month === '2026-10' ? 41 : (month === '2026-09' ? 40 : 39));
+
             if (secId === 1) {
                 btn = document.getElementById('btnSaveSec1');
                 sectionName = 'Section 1 (宏观与期别)';
                 payload.settle_date = document.getElementById('inpSettleDate').value.trim();
                 payload.valuation_date_zh = document.getElementById('inpValuationLabelZh').value.trim();
-                payload.dynamic_sequence_months = parseInt(document.getElementById('inpSequenceCount').value.trim()) || 39;
+                payload.dynamic_sequence_months = autoSeq;
                 payload.benchmark = document.getElementById('inpBenchmark').value;
                 payload.section_name = sectionName;
             } else if (secId === 2) {
                 btn = document.getElementById('btnSaveSec2');
                 sectionName = 'Section 2 (取值规则映射)';
                 payload.google_sheet_id = document.getElementById('inpGoogleSheetId').value.trim();
-                payload.calc_engine_tab = document.getElementById('inpCalcEngineTab').value.trim();
-                payload.tab_strategy = document.getElementById('selTabStrategy').value;
+                payload.calc_engine_tab = 'Calculation_Engine';
+                payload.tab_strategy = 'name';
                 payload.section_name = sectionName;
             } else if (secId === 3) {
                 btn = document.getElementById('btnSaveSec3');
@@ -950,11 +975,11 @@
                 sectionName = '全局全部配置 (Sections 1-4)';
                 payload.settle_date = document.getElementById('inpSettleDate').value.trim();
                 payload.valuation_date_zh = document.getElementById('inpValuationLabelZh').value.trim();
-                payload.dynamic_sequence_months = parseInt(document.getElementById('inpSequenceCount').value.trim()) || 39;
+                payload.dynamic_sequence_months = autoSeq;
                 payload.benchmark = document.getElementById('inpBenchmark').value;
                 payload.google_sheet_id = document.getElementById('inpGoogleSheetId').value.trim();
-                payload.calc_engine_tab = document.getElementById('inpCalcEngineTab').value.trim();
-                payload.tab_strategy = document.getElementById('selTabStrategy').value;
+                payload.calc_engine_tab = 'Calculation_Engine';
+                payload.tab_strategy = 'name';
                 payload.reference_monthly_update = document.getElementById('inpMonthlyUpdate').value.trim();
                 payload.reference_factsheets_dir = document.getElementById('inpFactsheetsDir').value.trim();
                 payload.target_output_dir = document.getElementById('inpTargetOutputDir').value.trim();
@@ -1030,6 +1055,11 @@
 
         async function triggerExportAll() {
             const btn = document.getElementById('btnExportPDF');
+            const resBanner = document.getElementById('exportResultsBanner');
+            const btnsList = document.getElementById('exportDownloadButtonsList');
+            if (resBanner) resBanner.classList.add('hidden');
+            if (btnsList) btnsList.innerHTML = '';
+
             btn.disabled = true;
             btn.innerHTML = '<span>🖨️ 正在渲染全套 PDF...</span>';
             log('🚀 启动 Playwright 渲染选定全套 PDF（备忘录 + 独立 Factsheet 中英文版）...', 'text-blue-400');
@@ -1054,12 +1084,71 @@
                     body: JSON.stringify(payload)
                 });
                 const data = await res.json();
+                if (data.status === 'error') {
+                    throw new Error(data.message || '导出执行异常');
+                }
+
                 log(`✓ 渲染完成！共成功导出 ${data.count} 份独立机构交付物：`, 'text-emerald-400');
-                data.deliverables.forEach(d => {
-                    log(`  - [${d.type}] ${d.name} ➔ 本地: ${d.local} | 云端: ${d.drive}`, 'text-slate-200');
-                });
+
+                // Render dynamic download buttons and trigger browser download
+                if (resBanner && btnsList && data.deliverables && data.deliverables.length > 0) {
+                    resBanner.classList.remove('hidden');
+                    document.getElementById('exportTimestampBadge').textContent = new Date().toLocaleTimeString();
+                    btnsList.innerHTML = '';
+
+                    let firstPdfUrl = null;
+
+                    data.deliverables.forEach(d => {
+                        log(`  - [${d.type}] ${d.name} ➔ 本地: ${d.local} | 云端: ${d.drive}`, 'text-slate-200');
+
+                        const dlUrl = d.download_url || `/download?file=${encodeURIComponent(d.name)}`;
+                        const viewUrl = `/output/${encodeURIComponent(d.name)}`;
+                        if (!firstPdfUrl && d.type === 'memo_zh') {
+                            firstPdfUrl = dlUrl;
+                        }
+
+                        let badgeColor = 'bg-amber-500/20 text-amber-300 border-amber-500/40 hover:bg-amber-500/30';
+                        let label = '月度投资备忘录 (中文)';
+                        if (d.type === 'factsheet_zh') {
+                            badgeColor = 'bg-teal-500/20 text-teal-300 border-teal-500/40 hover:bg-teal-500/30';
+                            label = '资产穿透报告 (中文)';
+                        } else if (d.type === 'factsheet_en') {
+                            badgeColor = 'bg-blue-500/20 text-blue-300 border-blue-500/40 hover:bg-blue-500/30';
+                            label = 'Portfolio Factsheet (EN)';
+                        }
+
+                        const itemDiv = document.createElement('div');
+                        itemDiv.className = 'flex items-center gap-1.5 p-1.5 rounded-lg bg-slate-900 border border-slate-700 text-xs shadow-sm';
+                        itemDiv.innerHTML = `
+                            <a href="${dlUrl}" download="${d.name}" class="px-3 py-1.5 rounded-md ${badgeColor} border font-bold flex items-center gap-1.5 transition">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                <span>📥 下载 ${label}</span>
+                            </a>
+                            <a href="${viewUrl}" target="_blank" class="px-2 py-1.5 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-[11px] transition" title="在新标签页预览">
+                                👁️ 打开
+                            </a>
+                        `;
+                        btnsList.appendChild(itemDiv);
+                    });
+
+                    // Auto-trigger browser download for primary Chinese memo PDF
+                    if (firstPdfUrl) {
+                        const dlLink = document.createElement('a');
+                        dlLink.href = firstPdfUrl;
+                        dlLink.setAttribute('download', '');
+                        document.body.appendChild(dlLink);
+                        dlLink.click();
+                        document.body.removeChild(dlLink);
+                        log(`📥 已自动触发主备忘录 PDF 浏览器下载！`, 'text-emerald-400 font-bold');
+                    }
+                }
             } catch(e) {
                 log(`✗ 导出出错: ${e.message}`, 'text-rose-400');
+                if (resBanner) {
+                    resBanner.classList.remove('hidden');
+                    resBanner.className = 'mt-3 p-3.5 rounded-xl bg-rose-950/50 border border-rose-500/60 text-rose-300 text-xs';
+                    resBanner.innerHTML = `<strong>✗ 导出失败：</strong> ${e.message}。请查看控制台日志了解详细错误。`;
+                }
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg><span>🖨️ 导出选定全套 PDF 并同步云端</span>';

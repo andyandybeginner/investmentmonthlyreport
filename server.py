@@ -43,6 +43,55 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
                     self.wfile.write(f.read())
                 return
 
+        # Direct File Download Endpoint
+        elif clean_path == '/download':
+            filename = query.get('file', [''])[0]
+            filename = os.path.basename(filename)
+            file_path = os.path.join(BASE_DIR, 'output', filename)
+            if not os.path.exists(file_path):
+                file_path = os.path.join(BASE_DIR, filename)
+
+            if os.path.exists(file_path) and os.path.isfile(file_path):
+                self.send_response(200)
+                self.send_header('Content-Type', 'application/pdf' if filename.endswith('.pdf') else 'application/octet-stream')
+                encoded_filename = urllib.parse.quote(filename)
+                self.send_header('Content-Disposition', f'attachment; filename="{encoded_filename}"; filename*=UTF-8\'\'{encoded_filename}')
+                self.send_header('Content-Length', str(os.path.getsize(file_path)))
+                self.end_headers()
+                with open(file_path, 'rb') as f:
+                    self.wfile.write(f.read())
+                return
+            else:
+                self.send_response(404)
+                self.send_header('Content-Type', 'text/plain; charset=utf-8')
+                self.end_headers()
+                self.wfile.write(f"文件未找到: {filename}".encode('utf-8'))
+                return
+
+        # Static /output/ Viewer
+        elif clean_path.startswith('/output/'):
+            filename = os.path.basename(clean_path)
+            file_path = os.path.join(BASE_DIR, 'output', filename)
+            if os.path.exists(file_path) and os.path.isfile(file_path):
+                self.send_response(200)
+                if filename.endswith('.pdf'):
+                    self.send_header('Content-Type', 'application/pdf')
+                elif filename.endswith('.html'):
+                    self.send_header('Content-Type', 'text/html; charset=utf-8')
+                elif filename.endswith('.png'):
+                    self.send_header('Content-Type', 'image/png')
+                else:
+                    self.send_header('Content-Type', 'application/octet-stream')
+                self.send_header('Content-Length', str(os.path.getsize(file_path)))
+                self.end_headers()
+                with open(file_path, 'rb') as f:
+                    self.wfile.write(f.read())
+                return
+            else:
+                self.send_response(404)
+                self.end_headers()
+                return
+
         # 2. Dynamic Live Preview for Any Month
         elif clean_path == '/preview':
             month = query.get('month', [None])[0]
