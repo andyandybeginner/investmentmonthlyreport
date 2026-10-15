@@ -16,16 +16,20 @@ from playwright.sync_api import sync_playwright
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEFAULT_DRIVE_DIR = r"G:\我的云端硬盘\0. 工作\2. 投资分析计划 01102026\3. Monthly Report"
 
-def render_html_to_pdf(html_path, output_pdf, title="HR 模板投资组合"):
+def render_html_to_pdf(html_path, output_pdf, title="HR 模板投资组合", lang="zh"):
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page(viewport={"width": 1400, "height": 990})
         page.goto(f"file:///{html_path.replace(os.sep, '/')}", wait_until="networkidle")
         page.wait_for_timeout(800)
 
+        if lang == "en":
+            page.evaluate("if (typeof switchLanguage === 'function') switchLanguage('en');")
+            page.wait_for_timeout(600)
+
         page.emulate_media(media="print")
         page.evaluate("() => { if (window.Chart) { Object.values(Chart.instances).forEach(c => c.resize()); } }")
-        page.wait_for_timeout(400)
+        page.wait_for_timeout(500)
 
         os.makedirs(os.path.dirname(output_pdf), exist_ok=True)
         page.pdf(
@@ -55,43 +59,41 @@ def export_all_deliverables(options=None):
     if options is None:
         options = {
             "export_memo_zh": True,
-            "export_memo_en": False,
+            "export_memo_en": True,
             "export_factsheet_zh": True,
             "export_factsheet_en": True,
             "target_dir": DEFAULT_DRIVE_DIR,
-            "month": "2026-08",
-            "settle_date": "2026-09-03"
+            "month": "2026-09",
+            "settle_date": "2026-10-05"
         }
 
     target_dir = options.get("target_dir") or DEFAULT_DRIVE_DIR
-    month = options.get("month", "2026-08")
-    settle_date = options.get("settle_date", "2026-09-03")
+    month = options.get("month", "2026-09")
+    settle_date = options.get("settle_date", "2026-10-05")
 
     results = []
 
-    # 1. Chinese Memorandum
+    # Load config to get exact settle_date if default
+    cfg_file = os.path.join(BASE_DIR, "config", f"config_{month.replace('-', '_')}.json")
+    if os.path.exists(cfg_file):
+        with open(cfg_file, 'r', encoding='utf-8') as f:
+            c = json.load(f)
+            settle_date = c.get('settle_date', settle_date)
+
+    memo_html = os.path.join(BASE_DIR, "output", f"iFAST_Equity_Growth_Monthly_Report_{month}.html")
+    if not os.path.exists(memo_html):
+        from engine.report_generator import generate_report
+        generate_report(month=month)
+
+    if not os.path.exists(memo_html):
+        memo_html = os.path.join(BASE_DIR, "iFAST_Equity_Growth_Monthly_Report_Latest.html")
+
+    # 1. Chinese Memorandum (5 Slides)
     if options.get("export_memo_zh", True):
-        # Load config to get exact settle_date if default
-        cfg_file = os.path.join(BASE_DIR, "config", f"config_{month.replace('-', '_')}.json")
-        if os.path.exists(cfg_file):
-            with open(cfg_file, 'r', encoding='utf-8') as f:
-                c = json.load(f)
-                settle_date = c.get('settle_date', settle_date)
-
-        memo_html = os.path.join(BASE_DIR, "output", f"iFAST_Equity_Growth_Monthly_Report_{month}.html")
-        if not os.path.exists(memo_html):
-            from engine.report_generator import generate_report
-            generate_report(month=month)
-
-        if not os.path.exists(memo_html):
-            memo_html = os.path.join(BASE_DIR, "iFAST_Equity_Growth_Monthly_Report_Latest.html")
-        if not os.path.exists(memo_html):
-            memo_html = os.path.join(BASE_DIR, "iFAST_Equity_Growth_Monthly_Report_August2026.html")
-
         memo_pdf_name = f"HR_模板投资组合_月度备忘录_{settle_date}.pdf"
         memo_pdf_local = os.path.join(BASE_DIR, "output", memo_pdf_name)
         if os.path.exists(memo_html):
-            render_html_to_pdf(memo_html, memo_pdf_local, "HR 模板投资组合 · 月度投资建议备忘录")
+            render_html_to_pdf(memo_html, memo_pdf_local, "HR 模板投资组合 · 月度投资建议备忘录", lang="zh")
             shutil.copy2(memo_pdf_local, os.path.join(BASE_DIR, memo_pdf_name))
             drive_dest = None
             if os.path.exists(target_dir):
@@ -106,6 +108,28 @@ def export_all_deliverables(options=None):
                 "local": memo_pdf_local,
                 "drive": drive_dest,
                 "download_url": f"/download?file={memo_pdf_name}"
+            })
+
+    # 2. English Memorandum (5 Slides)
+    if options.get("export_memo_en", True):
+        memo_en_pdf_name = f"HR_Model_Portfolio_Advisory_Memorandum_{settle_date}.pdf"
+        memo_en_pdf_local = os.path.join(BASE_DIR, "output", memo_en_pdf_name)
+        if os.path.exists(memo_html):
+            render_html_to_pdf(memo_html, memo_en_pdf_local, "HR Model Portfolio · Monthly Advisory Memorandum", lang="en")
+            shutil.copy2(memo_en_pdf_local, os.path.join(BASE_DIR, memo_en_pdf_name))
+            drive_dest = None
+            if os.path.exists(target_dir):
+                drive_dest = os.path.join(target_dir, memo_en_pdf_name)
+                try:
+                    shutil.copy2(memo_en_pdf_local, drive_dest)
+                except Exception as e:
+                    drive_dest = f"Copy error: {e}"
+            results.append({
+                "type": "memo_en",
+                "name": memo_en_pdf_name,
+                "local": memo_en_pdf_local,
+                "drive": drive_dest,
+                "download_url": f"/download?file={memo_en_pdf_name}"
             })
 
     # 2. Standalone Factsheets (Chinese and English)

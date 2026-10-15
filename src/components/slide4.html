@@ -133,40 +133,18 @@
                         <th class="p-2 text-right" data-i18n="tm_ret">9月回报</th>
                         <th class="p-2" data-i18n="tm_noise">市场短期噪音</th>
                         <th class="p-2" data-i18n="tm_fundam">底层基本面支撑</th>
-                        <th class="p-2 text-center pr-3" data-i18n="tm_action">顾问决策指令</th>
+                        <th class="p-2 text-center pr-3" data-i18n="tm_action">顾问建议</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-200 bg-white text-[11.5px]">
-                    <tr>
-                        <td class="p-2 pl-3 font-bold text-slate-900" data-i18n="c1_name">United China A Shares Innovation A Acc</td>
-                        <td class="p-2 text-right font-mono text-rose-600 font-bold">-5.40%</td>
-                        <td class="p-2 text-slate-600" data-i18n="c1_noise">8月零售数据偏弱，地缘不确定性引发短期外资流出。</td>
-                        <td class="p-2 text-slate-800 font-medium" data-i18n="c1_fundam">9月29日一揽子政策托底，估值处于历史后10%分位，极具非对称获利空间。</td>
-                        <td class="p-2 text-center pr-3"><span class="px-2.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10.5px]" data-i18n="c1_act">坚持持有</span></td>
-                    </tr>
-                    <tr>
-                        <td class="p-2 pl-3 font-bold text-slate-900" data-i18n="c2_name">United Gold and General A Acc SGD</td>
-                        <td class="p-2 text-right font-mono text-rose-600 font-bold">-6.30%</td>
-                        <td class="p-2 text-slate-600" data-i18n="c2_noise">美元指数短期反弹 (DXY 101.45)，引发金价投机性获利回吐。</td>
-                        <td class="p-2 text-slate-800 font-medium" data-i18n="c2_fundam">中东石油供应链阻塞推升滞胀风险，全球央行结构性去美元化增储逻辑未变。</td>
-                        <td class="p-2 text-center pr-3"><span class="px-2.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10.5px]" data-i18n="c2_act">坚持持有</span></td>
-                    </tr>
-                    <tr>
-                        <td class="p-2 pl-3 font-bold text-slate-900" data-i18n="c3_name">Janus Henderson Global Life Sciences</td>
-                        <td class="p-2 text-right font-mono text-rose-600 font-bold">-1.10%</td>
-                        <td class="p-2 text-slate-600" data-i18n="c3_noise">长端利率突破 5.2% 压制高研发型生物医药个股估值。</td>
-                        <td class="p-2 text-slate-800 font-medium" data-i18n="c3_fundam">大型药企自由现金流强劲，创新药管线放量支撑盈利稳步增长。</td>
-                        <td class="p-2 text-center pr-3"><span class="px-2.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10.5px]" data-i18n="c3_act">坚持持有</span></td>
-                    </tr>
+{{CONVICTION_ROWS}}
                 </tbody>
             </table>
         </div>
 
         <!-- 3. Monthly Rebalancing Decision Box -->
-        <div class="bg-blue-50 border border-blue-200 rounded-lg px-3.5 py-2 text-xs text-blue-950 flex justify-between items-center" data-i18n="s4_foot_box">
-            <span class="font-bold text-[#0f2347]">月度调仓结论：</span>
-            <span class="text-[12px] text-slate-700">实际权重漂移均在安全阈值内，底层资产逻辑依然坚实，<strong>本月维持既有 7 只标的目标配比不变，不触发被动赎回</strong>。</span>
-        </div>
+{{REBALANCE_BOX}}
+
 
     </div>
 

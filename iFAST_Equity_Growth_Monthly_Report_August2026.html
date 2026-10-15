@@ -127,8 +127,7 @@
     <!-- Long Image Container Wrapping All 5 Slides -->
     <div id="reportCanvasContainer" class="flex flex-col items-center">
         <!-- INJECT: SLIDE_1 -->
-        
-<div id="slide1" class="landscape-slide relative">
+        <div id="slide1" class="landscape-slide relative">
     <canvas id="canvas_slide1" class="annotation-canvas absolute inset-0 pointer-events-none z-40 w-full h-full"></canvas>
 
     <!-- Slide Header: HR 模板投资组合 + 8月备忘录 -->
@@ -401,10 +400,8 @@
     </div>
 </div>
 
-
         <!-- INJECT: SLIDE_2 -->
-        
-<div id="slide2" class="landscape-slide relative">
+        <div id="slide2" class="landscape-slide relative">
     <canvas id="canvas_slide2" class="annotation-canvas absolute inset-0 pointer-events-none z-40 w-full h-full"></canvas>
     
     <!-- Slide Header -->
@@ -789,7 +786,6 @@
     </div>
 </div>
 
-
         <!-- INJECT: SLIDE_3 -->
         <div id="slide3" class="landscape-slide relative flex flex-col justify-between">
     <canvas id="canvas_slide3" class="annotation-canvas absolute inset-0 pointer-events-none z-40 w-full h-full"></canvas>
@@ -995,8 +991,7 @@
 
 
         <!-- INJECT: SLIDE_4 -->
-        
-<div id="slide4" class="landscape-slide relative flex flex-col justify-between">
+        <div id="slide4" class="landscape-slide relative flex flex-col justify-between">
     <canvas id="canvas_slide4" class="annotation-canvas absolute inset-0 pointer-events-none z-40 w-full h-full"></canvas>
     
     <!-- Slide Header -->
@@ -1203,7 +1198,6 @@
         <span>第 4 页 · 组合配置逻辑与信念复盘</span>
     </div>
 </div>
-
 
         <!-- INJECT: SLIDE_5 -->
         <div id="slide5" class="landscape-slide relative flex flex-col justify-between">
@@ -1852,12 +1846,12 @@
         // INJECT: MAIN_JS
         
     // Master Chart & Interactive Engine for August 2026
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function() {{
         initSlide1Chart();
         initSlide3FrontierChart();
-    });
+    }});
 
-    function initSlide1Chart() {
+    function initSlide1Chart() {{
         const ctx = document.getElementById('lsSlide1RealLineChart');
         if (!ctx) return;
         
@@ -1869,13 +1863,13 @@
         const events = [{"date": "2023-07", "fullDate": "2023-07-05", "status": "Reconstitute", "type": "restructure"}, {"date": "2025-07", "fullDate": "2025-07-03", "status": "Reconstitute", "type": "restructure"}, {"date": "2026-01", "fullDate": "2026-01-05", "status": "Reconstitute", "type": "restructure"}];
 
         // Reconstitution / Rebalance Annotations Plugin
-        const portfolioEventsPlugin = {
+        const portfolioEventsPlugin = {{
             id: 'portfolioEvents',
-            afterDraw(chart) {
-                const { ctx, chartArea: { top, bottom, left, right }, scales: { x, y } } = chart;
+            afterDraw(chart) {{
+                const {{ ctx, chartArea: {{ top, bottom, left, right }}, scales: {{ x, y }} }} = chart;
                 if (!x || !y) return;
 
-                events.forEach(evt => {
+                events.forEach(evt => {{
                     const xIdx = labels.indexOf(evt.date);
                     if (xIdx === -1) return;
                     
@@ -1914,12 +1908,12 @@
                     
                     let badgeX = xPos;
                     const halfW = textWidth / 2 + 4;
-                    if (badgeX + halfW > right) {
+                    if (badgeX + halfW > right) {{
                         badgeX = right - halfW;
-                    }
-                    if (badgeX - halfW < left) {
+                    }}
+                    if (badgeX - halfW < left) {{
                         badgeX = left + halfW;
-                    }
+                    }}
 
                     ctx.fillStyle = mainColor;
                     ctx.fillRect(badgeX - textWidth/2 - 3, badgeY - 8, textWidth + 6, 11);
@@ -1928,16 +1922,16 @@
                     ctx.fillText(text, badgeX, badgeY);
 
                     ctx.restore();
-                });
-            }
-        };
+                }});
+            }}
+        }};
 
-        new Chart(ctx, {
+        new Chart(ctx, {{
             type: 'line',
-            data: {
+            data: {{
                 labels: labels,
                 datasets: [
-                    {
+                    {{
                         label: '当前组合 (主动重组优化)',
                         data: currentData,
                         borderColor: '#dc2626',
@@ -1946,8 +1940,8 @@
                         tension: 0.15,
                         pointRadius: 0,
                         pointHoverRadius: 5
-                    },
-                    {
+                    }},
+                    {{
                         label: '未重组组合 (旧组合对照组)',
                         data: pastData,
                         borderColor: '#2563eb',
@@ -1956,8 +1950,8 @@
                         tension: 0.15,
                         pointRadius: 0,
                         pointHoverRadius: 4
-                    },
-                    {
+                    }},
+                    {{
                         label: 'MSCI 全球指数',
                         data: msciData,
                         borderColor: '#94a3b8',
@@ -1965,8 +1959,8 @@
                         borderDash: [3, 3],
                         tension: 0.15,
                         pointRadius: 0
-                    },
-                    {
+                    }},
+                    {{
                         label: '标普 500 指数',
                         data: spData,
                         borderColor: '#000000',
@@ -1974,80 +1968,80 @@
                         borderDash: [4, 4],
                         tension: 0.15,
                         pointRadius: 0
-                    }
+                    }}
                 ]
-            },
-            options: {
+            }},
+            options: {{
                 responsive: true,
                 maintainAspectRatio: false,
-                layout: {
-                    padding: {
+                layout: {{
+                    padding: {{
                         left: 8,
                         right: 36,
                         top: 16,
                         bottom: 6
-                    }
-                },
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
+                    }}
+                }},
+                plugins: {{
+                    legend: {{ display: false }},
+                    tooltip: {{
                         mode: 'index',
                         intersect: false,
-                        callbacks: {
-                            label: function(context) {
+                        callbacks: {{
+                            label: function(context) {{
                                 const val = (context.parsed.y * 100).toFixed(2) + '%';
                                 return context.dataset.label + ': ' + val;
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        grid: { display: false },
-                        ticks: {
-                            font: { size: 9 },
+                            }}
+                        }}
+                    }}
+                }},
+                scales: {{
+                    x: {{
+                        grid: {{ display: false }},
+                        ticks: {{
+                            font: {{ size: 9 }},
                             maxRotation: 0,
                             autoSkip: false,
-                            callback: function(val, index) {
+                            callback: function(val, index) {{
                                 const d = labels[index];
                                 if (index === 0 || index === labels.length - 1) return d;
                                 if (d === '2026-07') return '';
                                 return (d.endsWith('-01') || d.endsWith('-07')) ? d : '';
-                            }
-                        }
-                    },
-                    y: {
+                            }}
+                        }}
+                    }},
+                    y: {{
                         min: 0.95,
                         max: 2.05,
-                        grid: { color: 'rgba(226, 232, 240, 0.6)' },
-                        ticks: {
-                            font: { size: 9 },
-                            callback: function(val) {
+                        grid: {{ color: 'rgba(226, 232, 240, 0.6)' }},
+                        ticks: {{
+                            font: {{ size: 9 }},
+                            callback: function(val) {{
                                 return ((val - 1.0) * 100).toFixed(0) + '%';
-                            }
-                        }
-                    }
-                }
-            },
+                            }}
+                        }}
+                    }}
+                }}
+            }},
             plugins: [portfolioEventsPlugin]
-        });
-    }
+        }});
+    }}
 
-    function initSlide3FrontierChart() {
+    function initSlide3FrontierChart() {{
         const canvas = document.getElementById('lsFrontierChart');
         if (!canvas) return;
         const ctxS3 = canvas.getContext('2d');
         
-        const frontierDataLabelsPlugin = {
+        const frontierDataLabelsPlugin = {{
             id: 'frontierDataLabels',
-            afterDatasetsDraw(chart) {
-                const { ctx } = chart;
+            afterDatasetsDraw(chart) {{
+                const {{ ctx }} = chart;
                 ctx.save();
                 ctx.font = 'bold 9px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
                 
-                chart.data.datasets.forEach((dataset, dIdx) => {
+                chart.data.datasets.forEach((dataset, dIdx) => {{
                     const meta = chart.getDatasetMeta(dIdx);
-                    meta.data.forEach((element, index) => {
+                    meta.data.forEach((element, index) => {{
                         const pt = dataset.data[index];
                         const label = pt.zh || pt.label;
                         const posX = element.x;
@@ -2055,53 +2049,53 @@
                         
                         ctx.fillStyle = '#0f172a';
                         
-                        if (dIdx === 1) { // 1986-2020 (Dark Blue Line)
-                            if (index === 0) { // 100% Bonds
+                        if (dIdx === 1) {{ // 1986-2020 (Dark Blue Line)
+                            if (index === 0) {{ // 100% Bonds
                                 ctx.textAlign = 'center';
                                 ctx.fillText(label, posX, posY + 16);
-                            } else if (index === 1) { // 25/75
+                            }} else if (index === 1) {{ // 25/75
                                 ctx.textAlign = 'right';
                                 ctx.fillText(label, posX - 6, posY - 2);
-                            } else if (index === meta.data.length - 1) { // 100% Stocks
+                            }} else if (index === meta.data.length - 1) {{ // 100% Stocks
                                 ctx.textAlign = 'center';
                                 ctx.fillText(label, posX, posY - 10);
-                            } else {
+                            }} else {{
                                 ctx.textAlign = 'center';
                                 ctx.fillText(label, posX, posY - 10);
-                            }
-                        } else { // 2021-2025 (Red Line)
-                            if (index === 0) { // 100% Bonds
+                            }}
+                        }} else {{ // 2021-2025 (Red Line)
+                            if (index === 0) {{ // 100% Bonds
                                 ctx.textAlign = 'center';
                                 ctx.fillText(label, posX, posY + 16);
-                            } else if (index === meta.data.length - 1) { // 100% Stocks
+                            }} else if (index === meta.data.length - 1) {{ // 100% Stocks
                                 ctx.textAlign = 'center';
                                 ctx.fillText(label, posX, posY - 10);
-                            } else {
+                            }} else {{
                                 ctx.textAlign = 'left';
                                 ctx.fillText(label, posX + 8, posY + 4);
-                            }
-                        }
-                    });
-                });
+                            }}
+                        }}
+                    }});
+                }});
                 ctx.restore();
-            }
-        };
+            }}
+        }};
 
-        window.s3ChartInstance = new Chart(ctxS3, {
+        window.s3ChartInstance = new Chart(ctxS3, {{
             type: 'scatter',
             plugins: [frontierDataLabelsPlugin],
-            data: {
+            data: {{
                 datasets: [
-                    {
+                    {{
                         label: '2021-2025年实际回报',
                         data: [
-                            { x: 10.5, y: -2.5, label: '100% Bonds', zh: '100% 债券' },
-                            { x: 12.1, y: 2.5, label: '25/75', zh: '25/75' },
-                            { x: 13.9, y: 6.8, label: '50/50', zh: '50/50' },
-                            { x: 15.2, y: 8.9, label: '60/40', zh: '60/40' },
-                            { x: 16.0, y: 10.4, label: '70/30', zh: '70/30' },
-                            { x: 17.3, y: 12.1, label: '80/20', zh: '80/20' },
-                            { x: 19.3, y: 15.8, label: '100% Stocks', zh: '100% 股票' }
+                            {{ x: 10.5, y: -2.5, label: '100% Bonds', zh: '100% 债券' }},
+                            {{ x: 12.1, y: 2.5, label: '25/75', zh: '25/75' }},
+                            {{ x: 13.9, y: 6.8, label: '50/50', zh: '50/50' }},
+                            {{ x: 15.2, y: 8.9, label: '60/40', zh: '60/40' }},
+                            {{ x: 16.0, y: 10.4, label: '70/30', zh: '70/30' }},
+                            {{ x: 17.3, y: 12.1, label: '80/20', zh: '80/20' }},
+                            {{ x: 19.3, y: 15.8, label: '100% Stocks', zh: '100% 股票' }}
                         ],
                         borderColor: '#dc2626',
                         backgroundColor: '#dc2626',
@@ -2110,17 +2104,17 @@
                         tension: 0.1,
                         pointRadius: 4.5,
                         pointHoverRadius: 6.5
-                    },
-                    {
+                    }},
+                    {{
                         label: '1986-2020年历史回报',
                         data: [
-                            { x: 8.5, y: 6.8, label: '100% Bonds', zh: '100% 债券' },
-                            { x: 7.8, y: 8.4, label: '25/75', zh: '25/75' },
-                            { x: 8.8, y: 9.8, label: '50/50', zh: '50/50' },
-                            { x: 10.0, y: 10.2, label: '60/40', zh: '60/40' },
-                            { x: 11.8, y: 10.7, label: '70/30', zh: '70/30' },
-                            { x: 13.2, y: 11.2, label: '80/20', zh: '80/20' },
-                            { x: 15.6, y: 12.3, label: '100% Stocks', zh: '100% 股票' }
+                            {{ x: 8.5, y: 6.8, label: '100% Bonds', zh: '100% 债券' }},
+                            {{ x: 7.8, y: 8.4, label: '25/75', zh: '25/75' }},
+                            {{ x: 8.8, y: 9.8, label: '50/50', zh: '50/50' }},
+                            {{ x: 10.0, y: 10.2, label: '60/40', zh: '60/40' }},
+                            {{ x: 11.8, y: 10.7, label: '70/30', zh: '70/30' }},
+                            {{ x: 13.2, y: 11.2, label: '80/20', zh: '80/20' }},
+                            {{ x: 15.6, y: 12.3, label: '100% Stocks', zh: '100% 股票' }}
                         ],
                         borderColor: '#1e3a8a',
                         backgroundColor: '#1e3a8a',
@@ -2129,135 +2123,135 @@
                         tension: 0.1,
                         pointRadius: 4.5,
                         pointHoverRadius: 6.5
-                    }
+                    }}
                 ]
-            },
-            options: {
+            }},
+            options: {{
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        callbacks: {
-                            label: function(ctx) {
+                plugins: {{
+                    legend: {{ display: false }},
+                    tooltip: {{
+                        callbacks: {{
+                            label: function(ctx) {{
                                 const pt = ctx.raw;
                                 const lbl = pt.zh || pt.label;
-                                return `${ctx.dataset.label} (${lbl}) - 风险: ${pt.x}%, 回报: ${pt.y}%`;
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    x: {
+                                return `${{ctx.dataset.label}} (${{lbl}}) - 风险: ${{pt.x}}%, 回报: ${{pt.y}}%`;
+                            }}
+                        }}
+                    }}
+                }},
+                scales: {{
+                    x: {{
                         min: 6.0,
                         max: 21.0,
-                        title: {
+                        title: {{
                             display: true,
                             text: '年化波动率 / 风险 (标准差)',
-                            font: { size: 9, weight: 'bold' },
+                            font: {{ size: 9, weight: 'bold' }},
                             color: '#0f172a'
-                        },
-                        ticks: {
+                        }},
+                        ticks: {{
                             stepSize: 2.0,
-                            callback: function(v){ return v.toFixed(1) + '%'; },
-                            font: { size: 8.5, weight: 'bold' },
+                            callback: function(v){{ return v.toFixed(1) + '%'; }},
+                            font: {{ size: 8.5, weight: 'bold' }},
                             color: '#334155'
-                        },
-                        grid: { color: '#cbd5e1' }
-                    },
-                    y: {
+                        }},
+                        grid: {{ color: '#cbd5e1' }}
+                    }},
+                    y: {{
                         min: -5.0,
                         max: 20.0,
-                        title: {
+                        title: {{
                             display: true,
                             text: '年化实际回报率 (%)',
-                            font: { size: 9, weight: 'bold' },
+                            font: {{ size: 9, weight: 'bold' }},
                             color: '#0f172a'
-                        },
-                        ticks: {
+                        }},
+                        ticks: {{
                             stepSize: 5.0,
-                            callback: function(v){ return v.toFixed(1) + '%'; },
-                            font: { size: 8.5, weight: 'bold' },
+                            callback: function(v){{ return v.toFixed(1) + '%'; }},
+                            font: {{ size: 8.5, weight: 'bold' }},
                             color: '#334155'
-                        },
-                        grid: {
-                            color: function(ctx) {
+                        }},
+                        grid: {{
+                            color: function(ctx) {{
                                 if (ctx.tick && ctx.tick.value === 0) return '#000000';
                                 return '#cbd5e1';
-                            },
-                            lineWidth: function(ctx) {
+                            }},
+                            lineWidth: function(ctx) {{
                                 if (ctx.tick && ctx.tick.value === 0) return 2;
                                 return 1;
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    }
+                            }}
+                        }}
+                    }}
+                }}
+            }}
+        }});
+    }}
 
-    window.addEventListener('beforeprint', () => {
-        if (window.Chart) {
+    window.addEventListener('beforeprint', () => {{
+        if (window.Chart) {{
             Object.values(Chart.instances).forEach(c => c.resize());
-        }
-    });
-    window.addEventListener('afterprint', () => {
-        if (window.Chart) {
+        }}
+    }});
+    window.addEventListener('afterprint', () => {{
+        if (window.Chart) {{
             Object.values(Chart.instances).forEach(c => c.resize());
-        }
-    });
+        }}
+    }});
 
-    function scrollToSlide(n) {
+    function scrollToSlide(n) {{
         const el = document.getElementById('slide' + n);
-        if (el) {
-            el.scrollIntoView({ behavior: 'smooth' });
-        }
-    }
+        if (el) {{
+            el.scrollIntoView({{ behavior: 'smooth' }});
+        }}
+    }}
 
-    function switchLanguage(lang) {
-        if (lang === 'en') {
+    function switchLanguage(lang) {{
+        if (lang === 'en') {{
             alert('8月专业定制备忘录当前仅提供中文机构版。');
-        }
-    }
+        }}
+    }}
 
-    function exportPDF() {
+    function exportPDF() {{
         window.print();
-    }
+    }}
 
-    async function exportLongImage() {
+    async function exportLongImage() {{
         const btn = document.getElementById('btnLongPng');
         const originalText = btn ? btn.innerHTML : '';
-        if (btn) {
+        if (btn) {{
             btn.innerHTML = '<span>正在生成6页长图...</span>';
             btn.disabled = true;
-        }
-        try {
+        }}
+        try {{
             const container = document.getElementById('reportCanvasContainer');
-            const canvas = await html2canvas(container, {
+            const canvas = await html2canvas(container, {{
                 scale: 2,
                 useCORS: true,
                 backgroundColor: '#0b1120',
                 logging: false
-            });
+            }});
             const link = document.createElement('a');
             link.download = 'HR_模板投资组合_6页全景备忘录_2026-08.png';
             link.href = canvas.toDataURL('image/png');
             link.click();
-            if (btn) {
+            if (btn) {{
                 btn.innerHTML = '<span>✅ 导出成功!</span>';
-                setTimeout(() => {
+                setTimeout(() => {{
                     btn.innerHTML = originalText;
                     btn.disabled = false;
-                }, 2500);
-            }
-        } catch (err) {
+                }}, 2500);
+            }}
+        }} catch (err) {{
             alert('长图生成失败: ' + err);
-            if (btn) {
+            if (btn) {{
                 btn.innerHTML = originalText;
                 btn.disabled = false;
-            }
-        }
-    }
+            }}
+        }}
+    }}
     
     </script>
 </body>

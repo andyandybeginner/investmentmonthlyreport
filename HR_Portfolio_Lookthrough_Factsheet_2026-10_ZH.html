@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR 模板投资组合 · 资产穿透全景分析与风险报告 (2026-10)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+            background-color: #0b1120;
+            color: #1e293b;
+            margin: 0;
+            padding: 0;
+        }
+        .mono-num { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+        .landscape-slide {
+            background: #ffffff;
+            width: 1400px;
+            height: 990px;
+            margin: 1.5rem auto;
+            border-radius: 1rem;
+            overflow: hidden;
+            border: 1px solid #cbd5e1;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        @media print {
+            @page {
+                size: 297mm 210mm;
+                margin: 0;
+            }
+            .no-print { display: none !important; }
+            html, body {
+                width: 297mm !important;
+                height: 210mm !important;
+                background: white !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            .landscape-slide {
+                box-shadow: none !important;
+                border: none !important;
+                margin: 0 !important;
+                width: 100% !important;
+                height: 100vh !important;
+                border-radius: 0 !important;
+            }
+        }
+    </style>
+</head>
+<body class="p-4">
+    <!-- Standalone Action Bar (No-Print) -->
+    <div class="max-w-[1400px] mx-auto mb-3 flex justify-between items-center no-print bg-slate-800/80 px-5 py-2.5 rounded-xl border border-slate-700 text-white text-xs">
+        <div class="flex items-center gap-2">
+            <span class="font-bold text-amber-400">HR Model Portfolio</span>
+            <span class="text-slate-400">|</span>
+            <span>HR 模板投资组合 · 资产穿透全景分析与风险报告 (2026-10)</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <button onclick="window.print()" class="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 font-bold text-xs transition">
+                🖨️ 打印 / 保存为 PDF
+            </button>
+            <a href="/" class="px-3 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 font-bold text-xs transition">
+                返回控制台
+            </a>
+        </div>
+    </div>
+
+    <!-- Standalone Slide Content -->
+    <!-- Slide 6: 底层优选基金穿透全景分析 (Portfolio Look-Through & Risk Analytics) -->
+<div id="slide6" class="landscape-slide relative flex flex-col justify-between">
+    <canvas id="canvas_slide6" class="annotation-canvas absolute inset-0 pointer-events-none z-40 w-full h-full"></canvas>
+
+    <!-- Slide Header -->
+    <div class="bg-gradient-to-r from-[#091528] via-[#0f2347] to-[#163566] text-white px-8 py-2 border-b-2 border-amber-500 flex justify-between items-center shrink-0">
+        <div>
+            <div class="flex items-center space-x-2 text-[11px] uppercase tracking-wider font-bold mb-0.5">
+                <span class="bg-amber-400/20 px-2 py-0.5 rounded text-amber-300 border border-amber-400/30">底层优选基金穿透透视 · 组合全景资产配置</span>
+            </div>
+            <div class="flex items-baseline gap-3">
+                <h1 class="text-lg font-extrabold tracking-tight text-white">HR 模板投资组合穿透全景分析</h1>
+                <span class="text-amber-400 font-bold text-[11px] bg-slate-900/80 px-2.5 py-0.5 rounded border border-amber-500/50">8月底层透析</span>
+            </div>
+        </div>
+        
+        <div class="flex items-center gap-3 text-right">
+            <div class="bg-white/10 px-3 py-1 rounded-lg border border-white/15">
+                <span class="text-slate-300 block text-[9px] uppercase font-semibold">分析数据基准</span>
+                <span class="text-amber-300 font-extrabold text-xs mono-num">2026年8月31日 官方Factsheets</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top KPI Banner: 4 Portfolio Level Core Metrics (Compact) -->
+    <div class="px-7 py-1.5 bg-slate-100/90 border-b border-slate-200 grid grid-cols-4 gap-3 shrink-0">
+        <!-- Metric 1: Annualised Volatility -->
+        <div class="bg-white border border-slate-200/90 rounded-lg px-3 py-1 shadow-xs flex items-center gap-2.5">
+            <div class="w-7 h-7 rounded-md bg-teal-50 border border-teal-200 flex items-center justify-center shrink-0">
+                <svg class="w-3.5 h-3.5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+            </div>
+            <div>
+                <span class="text-[9.5px] text-slate-500 font-semibold block uppercase leading-tight">组合实盘年化波动率 (3Y)</span>
+                <div class="flex items-baseline gap-1.5 leading-none mt-0.5">
+                    <span class="text-sm font-extrabold text-[#0f2347] mono-num">13.42%</span>
+                    <span class="text-[9px] text-emerald-700 font-bold bg-emerald-50 px-1 rounded">vs 科技基准 23.1%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Metric 2: Sharpe Ratio -->
+        <div class="bg-white border border-slate-200/90 rounded-lg px-3 py-1 shadow-xs flex items-center gap-2.5">
+            <div class="w-7 h-7 rounded-md bg-amber-50 border border-amber-200 flex items-center justify-center shrink-0">
+                <svg class="w-3.5 h-3.5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+            </div>
+            <div>
+                <span class="text-[9.5px] text-slate-500 font-semibold block uppercase leading-tight">组合实盘夏普比率 (Sharpe)</span>
+                <div class="flex items-baseline gap-1.5 leading-none mt-0.5">
+                    <span class="text-sm font-extrabold text-amber-700 mono-num">1.35 ~ 1.41</span>
+                    <span class="text-[9px] text-amber-800 font-bold bg-amber-50 px-1 rounded">无风险率 3.0%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Metric 3: Top 10 Concentration -->
+        <div class="bg-white border border-slate-200/90 rounded-lg px-3 py-1 shadow-xs flex items-center gap-2.5">
+            <div class="w-7 h-7 rounded-md bg-blue-50 border border-blue-200 flex items-center justify-center shrink-0">
+                <svg class="w-3.5 h-3.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+            </div>
+            <div>
+                <span class="text-[9.5px] text-slate-500 font-semibold block uppercase leading-tight">前十大重仓集中度 (Top 10)</span>
+                <div class="flex items-baseline gap-1.5 leading-none mt-0.5">
+                    <span class="text-sm font-extrabold text-blue-800 mono-num">17.86%</span>
+                    <span class="text-[9px] text-blue-700 font-bold bg-blue-50 px-1 rounded">最大单票 3.35%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Metric 4: Effective Securities Count -->
+        <div class="bg-white border border-slate-200/90 rounded-lg px-3 py-1 shadow-xs flex items-center gap-2.5">
+            <div class="w-7 h-7 rounded-md bg-purple-50 border border-purple-200 flex items-center justify-center shrink-0">
+                <svg class="w-3.5 h-3.5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+            <div>
+                <span class="text-[9.5px] text-slate-500 font-semibold block uppercase leading-tight">底层穿透证券资产总数</span>
+                <div class="flex items-baseline gap-1.5 leading-none mt-0.5">
+                    <span class="text-sm font-extrabold text-purple-900 mono-num">380+ 只</span>
+                    <span class="text-[9px] text-purple-800 font-bold bg-purple-50 px-1 rounded">跨越 11 个全球市场</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Body: 3 Columns Layout (Col 1: Geo | Col 2: Sector | Col 3: Top 10 Holdings & Fund Matrix) -->
+    <div class="px-7 py-2 grid grid-cols-12 gap-3.5 flex-1 items-stretch overflow-hidden">
+        
+        <!-- Column 1 (3 Cols): 总体地理配置 Geographical Allocation -->
+        <div class="col-span-3 bg-white border border-slate-200 rounded-xl p-2.5 shadow-xs flex flex-col justify-between">
+            <div class="flex justify-between items-center mb-1 border-b border-slate-100 pb-1">
+                <h4 class="text-[11.5px] font-extrabold uppercase tracking-tight text-[#0f2347] flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
+                    <span>总体加权地理配置</span>
+                </h4>
+                <span class="text-[9px] text-slate-400 font-semibold">组合加权穿透</span>
+            </div>
+
+            <div class="space-y-1 text-[10px] flex-1 flex flex-col justify-around">
+                <!-- Geo 1: USA -->
+                <div>
+                    <div class="flex justify-between font-semibold text-slate-700">
+                        <span class="flex items-center gap-1"><span>🇺🇸</span><span>美国 United States</span></span>
+                        <span class="font-mono font-bold text-blue-900">45.07%</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-1 overflow-hidden mt-0.5">
+                        <div class="bg-blue-600 h-1 rounded-full" style="width: 45.07%"></div>
+                    </div>
+                </div>
+
+                <!-- Geo 2: China -->
+                <div>
+                    <div class="flex justify-between font-semibold text-slate-700">
+                        <span class="flex items-center gap-1"><span>🇨🇳</span><span>中国 China (A股+离岸)</span></span>
+                        <span class="font-mono font-bold text-rose-800">12.95%</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-1 overflow-hidden mt-0.5">
+                        <div class="bg-rose-500 h-1 rounded-full" style="width: 12.95%"></div>
+                    </div>
+                </div>
+
+                <!-- Geo 3: Europe & Developed -->
+                <div>
+                    <div class="flex justify-between font-semibold text-slate-700">
+                        <span class="flex items-center gap-1"><span>🇪🇺</span><span>欧洲及发达市场</span></span>
+                        <span class="font-mono font-bold text-slate-800">10.74%</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-1 overflow-hidden mt-0.5">
+                        <div class="bg-slate-500 h-1 rounded-full" style="width: 10.74%"></div>
+                    </div>
+                </div>
+
+                <!-- Geo 4: Canada -->
+                <div>
+                    <div class="flex justify-between font-semibold text-slate-700">
+                        <span class="flex items-center gap-1"><span>🇨🇦</span><span>加拿大 Canada (金矿)</span></span>
+                        <span class="font-mono font-bold text-amber-800">5.44%</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-1 overflow-hidden mt-0.5">
+                        <div class="bg-amber-600 h-1 rounded-full" style="width: 5.44%"></div>
+                    </div>
+                </div>
+
+                <!-- Geo 5: Cash -->
+                <div>
+                    <div class="flex justify-between font-semibold text-slate-700">
+                        <span class="flex items-center gap-1"><span>💵</span><span>现金与对冲工具</span></span>
+                        <span class="font-mono font-bold text-emerald-800">5.15%</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-1 overflow-hidden mt-0.5">
+                        <div class="bg-emerald-500 h-1 rounded-full" style="width: 5.15%"></div>
+                    </div>
+                </div>
+
+                <!-- Geo 6: Taiwan -->
+                <div>
+                    <div class="flex justify-between font-semibold text-slate-700">
+                        <span class="flex items-center gap-1"><span>🇹🇼</span><span>中国台湾 (先进半导体)</span></span>
+                        <span class="font-mono font-bold text-cyan-800">4.79%</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-1 overflow-hidden mt-0.5">
+                        <div class="bg-cyan-600 h-1 rounded-full" style="width: 4.79%"></div>
+                    </div>
+                </div>
+
+                <!-- Geo 7: Japan -->
+                <div>
+                    <div class="flex justify-between font-semibold text-slate-700">
+                        <span class="flex items-center gap-1"><span>🇯🇵</span><span>日本 Japan (优质高息)</span></span>
+                        <span class="font-mono font-bold text-indigo-800">4.37%</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-1 overflow-hidden mt-0.5">
+                        <div class="bg-indigo-600 h-1 rounded-full" style="width: 4.37%"></div>
+                    </div>
+                </div>
+
+                <!-- Geo 8: Australia -->
+                <div>
+                    <div class="flex justify-between font-semibold text-slate-700">
+                        <span class="flex items-center gap-1"><span>🇦🇺</span><span>澳大利亚 (资源采掘)</span></span>
+                        <span class="font-mono font-bold text-amber-700">4.16%</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-1 overflow-hidden mt-0.5">
+                        <div class="bg-amber-500 h-1 rounded-full" style="width: 4.16%"></div>
+                    </div>
+                </div>
+
+                <!-- Geo 9: Singapore -->
+                <div>
+                    <div class="flex justify-between font-semibold text-slate-700">
+                        <span class="flex items-center gap-1"><span>🇸🇬</span><span>新加坡 (财富枢纽)</span></span>
+                        <span class="font-mono font-bold text-teal-800">2.93%</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-1 overflow-hidden mt-0.5">
+                        <div class="bg-teal-600 h-1 rounded-full" style="width: 2.93%"></div>
+                    </div>
+                </div>
+
+                <!-- Geo 10: South Korea & Others -->
+                <div>
+                    <div class="flex justify-between font-semibold text-slate-700">
+                        <span class="flex items-center gap-1"><span>🇰🇷</span><span>韩国及其他市场</span></span>
+                        <span class="font-mono font-bold text-purple-800">4.40%</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-1 overflow-hidden mt-0.5">
+                        <div class="bg-purple-600 h-1 rounded-full" style="width: 4.40%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Column 2 (3 Cols): 总体加权行业分布 Sector Allocation & Strategy Tag -->
+        <div class="col-span-3 bg-white border border-slate-200 rounded-xl p-2.5 shadow-xs flex flex-col justify-between">
+            <div class="flex justify-between items-center mb-1 border-b border-slate-100 pb-1">
+                <h4 class="text-[11.5px] font-extrabold uppercase tracking-tight text-[#0f2347] flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                    <span>总体加权行业分布</span>
+                </h4>
+                <span class="text-[9px] text-slate-400 font-semibold">GICS 穿透映射</span>
+            </div>
+
+            <div class="space-y-1.5 text-[10px] flex-1 flex flex-col justify-around">
+                <!-- Sector 1: Tech -->
+                <div>
+                    <div class="flex justify-between font-semibold text-slate-700">
+                        <span class="font-bold text-blue-900">信息技术 (IT / 半导体)</span>
+                        <span class="font-mono font-bold text-blue-900">29.45%</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-1 overflow-hidden mt-0.5">
+                        <div class="bg-blue-600 h-1 rounded-full" style="width: 29.45%"></div>
+                    </div>
+                    <span class="text-[8.5px] text-slate-400 block leading-tight">AI 算力、先进制程与云服务底座</span>
+                </div>
+
+                <!-- Sector 2: Healthcare -->
+                <div>
+                    <div class="flex justify-between font-semibold text-slate-700">
+                        <span class="font-bold text-emerald-900">医疗健康 (Health Care)</span>
+                        <span class="font-mono font-bold text-emerald-800">17.77%</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-1 overflow-hidden mt-0.5">
+                        <div class="bg-emerald-600 h-1 rounded-full" style="width: 17.77%"></div>
+                    </div>
+                    <span class="text-[8.5px] text-slate-400 block leading-tight">减肥药GLP-1、生命科学与创新耗材</span>
+                </div>
+
+                <!-- Sector 3: Materials & Gold -->
+                <div>
+                    <div class="flex justify-between font-semibold text-slate-700">
+                        <span class="font-bold text-amber-900">原材料与黄金矿业 (Materials)</span>
+                        <span class="font-mono font-bold text-amber-800">16.23%</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-1 overflow-hidden mt-0.5">
+                        <div class="bg-amber-600 h-1 rounded-full" style="width: 16.23%"></div>
+                    </div>
+                    <span class="text-[8.5px] text-amber-700 font-medium block leading-tight">含纯黄金穿透 10.46%，逆周期对冲核心</span>
+                </div>
+
+                <!-- Sector 4: Financials -->
+                <div>
+                    <div class="flex justify-between font-semibold text-slate-700">
+                        <span class="font-bold text-indigo-900">金融与财富管理 (Financials)</span>
+                        <span class="font-mono font-bold text-indigo-800">11.34%</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-1 overflow-hidden mt-0.5">
+                        <div class="bg-indigo-600 h-1 rounded-full" style="width: 11.34%"></div>
+                    </div>
+                    <span class="text-[8.5px] text-slate-400 block leading-tight">新加坡银行与高息价值龙头</span>
+                </div>
+
+                <!-- Sector 5: Industrials -->
+                <div>
+                    <div class="flex justify-between font-semibold text-slate-700">
+                        <span class="font-bold text-slate-800">工业与先进制造 (Industrials)</span>
+                        <span class="font-mono font-bold text-slate-800">9.22%</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-1 overflow-hidden mt-0.5">
+                        <div class="bg-slate-600 h-1 rounded-full" style="width: 9.22%"></div>
+                    </div>
+                    <span class="text-[8.5px] text-slate-400 block leading-tight">多元化工业、自动化与高分子材料</span>
+                </div>
+
+                <!-- Sector 6: Cash & Equivalents -->
+                <div>
+                    <div class="flex justify-between font-semibold text-slate-700">
+                        <span class="font-bold text-teal-800">现金与流动性对冲 (Cash)</span>
+                        <span class="font-mono font-bold text-teal-800">5.15%</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-1 overflow-hidden mt-0.5">
+                        <div class="bg-teal-500 h-1 rounded-full" style="width: 5.15%"></div>
+                    </div>
+                    <span class="text-[8.5px] text-slate-400 block leading-tight">货币基金与流动性储备缓冲</span>
+                </div>
+
+                <!-- Sector 7: Communication Services -->
+                <div>
+                    <div class="flex justify-between font-semibold text-slate-700">
+                        <span class="font-bold text-sky-800">通信服务 (Communication)</span>
+                        <span class="font-mono font-bold text-sky-800">5.01%</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-1 overflow-hidden mt-0.5">
+                        <div class="bg-sky-600 h-1 rounded-full" style="width: 5.01%"></div>
+                    </div>
+                </div>
+
+                <!-- Sector 8: Consumer & Others -->
+                <div>
+                    <div class="flex justify-between font-semibold text-slate-700">
+                        <span class="font-bold text-purple-800">消费及其他新兴行业</span>
+                        <span class="font-mono font-bold text-purple-800">5.83%</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-1 overflow-hidden mt-0.5">
+                        <div class="bg-purple-600 h-1 rounded-full" style="width: 5.83%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Strategy Pillar Summary Box -->
+            <div class="mt-1 bg-amber-50/70 border border-amber-200/80 rounded-lg p-1.5 text-[9.5px] text-amber-950">
+                <span class="font-bold text-[#0f2347] block mb-0.5">三支柱均衡对冲结构：</span>
+                <span class="text-slate-600 leading-tight block">科技进攻（29%）+ 黄金医药防御（34%）+ 金融高息底仓（11%），兼顾成长弹性与抗滞胀韧性。</span>
+            </div>
+        </div>
+
+        <!-- Column 3 (6 Cols): Top 10 Holdings Table + Fund Risk & Feature Matrix -->
+        <div class="col-span-6 flex flex-col justify-between space-y-2 overflow-hidden">
+            
+            <!-- 1. Top 10 Holdings Table -->
+            <div class="bg-white border border-slate-200 rounded-xl p-2.5 shadow-xs flex-1 flex flex-col justify-between overflow-hidden">
+                <div class="flex justify-between items-center mb-1 border-b border-slate-100 pb-1">
+                    <h4 class="text-[11.5px] font-extrabold uppercase tracking-tight text-[#0f2347] flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
+                        <span>总体投资组合·穿透前十大核心重仓标的 (Top 10 Look-Through Holdings)</span>
+                    </h4>
+                    <span class="text-[9.5px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded">
+                        Top 10 合计 17.86%
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 overflow-hidden">
+                    <!-- Left Sub-table: Rank 1 - 5 -->
+                    <table class="w-full text-left text-xs border border-slate-200 rounded-lg overflow-hidden border-collapse">
+                        <thead>
+                            <tr class="bg-[#0f2347] text-white text-[9px] uppercase font-bold">
+                                <th class="py-1 px-1 text-center w-5">#</th>
+                                <th class="py-1 px-1">穿透重仓标的 (1-5)</th>
+                                <th class="py-1 px-1 text-right font-bold w-11">权重</th>
+                                <th class="py-1 px-1 text-slate-300">来源基金穿透重叠</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 bg-white text-[9px] leading-tight">
+                            <tr class="bg-amber-50/60 hover:bg-amber-50 transition">
+                                <td class="py-1 px-1 text-center font-bold text-amber-800 mono-num">1</td>
+                                <td class="py-1 px-1 font-bold text-slate-900 truncate max-w-[110px]">Alphabet (谷歌 GOOGL)</td>
+                                <td class="py-1 px-1 text-right font-extrabold text-blue-900 mono-num">3.35%</td>
+                                <td class="py-1 px-1 text-slate-600 text-[8.5px] truncate max-w-[130px]"><span class="font-bold text-blue-800">富顿</span>(7.9%)+<span class="font-bold text-sky-800">东方</span>(3.9%)</td>
+                            </tr>
+                            <tr class="bg-blue-50/40 hover:bg-blue-50/60 transition">
+                                <td class="py-1 px-1 text-center font-bold text-blue-800 mono-num">2</td>
+                                <td class="py-1 px-1 font-bold text-slate-900 truncate max-w-[110px]">台积电 TSMC (2330)</td>
+                                <td class="py-1 px-1 text-right font-extrabold text-blue-900 mono-num">2.54%</td>
+                                <td class="py-1 px-1 text-slate-600 text-[8.5px] truncate max-w-[130px]"><span class="font-bold text-sky-800">东方</span>(7.8%)+<span class="font-bold text-blue-800">富顿</span>(2.8%)+<span class="font-bold text-purple-800">FSSA</span>(9.7%)</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition">
+                                <td class="py-1 px-1 text-center font-bold text-slate-600 mono-num">3</td>
+                                <td class="py-1 px-1 font-bold text-slate-900 truncate max-w-[110px]">微软 Microsoft (MSFT)</td>
+                                <td class="py-1 px-1 text-right font-bold text-slate-800 mono-num">1.89%</td>
+                                <td class="py-1 px-1 text-slate-600 text-[8.5px] truncate max-w-[130px]"><span class="font-bold text-sky-800">东方</span>(5.6%)+<span class="font-bold text-blue-800">富顿</span>(3.0%)</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition">
+                                <td class="py-1 px-1 text-center font-bold text-slate-600 mono-num">4</td>
+                                <td class="py-1 px-1 font-semibold text-slate-900 truncate max-w-[110px]">赛默飞世尔 (TMO)</td>
+                                <td class="py-1 px-1 text-right font-bold text-slate-800 mono-num">1.80%</td>
+                                <td class="py-1 px-1 text-slate-600 text-[8.5px] truncate max-w-[130px]"><span class="font-bold text-blue-800">富顿</span>(3.9%)+<span class="font-bold text-emerald-800">骏利</span>(2.9%)</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition">
+                                <td class="py-1 px-1 text-center font-bold text-slate-600 mono-num">5</td>
+                                <td class="py-1 px-1 font-semibold text-slate-900 truncate max-w-[110px]">鸿海精密 (2317)</td>
+                                <td class="py-1 px-1 text-right font-bold text-slate-800 mono-num">1.50%</td>
+                                <td class="py-1 px-1 text-slate-600 text-[8.5px] truncate max-w-[130px]"><span class="font-bold text-blue-800">富顿底仓</span>(4.3%)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Right Sub-table: Rank 6 - 10 -->
+                    <table class="w-full text-left text-xs border border-slate-200 rounded-lg overflow-hidden border-collapse">
+                        <thead>
+                            <tr class="bg-[#0f2347] text-white text-[9px] uppercase font-bold">
+                                <th class="py-1 px-1 text-center w-5">#</th>
+                                <th class="py-1 px-1">穿透重仓标的 (6-10)</th>
+                                <th class="py-1 px-1 text-right font-bold w-11">权重</th>
+                                <th class="py-1 px-1 text-slate-300">来源基金穿透重叠</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 bg-white text-[9px] leading-tight">
+                            <tr class="hover:bg-slate-50 transition">
+                                <td class="py-1 px-1 text-center font-bold text-slate-600 mono-num">6</td>
+                                <td class="py-1 px-1 font-semibold text-slate-900 truncate max-w-[110px]">3M 公司 (MMM)</td>
+                                <td class="py-1 px-1 text-right font-bold text-slate-800 mono-num">1.47%</td>
+                                <td class="py-1 px-1 text-slate-600 text-[8.5px] truncate max-w-[130px]"><span class="font-bold text-blue-800">富顿底仓</span>(4.2%)</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition">
+                                <td class="py-1 px-1 text-center font-bold text-slate-600 mono-num">7</td>
+                                <td class="py-1 px-1 font-semibold text-slate-900 truncate max-w-[110px]">礼来制药 (LLY)</td>
+                                <td class="py-1 px-1 text-right font-bold text-slate-800 mono-num">1.37%</td>
+                                <td class="py-1 px-1 text-slate-600 text-[8.5px] truncate max-w-[130px]"><span class="font-bold text-emerald-800">骏利生命科学</span>(9.2%)</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition">
+                                <td class="py-1 px-1 text-center font-bold text-slate-600 mono-num">8</td>
+                                <td class="py-1 px-1 font-semibold text-slate-900 truncate max-w-[110px]">英伟达 (NVDA)</td>
+                                <td class="py-1 px-1 text-right font-bold text-slate-800 mono-num">1.33%</td>
+                                <td class="py-1 px-1 text-slate-600 text-[8.5px] truncate max-w-[130px]"><span class="font-bold text-sky-800">东方汇理科技</span>(8.9%)</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition">
+                                <td class="py-1 px-1 text-center font-bold text-slate-600 mono-num">9</td>
+                                <td class="py-1 px-1 font-semibold text-slate-900 truncate max-w-[110px]">纽蒙特黄金 (NEM)</td>
+                                <td class="py-1 px-1 text-right font-bold text-slate-800 mono-num">1.33%</td>
+                                <td class="py-1 px-1 text-slate-600 text-[8.5px] truncate max-w-[130px]"><span class="font-bold text-amber-800">大华黄金综合</span>(8.9%)</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition">
+                                <td class="py-1 px-1 text-center font-bold text-slate-600 mono-num">10</td>
+                                <td class="py-1 px-1 font-semibold text-slate-900 truncate max-w-[110px]">新加坡华侨银行 (OCBC)</td>
+                                <td class="py-1 px-1 text-right font-bold text-slate-800 mono-num">1.27%</td>
+                                <td class="py-1 px-1 text-slate-600 text-[8.5px] truncate max-w-[130px]"><span class="font-bold text-blue-800">富顿</span>(3.3%)+<span class="font-bold text-purple-800">FSSA</span>(3.0%)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 2. Fund Risk & Feature Matrix -->
+            <div class="bg-white border border-slate-200 rounded-xl p-2.5 shadow-xs flex-1 flex flex-col justify-between overflow-hidden">
+                <div class="flex justify-between items-center mb-1 border-b border-slate-100 pb-1">
+                    <h4 class="text-[11.5px] font-extrabold uppercase tracking-tight text-[#0f2347] flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
+                        <span>底层 7 只优选基金风险收益与关键特征穿透矩阵</span>
+                    </h4>
+                    <span class="text-[9px] text-slate-400 font-semibold">官方 Factsheets 权威统计</span>
+                </div>
+
+                <div class="overflow-hidden">
+                    <table class="w-full text-left text-xs border border-slate-200 rounded-lg overflow-hidden border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-700 text-[9.5px] uppercase font-bold border-b border-slate-200">
+                                <th class="py-1 px-1.5">底层基金全称</th>
+                                <th class="py-1 px-1.5 text-right font-bold w-12">目标配比</th>
+                                <th class="py-1 px-1.5 text-right font-bold w-12">3年夏普</th>
+                                <th class="py-1 px-1.5 text-right font-bold w-14">3年年化波动</th>
+                                <th class="py-1 px-1.5 font-bold">核心配置职能与超额阿尔法贡献</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 bg-white text-[9.5px] leading-tight">
+                            <tr>
+                                <td class="py-0.5 px-1.5 font-bold text-blue-900 truncate max-w-[170px]">Fullerton Global Absolute Alpha</td>
+                                <td class="py-0.5 px-1.5 text-right font-semibold text-slate-700 mono-num">35.0%</td>
+                                <td class="py-0.5 px-1.5 text-right text-emerald-700 font-bold mono-num">0.62*</td>
+                                <td class="py-0.5 px-1.5 text-right text-slate-700 mono-num">13.80%</td>
+                                <td class="py-0.5 px-1.5 text-slate-600 text-[9px]">全天候底仓，索提诺 0.93，多空选股平滑震荡 (*自成立)</td>
+                            </tr>
+                            <tr>
+                                <td class="py-0.5 px-1.5 font-bold text-sky-900 truncate max-w-[170px]">Eastspring Global Technology</td>
+                                <td class="py-0.5 px-1.5 text-right font-semibold text-slate-700 mono-num">15.0%</td>
+                                <td class="py-0.5 px-1.5 text-right text-emerald-700 font-bold mono-num">1.10</td>
+                                <td class="py-0.5 px-1.5 text-right text-rose-700 font-bold mono-num">23.10%</td>
+                                <td class="py-0.5 px-1.5 text-slate-600 text-[9px]">科技成长矛头，紧抓英伟达/台积电半导体（46.9%）超额弹性</td>
+                            </tr>
+                            <tr>
+                                <td class="py-0.5 px-1.5 font-bold text-emerald-900 truncate max-w-[170px]">Janus Henderson Life Sciences</td>
+                                <td class="py-0.5 px-1.5 text-right font-semibold text-slate-700 mono-num">15.0%</td>
+                                <td class="py-0.5 px-1.5 text-right text-slate-700 font-bold mono-num">0.43</td>
+                                <td class="py-0.5 px-1.5 text-right text-slate-700 mono-num">14.98%</td>
+                                <td class="py-0.5 px-1.5 text-slate-600 text-[9px]">非周期性刚需防御，礼来/强生创新药提供稳健现金流屏障</td>
+                            </tr>
+                            <tr>
+                                <td class="py-0.5 px-1.5 font-bold text-amber-900 truncate max-w-[170px]">United Gold and General A</td>
+                                <td class="py-0.5 px-1.5 text-right font-semibold text-slate-700 mono-num">15.0%</td>
+                                <td class="py-0.5 px-1.5 text-right text-emerald-700 font-extrabold mono-num">1.38^</td>
+                                <td class="py-0.5 px-1.5 text-right text-slate-700 mono-num">24.50%</td>
+                                <td class="py-0.5 px-1.5 text-slate-600 text-[9px]">逆周期对冲支柱，3年年化+42.5%，纯黄金穿透10.46%，抗通胀与去美元化</td>
+                            </tr>
+                            <tr>
+                                <td class="py-0.5 px-1.5 font-bold text-rose-900 truncate max-w-[170px]">United China A Shares Innovation</td>
+                                <td class="py-0.5 px-1.5 text-right font-semibold text-slate-700 mono-num">12.0%</td>
+                                <td class="py-0.5 px-1.5 text-right text-slate-700 font-bold mono-num">0.75^</td>
+                                <td class="py-0.5 px-1.5 text-right text-slate-700 mono-num">22.00%</td>
+                                <td class="py-0.5 px-1.5 text-slate-600 text-[9px]">3年年化+18.4%，中际旭创/寒武纪国产AI算力基底，低估值非对称获利</td>
+                            </tr>
+                            <tr>
+                                <td class="py-0.5 px-1.5 font-bold text-purple-900 truncate max-w-[170px]">FSSA Asian Growth Fund</td>
+                                <td class="py-0.5 px-1.5 text-right font-semibold text-slate-700 mono-num">4.0%</td>
+                                <td class="py-0.5 px-1.5 text-right text-slate-700 font-bold mono-num">0.68^</td>
+                                <td class="py-0.5 px-1.5 text-right text-slate-700 mono-num">15.20%</td>
+                                <td class="py-0.5 px-1.5 text-slate-600 text-[9px]">3年累计+44.2%，精选台积电/三星/腾讯/印度私银等亚洲最高护城河</td>
+                            </tr>
+                            <tr>
+                                <td class="py-0.5 px-1.5 font-bold text-indigo-900 truncate max-w-[170px]">Nikko AM Japan Dividend</td>
+                                <td class="py-0.5 px-1.5 text-right font-semibold text-slate-700 mono-num">4.0%</td>
+                                <td class="py-0.5 px-1.5 text-right text-emerald-700 font-bold mono-num">1.01</td>
+                                <td class="py-0.5 px-1.5 text-right text-slate-700 mono-num">12.42%</td>
+                                <td class="py-0.5 px-1.5 text-slate-600 text-[9px]">新币对冲B类，3年年化波动率仅12.4%，受益于日银加息与企业治理改革</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Slide Footer -->
+    <div class="bg-slate-100 px-8 py-1.5 border-t border-slate-200 flex justify-between items-center text-[10px] text-slate-500 shrink-0">
+        <span class="max-w-4xl truncate">
+            数据来源：底层 7 只优选基金官方 Factsheets（截至2026年8月31日）及组合真实净值时序数据库。穿透数据由各基金最新前十大持仓与目标配比加权综合推算，仅供专业投资顾问咨询展示。历史业绩不预示未来回报。
+        </span>
+        <span class="font-mono text-slate-600 font-semibold shrink-0">第 6 页 · 组合穿透配置与风险深度洞察</span>
+    </div>
+</div>
+
+</body>
+</html>
