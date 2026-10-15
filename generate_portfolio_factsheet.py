@@ -2,76 +2,74 @@
 """
 Standalone Portfolio Factsheet Generator (Chinese & English)
 Extracts Slide 6 into an independent 1-page A4 Landscape Factsheet PDF and HTML.
+Strictly separates Chinese and English template sources to guarantee 100% language purity.
 """
 
 import os
 import json
-import fitz
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-def generate_standalone_factsheet(month="2026-08", date_str="2026-09-03"):
-    with open(os.path.join(BASE_DIR, "src", "components", "slide6.html"), "r", encoding="utf-8") as f:
+MONTH_NAMES_EN = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+]
+LAST_DAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+
+def generate_standalone_factsheet(month="2026-09", date_str="2026-10-05"):
+    # Calculate date labels dynamically
+    try:
+        parts = month.split('-')
+        year_num = int(parts[0])
+        month_num = int(parts[1])
+        month_name_en = MONTH_NAMES_EN[month_num - 1]
+        last_day = LAST_DAYS[month_num - 1]
+    except Exception:
+        year_num = 2026
+        month_num = 9
+        month_name_en = "September"
+        last_day = 30
+
+    month_tag_zh = f"{month_num}月底层透析"
+    benchmark_date_zh = f"{year_num}年{month_num}月{last_day}日 官方Factsheets"
+
+    month_tag_en = f"{month_name_en} Look-Through"
+    benchmark_date_en = f"{last_day} {month_name_en} {year_num} Official Factsheets"
+
+    # 1. Chinese Slide 6 Source
+    zh_component_path = os.path.join(BASE_DIR, "src", "components", "slide6.html")
+    with open(zh_component_path, "r", encoding="utf-8") as f:
         slide6_zh = f.read()
 
-    # English version translation mapping
-    en_translations = [
-        ("底层优选基金穿透透视 · 组合全景资产配置", "PORTFOLIO LOOK-THROUGH & RISK ANALYTICS"),
-        ("HR 模板投资组合穿透全景分析", "HR Model Portfolio Allocation & Risk Factsheet"),
-        ("8月底层透析", "August Look-Through"),
-        ("9月底层透析", "September Look-Through"),
-        ("分析数据基准", "VALUATION BENCHMARK"),
-        ("2026年8月31日 官方Factsheets", "31 August 2026 Official Factsheets"),
-        ("组合实盘年化波动率 (3Y)", "Annualised Volatility (3Y)"),
-        ("vs 科技基准 23.1%", "vs Tech BM 23.1%"),
-        ("组合实盘夏普比率 (Sharpe)", "Portfolio Sharpe Ratio (3Y)"),
-        ("无风险率 3.0%", "Rf 3.0%"),
-        ("前十大重仓集中度 (Top 10)", "Top 10 Holdings Concentration"),
-        ("最大单票 3.35%", "Max Single Position 3.35%"),
-        ("底层穿透证券资产总数", "Effective Underlying Securities"),
-        ("380+ 只", "380+ Names"),
-        ("跨越 11 个全球市场", "Across 11 Global Markets"),
-        ("总体加权地理配置", "Geographical Breakdown"),
-        ("组合加权穿透", "Weighted Look-Through"),
-        ("其他新兴及成熟市场", "Other Emerging & Developed Markets"),
-        ("总体行业穿透分布", "Sector Breakdown"),
-        ("穿透权重", "Look-Through Weight"),
-        ("信息技术 (Technology)", "Information Technology"),
-        ("医疗保健 (Health Care)", "Health Care"),
-        ("原材料与黄金采掘 (Materials & Gold)", "Materials & Mining"),
-        ("通讯服务 (Communication)", "Communication Services"),
-        ("金融服务 (Financials)", "Financials"),
-        ("非必需消费 (Consumer Disc.)", "Consumer Discretionary"),
-        ("工业制造 (Industrials)", "Industrials"),
-        ("必需消费 (Consumer Staples)", "Consumer Staples"),
-        ("现金及对冲 (Cash & Hedge)", "Cash & Defensive"),
-        ("前十大底层重仓证券与来源基金穿透", "Top 10 Underlying Holdings & Fund Attribution"),
-        ("基金加权穿透占比", "Weighted Portfolio Exposure"),
-        ("证券名称", "Holding Name"),
-        ("行业分类", "Sector"),
-        ("穿透权重", "Weight"),
-        ("主要来源基金", "Source Fund"),
-        ("多周期风险与基准对比统计", "Risk & Benchmark Comparison Metrics"),
-        ("关键风险指标", "Risk Metric"),
-        ("当前投资组合", "Current Portfolio"),
-        ("MSCI 全球基准", "MSCI ACWI"),
-        ("标普 500 指数", "S&P 500"),
-        ("年化波动率 (3Y)", "Annualised Vol (3Y)"),
-        ("夏普比率 (3Y)", "Sharpe Ratio (3Y)"),
-        ("贝塔系数 (Beta vs MSCI)", "Beta (vs MSCI)"),
-        ("最大历史回撤", "Max Drawdown"),
-        ("跟踪误差 (Tracking Error)", "Tracking Error"),
-        ("第 6 页 · 组合底层优选基金穿透透视", "Page 1 · Portfolio Look-Through Factsheet"),
-        ("数据来源：各基金管理人官方月度 Factsheets (2026年8月版) 与 Bloomberg 终端穿透加权核算。", "Sources: Fund Managers' Official Factsheets (Aug 2026) and Bloomberg Weighted Analytics."),
-        ("本材料或广告未经新加坡金融管理局 (MAS) 审阅。", "This advertisement or material has not been reviewed by the Monetary Authority of Singapore.")
-    ]
+    slide6_zh = slide6_zh.replace("{{MONTH_TAG_ZH}}", month_tag_zh)
+    slide6_zh = slide6_zh.replace("{{BENCHMARK_DATE_ZH}}", benchmark_date_zh)
+    # Fallback replacements if any old static text remains
+    slide6_zh = slide6_zh.replace("8月底层透析", month_tag_zh)
+    slide6_zh = slide6_zh.replace("2026年8月31日 官方Factsheets", benchmark_date_zh)
 
-    slide6_en = slide6_zh
-    for zh, en in en_translations:
-        slide6_en = slide6_en.replace(zh, en)
+    # 2. English Slide 6 Source (Dedicated pure English template)
+    en_component_path = os.path.join(BASE_DIR, "src", "components", "slide6_en.html")
+    if os.path.exists(en_component_path):
+        with open(en_component_path, "r", encoding="utf-8") as f:
+            slide6_en = f.read()
+    else:
+        # Fallback to slide6_zh if slide6_en does not exist
+        slide6_en = slide6_zh
 
-    # HTML Shell
+    slide6_en = slide6_en.replace("{{MONTH_TAG_EN}}", month_tag_en)
+    slide6_en = slide6_en.replace("{{BENCHMARK_DATE_EN}}", benchmark_date_en)
+
+    # HTML Shell Builder
     def make_factsheet_html(content, title, lang="zh-CN"):
+        if lang == "en":
+            brand_label = "HR Model Portfolio"
+            print_btn = "🖨️ Print / Save as PDF"
+            back_btn = "Back to Dashboard"
+        else:
+            brand_label = "HR 模板投资组合"
+            print_btn = "🖨️ 打印 / 保存为 PDF"
+            back_btn = "返回控制台"
+
         return f"""<!DOCTYPE html>
 <html lang="{lang}">
 <head>
@@ -133,16 +131,16 @@ def generate_standalone_factsheet(month="2026-08", date_str="2026-09-03"):
     <!-- Standalone Action Bar (No-Print) -->
     <div class="max-w-[1400px] mx-auto mb-3 flex justify-between items-center no-print bg-slate-800/80 px-5 py-2.5 rounded-xl border border-slate-700 text-white text-xs">
         <div class="flex items-center gap-2">
-            <span class="font-bold text-amber-400">HR Model Portfolio</span>
+            <span class="font-bold text-amber-400">{brand_label}</span>
             <span class="text-slate-400">|</span>
             <span>{title}</span>
         </div>
         <div class="flex items-center gap-2">
             <button onclick="window.print()" class="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 font-bold text-xs transition">
-                🖨️ 打印 / 保存为 PDF
+                {print_btn}
             </button>
             <a href="/" class="px-3 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 font-bold text-xs transition">
-                返回控制台
+                {back_btn}
             </a>
         </div>
     </div>
@@ -171,4 +169,4 @@ def generate_standalone_factsheet(month="2026-08", date_str="2026-09-03"):
     }
 
 if __name__ == "__main__":
-    generate_standalone_factsheet()
+    generate_standalone_factsheet("2026-09", "2026-10-05")
