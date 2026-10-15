@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-High-Resolution PDF & Multi-Slide Exporter
-Renders HTML reports to A4 Landscape PDF and synchronizes directly to Google Drive.
+High-Resolution Multi-Format Exporter
+Exports:
+1. HR Model Portfolio Monthly Advisory Memorandum (Chinese & English)
+2. Standalone Portfolio Look-Through & Risk Factsheet (Chinese & English)
+Synchronizes directly to Google Drive and workspace.
 """
 
 import os
@@ -10,31 +13,22 @@ import fitz
 from playwright.sync_api import sync_playwright
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DRIVE_DIR = r"G:\我的云端硬盘\0. 工作\2. 投资分析计划 01102026\3. Monthly Report"
+DEFAULT_DRIVE_DIR = r"G:\我的云端硬盘\0. 工作\2. 投资分析计划 01102026\3. Monthly Report"
 
-def export_pdf(html_path=None, pdf_filename="HR_模板投资组合_月度备忘录_2026-09-03.pdf"):
-    if not html_path:
-        html_path = os.path.join(BASE_DIR, "iFAST_Equity_Growth_Monthly_Report_August2026.html")
-    
-    output_pdf_local = os.path.join(BASE_DIR, "output", pdf_filename)
-    root_pdf_local = os.path.join(BASE_DIR, pdf_filename)
-    drive_pdf_path = os.path.join(DRIVE_DIR, pdf_filename)
-    
-    print(f"🚀 Launching Playwright Chromium for: {html_path}")
+def render_html_to_pdf(html_path, output_pdf, title="HR 模板投资组合"):
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page(viewport={"width": 1400, "height": 990})
         page.goto(f"file:///{html_path.replace(os.sep, '/')}", wait_until="networkidle")
-        page.wait_for_timeout(1000)
+        page.wait_for_timeout(800)
 
-        # Emulate print media and trigger responsive canvas resizing
         page.emulate_media(media="print")
         page.evaluate("() => { if (window.Chart) { Object.values(Chart.instances).forEach(c => c.resize()); } }")
-        page.wait_for_timeout(500)
+        page.wait_for_timeout(400)
 
-        # Export high-res A4 Landscape PDF (297mm x 210mm)
+        os.makedirs(os.path.dirname(output_pdf), exist_ok=True)
         page.pdf(
-            path=output_pdf_local,
+            path=output_pdf,
             width="297mm",
             height="210mm",
             margin={"top": "0mm", "bottom": "0mm", "left": "0mm", "right": "0mm"},
@@ -43,53 +37,117 @@ def export_pdf(html_path=None, pdf_filename="HR_模板投资组合_月度备忘�
         )
         browser.close()
 
-    # Sanitize PDF Metadata Title & Author
-    doc = fitz.open(output_pdf_local)
+    # Sanitize PDF Metadata
+    doc = fitz.open(output_pdf)
     meta = doc.metadata
-    meta["title"] = "HR 模板投资组合 · 月度投资咨询备忘录"
-    meta["subject"] = "投资顾问咨询月度备忘录"
+    meta["title"] = title
     meta["author"] = "Gu Haoran / Alpha Wealth"
-    meta["keywords"] = "HR 模板投资组合, 月度备忘录, 资产配置"
+    meta["subject"] = "Institutional Wealth Advisory Deliverable"
     doc.set_metadata(meta)
-    temp_pdf = output_pdf_local + ".clean.pdf"
+    temp_pdf = output_pdf + ".clean.pdf"
     doc.save(temp_pdf)
     doc.close()
-    os.replace(temp_pdf, output_pdf_local)
+    os.replace(temp_pdf, output_pdf)
+    return output_pdf
 
-    # Sync to root for backward compatibility
-    shutil.copy2(output_pdf_local, root_pdf_local)
+def export_all_deliverables(options=None):
+    if options is None:
+        options = {
+            "export_memo_zh": True,
+            "export_memo_en": False,
+            "export_factsheet_zh": True,
+            "export_factsheet_en": True,
+            "target_dir": DEFAULT_DRIVE_DIR,
+            "month": "2026-08",
+            "settle_date": "2026-09-03"
+        }
 
-    # Sync to Google Drive
-    drive_status = "Not accessible"
-    if os.path.exists(DRIVE_DIR):
-        try:
-            shutil.copy2(output_pdf_local, drive_pdf_path)
-            drive_status = f"Successfully copied to {drive_pdf_path}"
-        except PermissionError:
-            alt_path = os.path.join(DRIVE_DIR, pdf_filename.replace(".pdf", " (更新).pdf"))
-            shutil.copy2(output_pdf_local, alt_path)
-            drive_status = f"Saved as {alt_path} (target was locked by viewer)"
+    target_dir = options.get("target_dir") or DEFAULT_DRIVE_DIR
+    month = options.get("month", "2026-08")
+    settle_date = options.get("settle_date", "2026-09-03")
 
-    # Generate Page Previews into output/previews/
-    previews_dir = os.path.join(BASE_DIR, "output", "previews")
-    os.makedirs(previews_dir, exist_ok=True)
-    doc = fitz.open(output_pdf_local)
-    preview_files = []
-    for idx, page in enumerate(doc):
-        pix = page.get_pixmap(dpi=150)
-        img_name = f"page_{idx+1}.png"
-        img_path = os.path.join(previews_dir, img_name)
-        pix.save(img_path)
-        preview_files.append(img_path)
-    doc.close()
+    results = []
 
-    print(f"✅ Export completed: {output_pdf_local} ({len(preview_files)} pages). Drive: {drive_status}")
+    # 1. Chinese Memorandum
+    if options.get("export_memo_zh", True):
+        memo_html = os.path.join(BASE_DIR, "iFAST_Equity_Growth_Monthly_Report_August2026.html")
+        memo_pdf_name = f"HR_模板投资组合_月度备忘录_{settle_date}.pdf"
+        memo_pdf_local = os.path.join(BASE_DIR, "output", memo_pdf_name)
+        if os.path.exists(memo_html):
+            render_html_to_pdf(memo_html, memo_pdf_local, "HR 模板投资组合 · 月度投资建议备忘录")
+            shutil.copy2(memo_pdf_local, os.path.join(BASE_DIR, memo_pdf_name))
+            drive_dest = None
+            if os.path.exists(target_dir):
+                drive_dest = os.path.join(target_dir, memo_pdf_name)
+                try:
+                    shutil.copy2(memo_pdf_local, drive_dest)
+                except Exception as e:
+                    drive_dest = f"Copy error: {e}"
+            results.append({"type": "memo_zh", "name": memo_pdf_name, "local": memo_pdf_local, "drive": drive_dest})
+
+    # 2. Standalone Factsheets (Chinese and English)
+    from generate_portfolio_factsheet import generate_standalone_factsheet
+    factsheet_files = generate_standalone_factsheet(month=month, date_str=settle_date)
+
+    if options.get("export_factsheet_zh", True):
+        fs_zh_pdf_name = f"HR_模板投资组合_资产穿透与风险报告_{settle_date}.pdf"
+        fs_zh_pdf_local = os.path.join(BASE_DIR, "output", fs_zh_pdf_name)
+        render_html_to_pdf(factsheet_files["zh_html"], fs_zh_pdf_local, "HR 模板投资组合 · 资产穿透与风险报告")
+        drive_dest = None
+        if os.path.exists(target_dir):
+            drive_dest = os.path.join(target_dir, fs_zh_pdf_name)
+            try:
+                shutil.copy2(fs_zh_pdf_local, drive_dest)
+            except Exception as e:
+                drive_dest = f"Copy error: {e}"
+        results.append({"type": "factsheet_zh", "name": fs_zh_pdf_name, "local": fs_zh_pdf_local, "drive": drive_dest})
+
+    if options.get("export_factsheet_en", True):
+        fs_en_pdf_name = f"HR_Model_Portfolio_Risk_Factsheet_{settle_date}.pdf"
+        fs_en_pdf_local = os.path.join(BASE_DIR, "output", fs_en_pdf_name)
+        render_html_to_pdf(factsheet_files["en_html"], fs_en_pdf_local, "HR Model Portfolio Risk Factsheet")
+        drive_dest = None
+        if os.path.exists(target_dir):
+            drive_dest = os.path.join(target_dir, fs_en_pdf_name)
+            try:
+                shutil.copy2(fs_en_pdf_local, drive_dest)
+            except Exception as e:
+                drive_dest = f"Copy error: {e}"
+        results.append({"type": "factsheet_en", "name": fs_en_pdf_name, "local": fs_en_pdf_local, "drive": drive_dest})
+
+    # Generate page previews for the Chinese memo if exported
+    previews = []
+    memo_pdf_local = os.path.join(BASE_DIR, "output", f"HR_模板投资组合_月度备忘录_{settle_date}.pdf")
+    if os.path.exists(memo_pdf_local):
+        previews_dir = os.path.join(BASE_DIR, "output", "previews")
+        os.makedirs(previews_dir, exist_ok=True)
+        doc = fitz.open(memo_pdf_local)
+        for idx, page in enumerate(doc):
+            pix = page.get_pixmap(dpi=150)
+            img_path = os.path.join(previews_dir, f"page_{idx+1}.png")
+            pix.save(img_path)
+            previews.append(img_path)
+        doc.close()
+
     return {
-        "local_pdf": output_pdf_local,
-        "drive_status": drive_status,
-        "pages_rendered": len(preview_files),
-        "previews": preview_files
+        "status": "success",
+        "deliverables": results,
+        "previews": previews,
+        "count": len(results)
+    }
+
+def export_pdf():
+    # Backward compatibility
+    res = export_all_deliverables()
+    memo = next((d for d in res["deliverables"] if d["type"] == "memo_zh"), None)
+    return {
+        "local_pdf": memo["local"] if memo else "",
+        "drive_status": memo["drive"] if memo else "",
+        "pages_rendered": len(res["previews"])
     }
 
 if __name__ == "__main__":
-    export_pdf()
+    print("Testing multi-deliverable export...")
+    res = export_all_deliverables()
+    for d in res["deliverables"]:
+        print(f" - {d['name']}: Local={d['local']}, Drive={d['drive']}")

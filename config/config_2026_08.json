@@ -11,7 +11,7 @@
   "portfolio_aum_sgd": 183380.86,
   "cumulative_return_current": 83.38,
   "cumulative_return_past": 86.53,
-  "cumulative_return_sp500": 69.50,
+  "cumulative_return_sp500": 69.5,
   "cumulative_return_msci": 68.72,
   "alpha_vs_msci": 14.66,
   "monthly_return_1m": 0.35,
@@ -19,7 +19,7 @@
   "monthly_conflict_calibration": "黄金配置与穿透校准：研报对黄金维持审慎（建议至多10%配置）。本组合大华黄金目标权重15%，底层穿透仅约72.08%为纯黄金资产，真实纯黄金敞口约10.46%，与研报10%避险上限严格吻合，并在8月金价暴涨+24.00%中发挥关键防守压舱石效应。",
   "manager_input": {
     "qualitative_view": "8月受长端美债收益率攀升至5.3%创2007年新高影响，全球科技成长股出现估值分母端短期压制，组合科技板块回调；然而大华黄金单月暴涨+24.00%（穿透真实纯黄金敞口10.46%），发挥了极其卓越的非对称抗通胀与避险压舱石效应，驱动组合全月实现+0.35%正收益，跑赢标普500同期表现。",
-    "rebalance_verdict": "坚持持有",
+    "rebalance_verdict": "持有",
     "rebalance_note": "实际权重漂移均在安全阈值内，大华黄金避险收益强劲平滑科技波动，8月维持既有 7 只标的目标配比不变，不触发被动赎回。",
     "holdings_conviction": [
       {
@@ -29,7 +29,7 @@
         "return_1m": "+24.00%",
         "market_noise": "金价短期急涨后可能面临获利盘了结与美元指数技术性反弹。",
         "fundamental_support": "美债30年期收益率升破5.3%，去美元化与全球央行购金逻辑坚实，非对称对冲大放异彩。",
-        "advisory_directive": "坚持持有"
+        "advisory_recommendation": "持有"
       },
       {
         "id": "tech",
@@ -38,7 +38,7 @@
         "return_1m": "-5.64%",
         "market_noise": "长端美债收益率攀升引发半导体估值分母端压制，芯片股短期震荡。",
         "fundamental_support": "英伟达财报亮眼，云巨头资本开支扩张，AI 硬件供需瓶颈突出，回调创造极佳逢低吸纳窗口。",
-        "advisory_directive": "坚持持有"
+        "advisory_recommendation": "持有"
       },
       {
         "id": "china_a",
@@ -47,7 +47,7 @@
         "return_1m": "-3.09%",
         "market_noise": "7月宏观数据复苏不均，零售消费温和，房地产投资持续收缩。",
         "fundamental_support": "在岸科技制造与国产AI技术稳步突破，估值处于历史绝对低位，政策托底与流动性注入预期强烈。",
-        "advisory_directive": "坚持持有"
+        "advisory_recommendation": "持有"
       },
       {
         "id": "fullerton",
@@ -56,7 +56,7 @@
         "return_1m": "+0.36%",
         "market_noise": "多空对冲策略在科技单边轮动行情下超额弹性相对温和。",
         "fundamental_support": "自下而上低贝塔多空配对交易，全月平稳穿越外围动荡，忠实履行组合下行减震底仓使命。",
-        "advisory_directive": "坚持持有"
+        "advisory_recommendation": "持有"
       },
       {
         "id": "life_sci",
@@ -65,7 +65,7 @@
         "return_1m": "-0.21%",
         "market_noise": "高利率环境下生物医药并购融资成本抬升，板块交易情绪偏弱。",
         "fundamental_support": "大型跨国药企重磅GLP-1药物与肿瘤研发管线现金流强劲，防御属性与长期估值修复潜力突出。",
-        "advisory_directive": "坚持持有"
+        "advisory_recommendation": "持有"
       },
       {
         "id": "fssa",
@@ -74,7 +74,7 @@
         "return_1m": "+1.12%",
         "market_noise": "新兴市场汇率受强美元反弹扰动，部分出口型经济体面临通胀压力。",
         "fundamental_support": "重仓印度与东南亚内需消费蓝筹，企业资本回报率与治理结构卓越，有效抵御外部波动。",
-        "advisory_directive": "坚持持有"
+        "advisory_recommendation": "持有"
       },
       {
         "id": "nikko",
@@ -83,7 +83,7 @@
         "return_1m": "+1.30%",
         "market_noise": "日本央行7-2加息25个基点，日元套息交易平仓引发东证指数间歇性震荡。",
         "fundamental_support": "东京证交所PBR改善改革持续深化，企业回购与股息分红创新高，日经反弹中现金流防御优异。",
-        "advisory_directive": "坚持持有"
+        "advisory_recommendation": "持有"
       }
     ]
   }

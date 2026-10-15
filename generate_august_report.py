@@ -46,8 +46,18 @@ def generate_report():
         ret_color = "text-emerald-600" if ret.startswith("+") else "text-rose-600"
         noise = h.get("market_noise", "")
         fundam = h.get("fundamental_support", "")
-        dir_text = h.get("advisory_directive", "坚持持有")
-        badge_bg = "bg-emerald-100 text-emerald-800" if dir_text == "坚持持有" else ("bg-rose-100 text-rose-800" if "削减" in dir_text else "bg-amber-100 text-amber-800")
+        dir_text = h.get("advisory_recommendation") or h.get("advisory_directive", "持有")
+        if dir_text in ["坚持持有", "持有"]:
+            dir_text = "持有"
+            badge_bg = "bg-emerald-100 text-emerald-800 border border-emerald-300"
+        elif dir_text in ["调仓", "主动调仓", "审慎削减"]:
+            dir_text = "调仓"
+            badge_bg = "bg-amber-100 text-amber-800 border border-amber-300"
+        elif dir_text in ["更换标的", "更换"]:
+            dir_text = "更换标的"
+            badge_bg = "bg-rose-100 text-rose-800 border border-rose-300"
+        else:
+            badge_bg = "bg-slate-100 text-slate-800"
         conviction_rows += f"""
                     <tr>
                         <td class="{py_class} pl-3 font-bold text-slate-900 truncate max-w-[210px]">{fname}</td>
@@ -876,7 +886,7 @@ def generate_report():
                         <th class="p-2 text-right">8月回报</th>
                         <th class="p-2">市场短期噪音</th>
                         <th class="p-2">底层基本面支撑</th>
-                        <th class="p-2 text-center pr-3 whitespace-nowrap min-w-[85px]">顾问决策指令</th>
+                        <th class="p-2 text-center pr-3 whitespace-nowrap min-w-[85px]">顾问建议</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-200 bg-white text-[11px]">
@@ -887,7 +897,7 @@ def generate_report():
 
         <!-- 3. Monthly Rebalancing Decision Box -->
         <div class="bg-blue-50 border border-blue-200 rounded-lg px-3.5 py-2 text-xs text-blue-950 flex justify-between items-center">
-            <span class="font-bold text-[#0f2347]">月度调仓结论（{{REBALANCE_VERDICT}}）：</span>
+            <span class="font-bold text-[#0f2347]">月度顾问建议（{{REBALANCE_VERDICT}}）：</span>
             <span class="text-[12px] text-slate-700">{{REBALANCE_NOTE}}</span>
         </div>
 
