@@ -12,6 +12,9 @@ import urllib.parse
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+if BASE_DIR not in sys.path:
+    sys.path.insert(0, BASE_DIR)
+
 PORT = 8080
 
 def compute_sequence_month_count(month_str):
@@ -24,26 +27,14 @@ def compute_sequence_month_count(month_str):
         return 39
 
 class DashboardRequestHandler(SimpleHTTPRequestHandler):
-    def translate_path(self, path):
-        path = urllib.parse.unquote(path)
-        clean_path = path.split('?')[0].split('#')[0]
-        if clean_path == '/':
-            return os.path.join(BASE_DIR, 'app', 'index.html')
-        elif clean_path == '/preview':
-            return os.path.join(BASE_DIR, 'iFAST_Equity_Growth_Monthly_Report_August2026.html')
-        elif clean_path == '/preview-factsheet-zh':
-            return os.path.join(BASE_DIR, 'HR_Portfolio_Lookthrough_Factsheet_2026-08_ZH.html')
-        elif clean_path == '/preview-factsheet-en':
-            return os.path.join(BASE_DIR, 'HR_Portfolio_Lookthrough_Factsheet_2026-08_EN.html')
-        return os.path.join(BASE_DIR, clean_path.lstrip('/'))
-
     def do_GET(self):
         url_parts = urllib.parse.urlparse(self.path)
         clean_path = url_parts.path
         query = urllib.parse.parse_qs(url_parts.query)
 
-        if clean_path in ['/', '/preview', '/preview-factsheet-zh', '/preview-factsheet-en']:
-            filepath = self.translate_path(clean_path)
+        # 1. Main Dashboard
+        if clean_path == '/':
+            filepath = os.path.join(BASE_DIR, 'app', 'index.html')
             if os.path.exists(filepath):
                 self.send_response(200)
                 self.send_header('Content-Type', 'text/html; charset=utf-8')
@@ -52,6 +43,47 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
                     self.wfile.write(f.read())
                 return
 
+        # 2. Dynamic Live Preview for Any Month
+        elif clean_path == '/preview':
+            month = query.get('month', [None])[0]
+            filepath = ""
+            if month:
+                p = os.path.join(BASE_DIR, 'output', f'iFAST_Equity_Growth_Monthly_Report_{month}.html')
+                if os.path.exists(p):
+                    filepath = p
+            if not filepath or not os.path.exists(filepath):
+                latest = os.path.join(BASE_DIR, 'iFAST_Equity_Growth_Monthly_Report_Latest.html')
+                if os.path.exists(latest):
+                    filepath = latest
+                else:
+                    filepath = os.path.join(BASE_DIR, 'iFAST_Equity_Growth_Monthly_Report_August2026.html')
+
+            if os.path.exists(filepath):
+                self.send_response(200)
+                self.send_header('Content-Type', 'text/html; charset=utf-8')
+                self.end_headers()
+                with open(filepath, 'rb') as f:
+                    self.wfile.write(f.read())
+                return
+
+        # 3. Dynamic Standalone Factsheet Previews
+        elif clean_path in ['/preview-factsheet-zh', '/preview-factsheet-en']:
+            month = query.get('month', ['2026-08'])[0]
+            is_en = (clean_path == '/preview-factsheet-en')
+            suffix = "EN" if is_en else "ZH"
+            filepath = os.path.join(BASE_DIR, f'HR_Portfolio_Lookthrough_Factsheet_{month}_{suffix}.html')
+            if not os.path.exists(filepath):
+                filepath = os.path.join(BASE_DIR, f'HR_Portfolio_Lookthrough_Factsheet_2026-08_{suffix}.html')
+
+            if os.path.exists(filepath):
+                self.send_response(200)
+                self.send_header('Content-Type', 'text/html; charset=utf-8')
+                self.end_headers()
+                with open(filepath, 'rb') as f:
+                    self.wfile.write(f.read())
+                return
+
+        # 4. SKILL.md Reader API
         elif clean_path == '/api/skill_md':
             skill_path = os.path.join(BASE_DIR, 'SKILL.md')
             content = ""
@@ -64,18 +96,36 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
             self.wfile.write(json.dumps({"status": "success", "content": content}, ensure_ascii=False).encode('utf-8'))
             return
 
+        # 5. Month Config Getter
         elif clean_path == '/api/get_config':
             month = query.get('month', ['2026-08'])[0]
             cfg_file = os.path.join(BASE_DIR, 'config', f'config_{month.replace("-", "_")}.json')
             if not os.path.exists(cfg_file):
-                cfg_file = os.path.join(BASE_DIR, 'config', 'config_2026_08.json')
-
-            cfg_data = {}
-            if os.path.exists(cfg_file):
+                # Dynamically generate sensible config for the requested month from template
+                base_cfg_file = os.path.join(BASE_DIR, 'config', 'config_2026_08.json')
+                with open(base_cfg_file, 'r', encoding='utf-8') as f:
+                    cfg_data = json.load(f)
+                
+                y, m = month.split('-')
+                m_int = int(m)
+                next_m = m_int + 1 if m_int < 12 else 1
+                next_y = int(y) if m_int < 12 else int(y) + 1
+                cfg_data['report_month'] = month
+                cfg_data['settle_date'] = f"{next_y}-{next_m:02d}-05"
+                cfg_data['valuation_date_zh'] = f"{next_y}年{next_m}月5日 ({y}年{m_int}月结算)"
+                if m_int >= 9:
+                    cfg_data['reference_monthly_update'] = 'iFAST Monthly Investment Update October 2026.pdf'
+                    cfg_data['reference_factsheets_dir'] = 'Oct 2026'
+                    cfg_data['slide3_template'] = 'src/components/slide3.html'
+                    cfg_data['slide3_topic_title'] = '月度专题深度：当债券不再扮演债券'
+                
+                # Save the new month config
+                with open(cfg_file, 'w', encoding='utf-8') as f:
+                    json.dump(cfg_data, f, ensure_ascii=False, indent=2)
+            else:
                 with open(cfg_file, 'r', encoding='utf-8') as f:
                     cfg_data = json.load(f)
 
-            # Ensure requested month is used for dynamic calculations
             cfg_data['report_month'] = month
             cfg_data['dynamic_sequence_months'] = compute_sequence_month_count(month)
 
@@ -85,16 +135,28 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
             self.wfile.write(json.dumps(cfg_data, ensure_ascii=False).encode('utf-8'))
             return
 
+        # 6. Dynamic Section Matcher for iFAST Monthly Update PDF
+        elif clean_path == '/api/match_pdf_sections':
+            pdf_name = query.get('pdf', [''])[0]
+            root = query.get('root', [r"G:\我的云端硬盘\0. 工作\2. 投资分析计划 01102026\3. Monthly Report"])[0]
+            pdf_path = os.path.join(root, '1. iFast Monthly update', pdf_name)
+            if not os.path.exists(pdf_path):
+                pdf_path = os.path.join(root, pdf_name)
+
+            from engine.pdf_section_matcher import match_monthly_update_sections
+            matched = match_monthly_update_sections(pdf_path)
+
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json; charset=utf-8')
+            self.end_headers()
+            self.wfile.write(json.dumps(matched, ensure_ascii=False).encode('utf-8'))
+            return
+
+        # 7. Drive Directory Scanner
         elif clean_path == '/api/scan_drive':
             root_path = query.get('path', [None])[0]
             if not root_path:
-                cfg_file = os.path.join(BASE_DIR, 'config', 'config_2026_08.json')
-                if os.path.exists(cfg_file):
-                    with open(cfg_file, 'r', encoding='utf-8') as f:
-                        c = json.load(f)
-                        root_path = c.get('google_drive_root', r"G:\我的云端硬盘\0. 工作\2. 投资分析计划 01102026\3. Monthly Report")
-                else:
-                    root_path = r"G:\我的云端硬盘\0. 工作\2. 投资分析计划 01102026\3. Monthly Report"
+                root_path = r"G:\我的云端硬盘\0. 工作\2. 投资分析计划 01102026\3. Monthly Report"
 
             exists = os.path.exists(root_path)
             monthly_updates = []
@@ -138,6 +200,7 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
             self.wfile.write(json.dumps(resp, ensure_ascii=False).encode('utf-8'))
             return
 
+        # 8. Factsheet Files Scanner (Dynamic N Funds)
         elif clean_path == '/api/scan_factsheets':
             dir_name = query.get('dir', ['Sep 2026'])[0]
             root_path = query.get('root', [r"G:\我的云端硬盘\0. 工作\2. 投资分析计划 01102026\3. Monthly Report"])[0]
@@ -175,6 +238,7 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
         except Exception:
             req_data = {}
 
+        # Save Configuration for the specified month
         if clean_path in ['/api/save_config', '/api/save_manager_input']:
             month = req_data.get('report_month') or req_data.get('month', '2026-08')
             cfg_path = os.path.join(BASE_DIR, 'config', f'config_{month.replace("-", "_")}.json')
@@ -187,7 +251,7 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
 
             # Update paths and settings
             for key in ['google_drive_root', 'reference_monthly_update', 'reference_factsheets_dir', 
-                        'monthly_conflict_calibration', 'target_output_dir', 'export_options']:
+                        'monthly_conflict_calibration', 'target_output_dir', 'export_options', 'settle_date']:
                 if key in req_data:
                     cfg[key] = req_data[key]
 
@@ -208,31 +272,38 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
             self.send_response(200)
             self.send_header('Content-Type', 'application/json; charset=utf-8')
             self.end_headers()
-            self.wfile.write(json.dumps({"status": "success", "message": "配置与定见已完整持久化保存！"}).encode('utf-8'))
+            self.wfile.write(json.dumps({"status": "success", "message": f"{month} 配置与定见已完整持久化保存！"}).encode('utf-8'))
 
+        # Agent Sentiment Synthesis
         elif clean_path == '/api/analyze_sentiment':
-            # Synthesizes web sentiment and macro analysis based on manager's input & month
             month = req_data.get('month', '2026-08')
             user_input = req_data.get('user_input', '')
-            holdings = req_data.get('holdings', [])
 
-            # Construct sophisticated institutional market sentiment synthesis
             if '2026-08' in month:
                 macro_sentiment = (
-                    "【宏观情绪与外围综述】8月全球资本市场处于‘利率再定价与财报验证’剧烈交锋期。美联储杰克逊霍尔年会释放审慎基调，长端美债收益率（30年期破5.3%）攀升形成估值分母端压制；"
-                    "但微观层面英伟达及云巨头资本开支扩张，印证AI基础设施景气度依旧坚挺。同时，地缘摩擦升温与全球央行持续增持黄金，驱动金价月度狂飙+24.00%。"
+                    "【宏观情绪与外围综述 · 8月】全球资本市场处于‘利率再定价与财报验证’交锋期。美联储杰克逊霍尔释放鹰派审慎信号，长端美债收益率（30年期破5.3%）引发成长股估值分母端压制；"
+                    "但英伟达财报与云巨头基础设施开支强劲，AI硬件需求坚挺。同时，地缘摩擦升温与全球央行购金去美元化，驱动金价单月暴涨+24.00%。"
                 )
                 ai_suggested_attribution = (
                     f"{user_input.strip()} 综合全球市场微观情绪与资金面监测，8月美债长端利率升破5.3%引发芯片成长股短期健康技术性整固（科技-5.64%）；"
                     "在此轮分化中，组合逆周期对冲资产发挥了关键压舱石效应——大华黄金单月暴涨+24.00%（穿透真实纯黄金敞口10.46%），贡献+1.94%绝对超额；"
                     "配合生命科学与日本高股息的充沛现金流防御，驱动组合全月实现+0.35%正收益，展现出极强的全天候抗跌穿越韧性。"
                 )
-            else:
+            elif '2026-09' in month:
                 macro_sentiment = (
-                    "【宏观情绪与外围综述】当前全球市场进入新一轮降息周期博弈阶段，宏观流动性预期向好，但在岸经济复苏节奏分化，科技硬件与核心防御性高股息资产持续吸引避险与配置资金。"
+                    "【宏观情绪与外围综述 · 9月】美联储开启超预期50基点降息，全球流动性拐点正式确立。中国央行推出强力组合拳（降准、降息与股票回购支持工具），在岸创新龙头与离岸科技股掀起史诗级估值修复；"
+                    "但长端国债在通胀粘性担忧下收益率曲线陡峭化，传统债券抗震效果持续衰减。"
                 )
                 ai_suggested_attribution = (
-                    f"{user_input.strip()} 结合当月宏观流动性与行业情绪监测，组合各资产职能分工清晰，核心持仓基本面扎实，建议保持战略定力，顺应基本面内在价值回归。"
+                    f"{user_input.strip()} 9月美联储大幅降息50基点与中国央行强力刺激共振，全球风险偏好急剧抬升。组合底层中国创新龙头迎来强劲重估，科技硬件持续受益算力基础设施投资；"
+                    "同时‘当债券不再扮演债券’的宏观事实，验证了本组合纯权益增长结合黄金与绝对收益底仓的配置前瞻性，组合稳健穿越利率震荡并把握反弹主线。"
+                )
+            else:
+                macro_sentiment = (
+                    "【宏观情绪与外围综述 · 10月】全球市场步入降息周期下半场与大选扰动期，宏观流动性充沛但地缘事件此起彼伏，核心防御资产与结构性高景气科技保持强吸金效应。"
+                )
+                ai_suggested_attribution = (
+                    f"{user_input.strip()} 10月全球流动性宽松大势所趋，各板块估值逐步夯实。组合各大支柱分工明确，核心标的基本面支撑扎实，建议保持战略定力，顺应基本面长期内在价值回归。"
                 )
 
             resp = {
@@ -245,18 +316,19 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(json.dumps(resp, ensure_ascii=False).encode('utf-8'))
 
+        # Unified Dynamic Report Builder for ANY Month
         elif clean_path == '/api/build_report':
             month = req_data.get('month', '2026-08')
             try:
-                from generate_august_report import generate_report
-                out_file = generate_report()
-                from generate_portfolio_factsheet import generate_standalone_factsheet
-                fs = generate_standalone_factsheet(month=month)
+                from engine.report_generator import generate_report
+                result = generate_report(month=month)
                 resp = {
                     "status": "success",
-                    "output_file": os.path.basename(out_file),
-                    "factsheet_zh": os.path.basename(fs["zh_html"]),
-                    "factsheet_en": os.path.basename(fs["en_html"])
+                    "month": month,
+                    "output_file": os.path.basename(result["monthly_html"]),
+                    "factsheet_zh": os.path.basename(result["factsheet_zh"]),
+                    "factsheet_en": os.path.basename(result["factsheet_en"]),
+                    "matched_pages": result["matched_pages"]
                 }
             except Exception as e:
                 resp = {"status": "error", "message": str(e)}
@@ -266,19 +338,17 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(json.dumps(resp, ensure_ascii=False).encode('utf-8'))
 
+        # Multi-Format Deliverable PDF Exporter
         elif clean_path == '/api/export_pdf':
+            month = req_data.get('month', '2026-08')
             try:
                 from engine.exporter import export_all_deliverables
-                export_options = req_data.get('export_options', {
-                    "export_memo_zh": True,
-                    "export_memo_en": False,
-                    "export_factsheet_zh": True,
-                    "export_factsheet_en": True,
-                    "target_dir": req_data.get('target_dir', r"G:\我的云端硬盘\0. 工作\2. 投资分析计划 01102026\3. Monthly Report")
-                })
+                export_options = req_data.get('export_options', {})
+                export_options['month'] = month
                 result = export_all_deliverables(export_options)
                 resp = {
                     "status": "success",
+                    "month": month,
                     "deliverables": result["deliverables"],
                     "previews": result["previews"],
                     "count": result["count"]

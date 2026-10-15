@@ -44,14 +44,14 @@
                 <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                 <span class="text-slate-300 text-[11px]">本地服务 (8080)</span>
             </div>
-            <a href="/preview" target="_blank" class="px-3 py-1 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs flex items-center gap-1 transition shadow-sm">
+            <a id="linkPreviewMemo" href="/preview" target="_blank" class="px-3 py-1 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs flex items-center gap-1 transition shadow-sm">
                 <span>浏览全景备忘录</span>
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
             </a>
-            <a href="/preview-factsheet-zh" target="_blank" class="px-3 py-1 rounded-lg bg-teal-700 hover:bg-teal-600 text-white font-bold text-xs flex items-center gap-1 transition shadow-sm">
+            <a id="linkPreviewFactsheetZh" href="/preview-factsheet-zh" target="_blank" class="px-3 py-1 rounded-lg bg-teal-700 hover:bg-teal-600 text-white font-bold text-xs flex items-center gap-1 transition shadow-sm">
                 <span>独立 Factsheet (中)</span>
             </a>
-            <a href="/preview-factsheet-en" target="_blank" class="px-3 py-1 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold text-xs flex items-center gap-1 transition shadow-sm">
+            <a id="linkPreviewFactsheetEn" href="/preview-factsheet-en" target="_blank" class="px-3 py-1 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold text-xs flex items-center gap-1 transition shadow-sm">
                 <span>Factsheet (EN)</span>
             </a>
         </div>
@@ -162,27 +162,15 @@
                             </td>
                         </tr>
                         <tr class="hover:bg-slate-800/40 transition">
-                            <td class="p-2.5 pl-4 font-bold text-emerald-300 flex items-center gap-1.5">
-                                <span class="w-2 h-2 rounded bg-emerald-500"></span>
-                                <span>参考组合资产规模 (AUM)</span>
-                            </td>
-                            <td class="p-2.5 font-mono text-slate-200">
-                                <strong>Calculation_Engine 工作表</strong> ➔ 对应月份结算行 <span class="text-emerald-400 font-bold">E列取总市值</span>
-                            </td>
-                            <td class="p-2.5 text-slate-400 leading-relaxed">
-                                动态读取当期专户实际参考资产规模（如 2026年8月结算行提取 <strong>$183,380.86 SGD</strong>）。
-                            </td>
-                        </tr>
-                        <tr class="hover:bg-slate-800/40 transition">
                             <td class="p-2.5 pl-4 font-bold text-sky-300 flex items-center gap-1.5">
                                 <span class="w-2 h-2 rounded bg-sky-500"></span>
                                 <span>宏观研报星级与主题研判</span>
                             </td>
                             <td class="p-2.5 font-mono text-slate-200">
-                                <strong>iFAST Monthly Investment Update 研报</strong> ➔ P.3 回报，P.4 行业星级榜，P.5-6 专题
+                                <strong>iFAST Monthly Investment Update 研报</strong> ➔ <span class="text-amber-400 font-bold">动态章节标题自适应匹配</span> (非固定页码)
                             </td>
                             <td class="p-2.5 text-slate-400 leading-relaxed">
-                                提取当月重点资产表现、19 个行业官方星级评定榜（全量单列不合并），以及当期专属宏观研讨专题。
+                                系统依据官方栏目章节标题（如 <code class="text-sky-300 font-mono">ASSET RETURNS</code>、<code class="text-sky-300 font-mono">INDUSTRY STAR RATINGS</code>、<code class="text-sky-300 font-mono">IDEAS OF THE MONTH / MACRO TOPIC</code>）<strong>自适应动态匹配研报对应页码</strong>（例如 9月版位于 P.3-5，10月版自适应定位至 P.6-8/12），自动提取资产表现、19个行业星级榜及当月专题，彻底解决研报改版/排版错位问题。
                             </td>
                         </tr>
                         <tr class="hover:bg-slate-800/40 transition">
@@ -227,7 +215,13 @@
                         <span class="text-[10px] text-slate-400">可从探测列表选或手动输入</span>
                     </label>
                     <select id="selMonthlyUpdate" onchange="onMonthlyUpdateChange(this.value)" class="w-full rounded-lg p-2 text-xs font-mono"></select>
-                    <input id="inpMonthlyUpdate" type="text" class="w-full rounded-lg p-2 text-xs font-mono" placeholder="输入研报文件名或相对路径...">
+                    <input id="inpMonthlyUpdate" type="text" class="w-full rounded-lg p-2 text-xs font-mono" placeholder="输入研报文件名或相对路径..." onchange="fetchPdfSections(this.value)">
+                    <div id="pdfMatchedSectionsBadge" class="pt-1.5 text-[11px] font-mono flex flex-wrap items-center gap-1.5 text-slate-300">
+                        <span class="text-slate-400">动态匹配页码：</span>
+                        <span id="badgeAssetReturns" class="px-2 py-0.5 rounded bg-amber-500/10 text-amber-300 border border-amber-500/30">回报: 探测中...</span>
+                        <span id="badgeStarRatings" class="px-2 py-0.5 rounded bg-sky-500/10 text-sky-300 border border-sky-500/30">星级: 探测中...</span>
+                        <span id="badgeTopic" class="px-2 py-0.5 rounded bg-purple-500/10 text-purple-300 border border-purple-500/30">专题: 探测中...</span>
+                    </div>
                 </div>
 
                 <!-- Source 2: Factsheet Directory (Dynamic N Funds) -->
@@ -480,17 +474,28 @@
 
         async function loadConfig(month = '2026-08') {
             try {
+                if (document.getElementById('selReportMonth')) {
+                    document.getElementById('selReportMonth').value = month;
+                }
+                const linkMemo = document.getElementById('linkPreviewMemo');
+                const linkZh = document.getElementById('linkPreviewFactsheetZh');
+                const linkEn = document.getElementById('linkPreviewFactsheetEn');
+                if (linkMemo) linkMemo.href = `/preview?month=${month}`;
+                if (linkZh) linkZh.href = `/preview-factsheet-zh?month=${month}`;
+                if (linkEn) linkEn.href = `/preview-factsheet-en?month=${month}`;
+
                 const res = await fetch(`/api/get_config?month=${month}`);
                 const data = await res.json();
                 currentConfig = data;
 
                 // Update dynamic sequence count
-                const seq = data.dynamic_sequence_months || 39;
+                const seq = data.dynamic_sequence_months || (month === '2026-10' ? 41 : (month === '2026-09' ? 40 : 39));
                 document.getElementById('pillSequenceSpan').textContent = `第 ${seq} 期走势 (成立日 2023-07)`;
-                document.getElementById('displayDynamicSeq').textContent = `第 ${seq} 期复权时间序列 (成立以来 ${seq} 个月)`;
+                const dispDyn = document.getElementById('displayDynamicSeq');
+                if (dispDyn) dispDyn.textContent = `第 ${seq} 期复权时间序列 (成立以来 ${seq} 个月)`;
 
                 // Update paths
-                if (data.google_drive_root) {
+                if (data.google_drive_root || data.target_output_dir) {
                     document.getElementById('inpTargetOutputDir').value = data.target_output_dir || data.google_drive_root;
                 }
                 if (data.reference_monthly_update) {
@@ -614,8 +619,37 @@
             document.querySelectorAll('#holdingsTableBody .chk-active').forEach(cb => cb.checked = active);
         }
 
-        function onMonthlyUpdateChange(val) {
+        async function onMonthlyUpdateChange(val) {
             document.getElementById('inpMonthlyUpdate').value = val;
+            await fetchPdfSections(val);
+        }
+
+        async function fetchPdfSections(pdfName) {
+            if (!pdfName) return;
+            try {
+                const root = encodeURIComponent(document.getElementById('inpTargetOutputDir').value.trim());
+                const res = await fetch(`/api/match_pdf_sections?pdf=${encodeURIComponent(pdfName)}&root=${root}`);
+                const data = await res.json();
+                const bRet = document.getElementById('badgeAssetReturns');
+                const bStar = document.getElementById('badgeStarRatings');
+                const bTop = document.getElementById('badgeTopic');
+                const retPage = data.returns_page || (data.matched_pages && data.matched_pages.asset_returns);
+                const starPage = data.star_ratings_page || (data.matched_pages && data.matched_pages.star_ratings);
+                const topicPage = data.topic_page || (data.matched_pages && (data.matched_pages.ideas_of_month || data.matched_pages.special_topic));
+                const topicTitle = data.topic_title || '当月专题';
+
+                if (bRet) bRet.textContent = `回报: P.${retPage || '未检出'}`;
+                if (bStar) bStar.textContent = `星级: P.${starPage || '未检出'}`;
+                if (bTop) bTop.textContent = `专题: P.${topicPage || '未检出'} (${topicTitle})`;
+
+                if (retPage || starPage || topicPage) {
+                    log(`📄 研报《${pdfName}》自适应匹配完成: 资产回报 P.${retPage}, 行业星级 P.${starPage}, 专题 P.${topicPage} (${topicTitle})`, 'text-amber-400');
+                } else {
+                    log(`⚠️ 研报《${pdfName}》未检出标准章节标题，使用兜底页码`, 'text-slate-400');
+                }
+            } catch (e) {
+                console.error('Error matching PDF sections:', e);
+            }
         }
 
         function onFactsheetsDirChange(val) {
@@ -632,29 +666,69 @@
                 const res = await fetch(`/api/scan_drive?path=${root}`);
                 const data = await res.json();
 
+                // Current selected or configured values
+                const curMonthlyUpdate = document.getElementById('inpMonthlyUpdate').value.trim();
+                const curFactsheetsDir = document.getElementById('inpFactsheetsDir').value.trim();
+
                 // Populate Monthly Update Select
                 const selUpdate = document.getElementById('selMonthlyUpdate');
                 selUpdate.innerHTML = '';
+                let foundUpdate = false;
                 data.monthly_updates.forEach(item => {
                     const opt = document.createElement('option');
                     opt.value = item.name;
                     opt.textContent = `${item.name} (${item.rel_path})`;
+                    if (item.name === curMonthlyUpdate) {
+                        opt.selected = true;
+                        foundUpdate = true;
+                    }
                     selUpdate.appendChild(opt);
                 });
+                if (curMonthlyUpdate && !foundUpdate) {
+                    const opt = document.createElement('option');
+                    opt.value = curMonthlyUpdate;
+                    opt.textContent = `${curMonthlyUpdate} (当前配置)`;
+                    opt.selected = true;
+                    selUpdate.appendChild(opt);
+                }
+                if (selUpdate.value && !curMonthlyUpdate) {
+                    document.getElementById('inpMonthlyUpdate').value = selUpdate.value;
+                }
 
                 // Populate Factsheet Dirs Select
                 const selDirs = document.getElementById('selFactsheetsDir');
                 selDirs.innerHTML = '';
+                let foundDir = false;
                 data.factsheet_dirs.forEach(d => {
                     const opt = document.createElement('option');
                     opt.value = d;
                     opt.textContent = d;
+                    if (d === curFactsheetsDir) {
+                        opt.selected = true;
+                        foundDir = true;
+                    }
                     selDirs.appendChild(opt);
                 });
+                if (curFactsheetsDir && !foundDir) {
+                    const opt = document.createElement('option');
+                    opt.value = curFactsheetsDir;
+                    opt.textContent = `${curFactsheetsDir} (当前配置)`;
+                    opt.selected = true;
+                    selDirs.appendChild(opt);
+                }
+                if (selDirs.value && !curFactsheetsDir) {
+                    document.getElementById('inpFactsheetsDir').value = selDirs.value;
+                }
 
                 // Scan Current Factsheet Folder
-                const curDir = document.getElementById('inpFactsheetsDir').value.trim() || 'Sep 2026';
-                await scanFactsheetsInDir(curDir);
+                const activeDir = document.getElementById('inpFactsheetsDir').value.trim() || 'Sep 2026';
+                await scanFactsheetsInDir(activeDir);
+
+                // Fetch PDF sections for current selected PDF
+                const activePdf = document.getElementById('inpMonthlyUpdate').value.trim();
+                if (activePdf) {
+                    await fetchPdfSections(activePdf);
+                }
 
                 log(`✓ 网盘扫描完毕：发现 ${data.monthly_updates.length} 份月报 PDF，${data.factsheet_dirs.length} 个子目录`, 'text-emerald-400');
             } catch(e) {

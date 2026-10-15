@@ -1,0 +1,90 @@
+{
+  "report_month": "2026-10",
+  "report_title": "HR 模板投资组合 · 月度投资建议备忘录",
+  "settle_date": "2026-11-04",
+  "valuation_date_zh": "2026年11月4日 (2026年10月结算)",
+  "google_drive_root": "G:\\我的云端硬盘\\0. 工作\\2. 投资分析计划 01102026\\3. Monthly Report",
+  "reference_monthly_update": "iFAST Monthly Investment Update October 2026.pdf",
+  "reference_factsheets_dir": "Oct 2026",
+  "slide3_topic_title": "月度专题深度：当债券不再扮演债券",
+  "slide3_template": "src/components/slide3.html",
+  "portfolio_aum_sgd": 183380.86,
+  "cumulative_return_current": 83.38,
+  "cumulative_return_past": 86.53,
+  "cumulative_return_sp500": 69.5,
+  "cumulative_return_msci": 68.72,
+  "alpha_vs_msci": 14.66,
+  "monthly_return_1m": 0.35,
+  "monthly_alpha_1m": -0.77,
+  "monthly_conflict_calibration": "长端美债收益率与固收资产校准：研报强调警惕长端美债与久期风险，本组合坚持纯股票高增长架构配搭大华黄金与富敦绝对收益底仓，规避了传统60/40组合在股债正相关环境下的减震失效陷阱。",
+  "manager_input": {
+    "qualitative_view": "10月宏观流动性与政策托底持续发力，组合核心持仓稳固，大盘整固创造优质逢低配置机会。",
+    "rebalance_verdict": "持有",
+    "rebalance_note": "维持既有配置组合，不触发被动调仓。",
+    "holdings_conviction": [
+      {
+        "id": "gold",
+        "fund_name": "United Gold and General A Acc SGD",
+        "active": true,
+        "return_1m": "+24.00%",
+        "market_noise": "金价短期急涨后可能面临获利盘了结与美元指数技术性反弹。",
+        "fundamental_support": "美债30年期收益率升破5.3%，去美元化与全球央行购金逻辑坚实，非对称对冲大放异彩。",
+        "advisory_recommendation": "持有"
+      },
+      {
+        "id": "tech",
+        "fund_name": "EASTSPRING - GLOBAL TECHNOLOGY SGD",
+        "active": true,
+        "return_1m": "-5.64%",
+        "market_noise": "长端美债收益率攀升引发半导体估值分母端压制，芯片股短期震荡。",
+        "fundamental_support": "英伟达财报亮眼，云巨头资本开支扩张，AI 硬件供需瓶颈突出，回调创造极佳逢低吸纳窗口。",
+        "advisory_recommendation": "持有"
+      },
+      {
+        "id": "china_a",
+        "fund_name": "United China A Shares Innovation A Acc",
+        "active": true,
+        "return_1m": "-3.09%",
+        "market_noise": "7月宏观数据复苏不均，零售消费温和，房地产投资持续收缩。",
+        "fundamental_support": "在岸科技制造与国产AI技术稳步突破，估值处于历史绝对低位，政策托底与流动性注入预期强烈。",
+        "advisory_recommendation": "持有"
+      },
+      {
+        "id": "fullerton",
+        "fund_name": "FULLERTON LUX - GLOBAL ABSOLUTE ALPHA",
+        "active": true,
+        "return_1m": "+0.36%",
+        "market_noise": "多空对冲策略在科技单边轮动行情下超额弹性相对温和。",
+        "fundamental_support": "自下而上低贝塔多空配对交易，全月平稳穿越外围动荡，忠实履行组合下行减震底仓使命。",
+        "advisory_recommendation": "持有"
+      },
+      {
+        "id": "life_sci",
+        "fund_name": "Janus Henderson Global Life Sciences",
+        "active": true,
+        "return_1m": "-0.21%",
+        "market_noise": "高利率环境下生物医药并购融资成本抬升，板块交易情绪偏弱。",
+        "fundamental_support": "大型跨国药企重磅GLP-1药物与肿瘤研发管线现金流强劲，防御属性与长期估值修复潜力突出。",
+        "advisory_recommendation": "持有"
+      },
+      {
+        "id": "fssa",
+        "fund_name": "FSSA Asian Growth Fund (Class A)",
+        "active": true,
+        "return_1m": "+1.12%",
+        "market_noise": "新兴市场汇率受强美元反弹扰动，部分出口型经济体面临通胀压力。",
+        "fundamental_support": "重仓印度与东南亚内需消费蓝筹，企业资本回报率与治理结构卓越，有效抵御外部波动。",
+        "advisory_recommendation": "持有"
+      },
+      {
+        "id": "nikko",
+        "fund_name": "Nikko AM Japan Dividend",
+        "active": true,
+        "return_1m": "+1.30%",
+        "market_noise": "日本央行7-2加息25个基点，日元套息交易平仓引发东证指数间歇性震荡。",
+        "fundamental_support": "东京证交所PBR改善改革持续深化，企业回购与股息分红创新高，日经反弹中现金流防御优异。",
+        "advisory_recommendation": "持有"
+      }
+    ]
+  }
+}

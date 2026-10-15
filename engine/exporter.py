@@ -70,7 +70,19 @@ def export_all_deliverables(options=None):
 
     # 1. Chinese Memorandum
     if options.get("export_memo_zh", True):
-        memo_html = os.path.join(BASE_DIR, "iFAST_Equity_Growth_Monthly_Report_August2026.html")
+        memo_html = os.path.join(BASE_DIR, "output", f"iFAST_Equity_Growth_Monthly_Report_{month}.html")
+        if not os.path.exists(memo_html):
+            memo_html = os.path.join(BASE_DIR, "iFAST_Equity_Growth_Monthly_Report_Latest.html")
+        if not os.path.exists(memo_html):
+            memo_html = os.path.join(BASE_DIR, "iFAST_Equity_Growth_Monthly_Report_August2026.html")
+
+        # Load config to get exact settle_date if default
+        cfg_file = os.path.join(BASE_DIR, "config", f"config_{month.replace('-', '_')}.json")
+        if os.path.exists(cfg_file):
+            with open(cfg_file, 'r', encoding='utf-8') as f:
+                c = json.load(f)
+                settle_date = c.get('settle_date', settle_date)
+
         memo_pdf_name = f"HR_模板投资组合_月度备忘录_{settle_date}.pdf"
         memo_pdf_local = os.path.join(BASE_DIR, "output", memo_pdf_name)
         if os.path.exists(memo_html):
