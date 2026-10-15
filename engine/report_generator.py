@@ -13,6 +13,7 @@ import os
 import sys
 import json
 import fitz
+import re
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if BASE_DIR not in sys.path:
@@ -46,7 +47,7 @@ def generate_report(month="2026-08"):
     year_str, month_str = report_month.split('-')
     month_num_zh = int(month_str)
     settle_date = cfg.get("settle_date", f"{year_str}-{int(month_str)+1:02d}-03")
-    seq_count = compute_sequence_month_count(report_month)
+    seq_count = cfg.get("dynamic_sequence_months") or compute_sequence_month_count(report_month)
 
     # 2. Dynamic PDF Section Matching for Reference Monthly Update
     drive_root = cfg.get("google_drive_root", r"G:\我的云端硬盘\0. 工作\2. 投资分析计划 01102026\3. Monthly Report")
@@ -149,23 +150,77 @@ def generate_report(month="2026-08"):
         slide3_html = f.read()
 
     # Dynamic Month Badge and Settlement in Slide 1
-    slide1_html = slide1_html.replace("8月备忘录", f"{month_num_zh}月备忘录")
-    slide1_html = slide1_html.replace("2026-09-03", settle_date)
-    slide1_html = slide1_html.replace("当月（2026年8月）", f"当月（{year_str}年{month_num_zh}月）")
-    slide1_html = slide1_html.replace("39个月真实净值走势", f"{seq_count}个月真实净值走势")
+    slide1_html = re.sub(r'<span class="text-amber-400 font-bold text-xs bg-slate-900/80 px-2.5 py-0.5 rounded border border-amber-500/50">[^<]+</span>',
+                         f'<span class="text-amber-400 font-bold text-xs bg-slate-900/80 px-2.5 py-0.5 rounded border border-amber-500/50">{month_num_zh}月备忘录</span>',
+                         slide1_html)
+    slide1_html = re.sub(r'<span class="text-amber-300 font-extrabold text-xs mono-num" id="calc_date_display">[^<]+</span>',
+                         f'<span class="text-amber-300 font-extrabold text-xs mono-num" id="calc_date_display">{settle_date}</span>',
+                         slide1_html)
+    slide1_html = re.sub(r'当月（\d+年\d+月）', f'当月（{year_str}年{month_num_zh}月）', slide1_html)
+    slide1_html = re.sub(r'\d+个月真实净值走势', f'{seq_count}个月真实净值走势', slide1_html)
+    # Remove AUM badge from Slide 1
+    slide1_html = re.sub(r'<span class="text-xs font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded border border-slate-200 shadow-xs">参考组合资产规模:[^<]+</span>', '', slide1_html)
+    # Dynamic Fund Table Title in Slide 1
+    slide1_html = re.sub(r'底层\s*\d+\s*只优选基金构成与月度行情穿透', f'底层 {len(active_funds)} 只优选基金构成与月度行情穿透', slide1_html)
+
+    # Dynamic Fund Table rows in Slide 1
+    s1_fund_rows = ""
+    role_map = {
+        "FULLERTON": ("全天候底仓", "35.00%"),
+        "EASTSPRING": ("科技成长", "15.00%"),
+        "JANUS": ("生命科学", "15.00%"),
+        "GOLD": ("黄金对冲", "15.00%"),
+        "CHINA A": ("中国创新", "12.00%"),
+        "FSSA": ("亚洲主题", "4.00%"),
+        "NIKKO": ("日本高息", "4.00%"),
+    }
+    for h in active_funds:
+        fname = h.get("fund_name", "")
+        ret = h.get("return_1m", "0.00%")
+        ret_color = "text-emerald-700 font-bold" if ret.startswith("+") else "text-rose-600 font-semibold"
+        role = "核心优选"
+        tgt_wt = "—"
+        for k, (r, w) in role_map.items():
+            if k in fname.upper():
+                role = r
+                tgt_wt = w
+                break
+        cur_wt = h.get("current_weight", tgt_wt)
+        nav = h.get("nav", "—")
+        contrib = h.get("contribution", "—")
+        contrib_color = "text-emerald-800 font-bold" if str(contrib).startswith("+") else ("text-rose-700 font-bold" if str(contrib).startswith("-") else "text-slate-600")
+
+        s1_fund_rows += f"""
+                        <tr>
+                            <td class="p-1.5 pl-2 font-bold text-slate-800">{role}</td>
+                            <td class="p-1.5 font-semibold text-slate-800 truncate max-w-[210px]">{fname}</td>
+                            <td class="p-1.5 text-right font-semibold text-slate-600 mono-num">{tgt_wt}</td>
+                            <td class="p-1.5 text-right font-bold text-[#0f2347] mono-num bg-amber-50/50 border-l border-r border-amber-100">{cur_wt}</td>
+                            <td class="p-1.5 text-right mono-num">{nav}</td>
+                            <td class="p-1.5 text-right {ret_color} mono-num">{ret}</td>
+                            <td class="p-1.5 text-right pr-2 {contrib_color} mono-num">{contrib}</td>
+                        </tr>"""
+
+    # Replace the tbody in Slide 1 fund table
+    tbody_start = slide1_html.find('<tbody class="divide-y divide-slate-200 bg-white text-[11.5px]">')
+    if tbody_start != -1:
+        tbody_end = slide1_html.find('</tbody>', tbody_start)
+        if tbody_end != -1:
+            slide1_html = slide1_html[:tbody_start] + '<tbody class="divide-y divide-slate-200 bg-white text-[11.5px]">\n' + s1_fund_rows + '\n                    ' + slide1_html[tbody_end:]
+
     slide1_html = slide1_html.replace("{{QUALITATIVE_VIEW}}", qualitative_view)
     slide1_html = slide1_html.replace("{{REBALANCE_VERDICT}}", rebalance_verdict)
     slide1_html = slide1_html.replace("{{REBALANCE_NOTE}}", rebalance_note)
 
     # Dynamic Page References in Slide 2
-    slide2_html = slide2_html.replace("8月重点资产月度回报", f"{month_num_zh}月重点资产月度回报")
-    slide2_html = slide2_html.replace("彭博与投研综合数据 (P.3)", f"彭博与投研综合数据 (P.{p_returns})")
-    slide2_html = slide2_html.replace("iFAST 官方榜单 (P.4)", f"iFAST 官方榜单 (P.{p_stars})")
+    slide2_html = re.sub(r'\d+月重点资产月度回报', f'{month_num_zh}月重点资产月度回报', slide2_html)
+    slide2_html = re.sub(r'彭博与投研综合数据 \(P\.\d+\)', f'彭博与投研综合数据 (P.{p_returns})', slide2_html)
+    slide2_html = re.sub(r'iFAST 官方榜单 \(P\.\d+\)', f'iFAST 官方榜单 (P.{p_stars})', slide2_html)
     slide2_html = slide2_html.replace("{{CONFLICT_NOTE}}", conflict_note)
 
     # Dynamic Month & Directive in Slide 4
-    slide4_html = slide4_html.replace("8月份信念审查决策矩阵", f"{month_num_zh}月份信念审查决策矩阵")
-    slide4_html = slide4_html.replace("8月回报", f"{month_num_zh}月回报")
+    slide4_html = re.sub(r'\d+月份信念审查决策矩阵', f'{month_num_zh}月份信念审查决策矩阵', slide4_html)
+    slide4_html = re.sub(r'\d+月回报', f'{month_num_zh}月回报', slide4_html)
     slide4_html = slide4_html.replace("{{CONVICTION_ROWS}}", conviction_rows)
     slide4_html = slide4_html.replace("{{REBALANCE_VERDICT}}", rebalance_verdict)
     slide4_html = slide4_html.replace("{{REBALANCE_NOTE}}", rebalance_note)

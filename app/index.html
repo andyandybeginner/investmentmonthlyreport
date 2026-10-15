@@ -85,37 +85,51 @@
                     </div>
 
                     <!-- Button to View SKILL.md in Modal -->
-                    <button onclick="openSkillModal()" class="px-4 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold text-xs transition flex items-center gap-1.5 shadow-sm">
+                    <button onclick="openSkillModal()" class="px-3.5 py-1.5 rounded-xl bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold text-xs transition flex items-center gap-1.5 shadow-sm border border-slate-600">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                        <span>📄 查看本地投研规范文件 (SKILL.md)</span>
+                        <span>📄 查看规范 (SKILL.md)</span>
+                    </button>
+
+                    <!-- Save Button for Section 1 -->
+                    <button id="btnSaveSec1" onclick="saveSection(1)" class="px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs transition flex items-center gap-1.5 shadow-md">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+                        <span>💾 保存 Section 1 设定</span>
                     </button>
                 </div>
             </div>
 
-            <!-- Dynamic Setting Pills (Compact Row) -->
-            <div class="mt-4 pt-3 border-t border-slate-700/60 grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
-                <div class="bg-slate-900/60 rounded-xl p-2.5 border border-slate-700/50 flex flex-col justify-between">
-                    <span class="text-slate-400 text-[11px]">动态时间序列跨度</span>
-                    <div class="text-white font-extrabold text-xs mt-0.5" id="pillSequenceSpan">第 39 期走势 (成立日 2023-07)</div>
+            <!-- Dynamic Setting Inputs Grid (Editable Settings) -->
+            <div class="mt-4 pt-3 border-t border-slate-700/60 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+                <div class="bg-slate-900/60 rounded-xl p-2.5 border border-slate-700/50 flex flex-col justify-between space-y-1">
+                    <span class="text-slate-400 text-[11px] font-semibold">动态时间序列期数</span>
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-slate-400 font-mono text-xs">第</span>
+                        <input id="inpSequenceCount" type="number" class="w-16 bg-slate-950/90 border border-slate-700 rounded px-2 py-1 text-xs font-extrabold text-amber-300 font-mono text-center" value="39">
+                        <span class="text-slate-400 font-mono text-xs">期走势 (成立日 2023-07)</span>
+                    </div>
                 </div>
-                <div class="bg-slate-900/60 rounded-xl p-2.5 border border-slate-700/50 flex flex-col justify-between">
-                    <span class="text-slate-400 text-[11px]">语言纯净性标准</span>
-                    <div class="text-emerald-400 font-extrabold text-xs mt-0.5">中英文独立无混杂 · 政治合规</div>
+                <div class="bg-slate-900/60 rounded-xl p-2.5 border border-slate-700/50 flex flex-col justify-between space-y-1">
+                    <span class="text-slate-400 text-[11px] font-semibold">当期估值结算日期</span>
+                    <input id="inpSettleDate" type="text" class="w-full bg-slate-950/90 border border-slate-700 rounded px-2 py-1 text-xs font-extrabold text-emerald-400 font-mono" value="2026-09-03" placeholder="YYYY-MM-DD">
                 </div>
-                <div class="bg-slate-900/60 rounded-xl p-2.5 border border-slate-700/50 flex flex-col justify-between">
-                    <span class="text-slate-400 text-[11px]">版面与打印标准</span>
-                    <div class="text-amber-300 font-extrabold text-xs mt-0.5">A4 横向 (297mm × 210mm) 零截断</div>
+                <div class="bg-slate-900/60 rounded-xl p-2.5 border border-slate-700/50 flex flex-col justify-between space-y-1">
+                    <span class="text-slate-400 text-[11px] font-semibold">报告周期全景中文标签</span>
+                    <input id="inpValuationLabelZh" type="text" class="w-full bg-slate-950/90 border border-slate-700 rounded px-2 py-1 text-xs font-bold text-slate-200" value="2026年9月3日 (2026年8月结算)">
                 </div>
-                <div class="bg-slate-900/60 rounded-xl p-2.5 border border-slate-700/50 flex flex-col justify-between">
-                    <span class="text-slate-400 text-[11px]">全局基准锚定</span>
-                    <div class="text-blue-400 font-extrabold text-xs mt-0.5">MSCI ACWI / S&P 500 严格对齐</div>
+                <div class="bg-slate-900/60 rounded-xl p-2.5 border border-slate-700/50 flex flex-col justify-between space-y-1">
+                    <span class="text-slate-400 text-[11px] font-semibold">全局对比基准</span>
+                    <select id="inpBenchmark" class="w-full bg-slate-950/90 border border-slate-700 rounded px-2 py-1 text-xs font-bold text-blue-400">
+                        <option value="MSCI ACWI / S&P 500" selected>MSCI ACWI / S&P 500 (基准对齐)</option>
+                        <option value="MSCI ACWI">MSCI ACWI (全球纯权益)</option>
+                        <option value="S&P 500">S&P 500 (美股基准)</option>
+                    </select>
                 </div>
             </div>
         </section>
 
         <!-- SECTION 2: 关键输入如何提取的解释 (一一对应格式) -->
         <section class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-5 shadow-lg">
-            <div class="flex items-center justify-between pb-3 border-b border-slate-700/80 mb-4">
+            <div class="flex flex-wrap items-center justify-between pb-3 border-b border-slate-700/80 mb-4 gap-3">
                 <div class="flex items-center gap-2.5">
                     <div class="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center font-bold text-sm">📋</div>
                     <div>
@@ -123,7 +137,31 @@
                         <p class="text-xs text-slate-400">底层基金价格与主组合时间序列取值路径完全透明，依表名精确检索</p>
                     </div>
                 </div>
-                <span class="text-[11px] font-mono text-slate-400 bg-slate-900/60 px-3 py-1 rounded-md border border-slate-700">Sheet ID: 1VXy6RGThyuQIBwYg9VF3NbWc7wXyfLFQcMGPgEf2Q4I</span>
+                <div class="flex items-center gap-2">
+                    <button id="btnSaveSec2" onclick="saveSection(2)" class="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs transition flex items-center gap-1.5 shadow-md">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+                        <span>💾 保存 Section 2 规则</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Section 2 Quick Config Row -->
+            <div class="mb-4 grid grid-cols-1 md:grid-cols-3 gap-3 text-xs bg-slate-900/60 p-3 rounded-xl border border-slate-700/50">
+                <div>
+                    <label class="block text-slate-400 text-[11px] font-semibold mb-1">专户 Google Sheet 表格 ID</label>
+                    <input id="inpGoogleSheetId" type="text" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-1.5 text-xs font-mono text-amber-300" value="1VXy6RGThyuQIBwYg9VF3NbWc7wXyfLFQcMGPgEf2Q4I">
+                </div>
+                <div>
+                    <label class="block text-slate-400 text-[11px] font-semibold mb-1">主组合时间序列计算表名 (Tab)</label>
+                    <input id="inpCalcEngineTab" type="text" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-1.5 text-xs font-mono text-slate-200" value="Calculation_Engine">
+                </div>
+                <div>
+                    <label class="block text-slate-400 text-[11px] font-semibold mb-1">底层基金价格工作表检索逻辑</label>
+                    <select id="selTabStrategy" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-1.5 text-xs font-bold text-emerald-400">
+                        <option value="name" selected>按基金全名工作表精确匹配 (完全独立于Tab顺序)</option>
+                        <option value="index">按Tab物理顺位提取 (Tab 12-18)</option>
+                    </select>
+                </div>
             </div>
 
             <!-- One-to-One Mapping Table -->
@@ -200,10 +238,16 @@
                         <p class="text-xs text-slate-400">自由指定研报、Factsheets 目录及输出目标，支持默认中英文双语全套导出</p>
                     </div>
                 </div>
-                <button onclick="scanDriveFiles()" id="btnScanDrive" class="px-3.5 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold text-xs flex items-center gap-1.5 transition shadow-sm">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                    <span>探测扫描网盘目录</span>
-                </button>
+                <div class="flex items-center gap-2">
+                    <button onclick="scanDriveFiles()" id="btnScanDrive" class="px-3.5 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold text-xs flex items-center gap-1.5 transition shadow-sm">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        <span>探测扫描网盘目录</span>
+                    </button>
+                    <button id="btnSaveSec3" onclick="saveSection(3)" class="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs flex items-center gap-1.5 transition shadow-md">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+                        <span>💾 保存 Section 3 设定</span>
+                    </button>
+                </div>
             </div>
 
             <!-- Source File Selectors Grid -->
@@ -315,9 +359,15 @@
                     <label class="font-bold text-amber-300 flex items-center gap-1.5 text-xs">
                         <span>📝 第一页 · 月度归因核心观点 (主管看法输入区)</span>
                     </label>
-                    <button onclick="runAgentSentimentAnalysis()" id="btnAgentSentiment" class="px-3 py-1 rounded-lg bg-purple-600/80 hover:bg-purple-500 text-white font-bold text-[11px] flex items-center gap-1.5 transition border border-purple-500/50 shadow-sm">
-                        <span>🤖 调取网络数据与市场情绪智能归因</span>
-                    </button>
+                    <div class="flex items-center gap-2">
+                        <button onclick="runAgentSentimentAnalysis()" id="btnAgentSentiment" class="px-3 py-1 rounded-lg bg-purple-600/80 hover:bg-purple-500 text-white font-bold text-[11px] flex items-center gap-1.5 transition border border-purple-500/50 shadow-sm">
+                            <span>🤖 调取网络数据与市场情绪智能归因</span>
+                        </button>
+                        <button id="btnSaveSec4A" onclick="saveSection('4a')" class="px-3 py-1 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-[11px] flex items-center gap-1 transition shadow-sm">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+                            <span>💾 保存 4.1 归因设定</span>
+                        </button>
+                    </div>
                 </div>
                 <textarea id="inpQualitativeView" rows="3" class="w-full rounded-xl p-3 text-xs leading-relaxed border border-slate-700 text-slate-200" placeholder="请在此输入您的主管核心研判观点..."></textarea>
 
@@ -361,6 +411,10 @@
                         </button>
                         <button onclick="toggleAllHoldings(true)" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] border border-slate-700">全选</button>
                         <button onclick="toggleAllHoldings(false)" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] border border-slate-700">清空</button>
+                        <button id="btnSaveSec4B" onclick="saveSection('4b')" class="px-3 py-1 rounded-lg bg-purple-600 hover:bg-purple-500 text-white font-extrabold text-[11px] flex items-center gap-1 transition shadow-sm">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+                            <span>💾 保存 4.2 标的矩阵</span>
+                        </button>
                     </div>
                 </div>
 
@@ -469,6 +523,7 @@
 
         async function onMonthChange(month) {
             log(`🔄 切换报告期别至: ${month}`, 'text-amber-400');
+            window.history.replaceState({}, '', '?month=' + month);
             await loadConfig(month);
         }
 
@@ -488,13 +543,22 @@
                 const data = await res.json();
                 currentConfig = data;
 
-                // Update dynamic sequence count
+                // Update Section 1 parameters
                 const seq = data.dynamic_sequence_months || (month === '2026-10' ? 41 : (month === '2026-09' ? 40 : 39));
-                document.getElementById('pillSequenceSpan').textContent = `第 ${seq} 期走势 (成立日 2023-07)`;
+                if (document.getElementById('inpSequenceCount')) document.getElementById('inpSequenceCount').value = seq;
+                if (document.getElementById('inpSettleDate')) document.getElementById('inpSettleDate').value = data.settle_date || (month === '2026-10' ? '2026-11-04' : (month === '2026-09' ? '2026-10-05' : '2026-09-03'));
+                if (document.getElementById('inpValuationLabelZh')) document.getElementById('inpValuationLabelZh').value = data.valuation_date_zh || `${month}结算周期`;
+                if (document.getElementById('inpBenchmark')) document.getElementById('inpBenchmark').value = data.benchmark || 'MSCI ACWI / S&P 500';
+
                 const dispDyn = document.getElementById('displayDynamicSeq');
                 if (dispDyn) dispDyn.textContent = `第 ${seq} 期复权时间序列 (成立以来 ${seq} 个月)`;
 
-                // Update paths
+                // Update Section 2 parameters
+                if (document.getElementById('inpGoogleSheetId')) document.getElementById('inpGoogleSheetId').value = data.google_sheet_id || '1VXy6RGThyuQIBwYg9VF3NbWc7wXyfLFQcMGPgEf2Q4I';
+                if (document.getElementById('inpCalcEngineTab')) document.getElementById('inpCalcEngineTab').value = data.calc_engine_tab || 'Calculation_Engine';
+                if (document.getElementById('selTabStrategy')) document.getElementById('selTabStrategy').value = data.tab_strategy || 'name';
+
+                // Update Section 3 paths & checkboxes
                 if (data.google_drive_root || data.target_output_dir) {
                     document.getElementById('inpTargetOutputDir').value = data.target_output_dir || data.google_drive_root;
                 }
@@ -504,8 +568,14 @@
                 if (data.reference_factsheets_dir) {
                     document.getElementById('inpFactsheetsDir').value = data.reference_factsheets_dir;
                 }
+                if (data.export_options) {
+                    if (document.getElementById('chkMemoZh')) document.getElementById('chkMemoZh').checked = data.export_options.export_memo_zh !== false;
+                    if (document.getElementById('chkMemoEn')) document.getElementById('chkMemoEn').checked = data.export_options.export_memo_en !== false;
+                    if (document.getElementById('chkFactsheetZh')) document.getElementById('chkFactsheetZh').checked = data.export_options.export_factsheet_zh !== false;
+                    if (document.getElementById('chkFactsheetEn')) document.getElementById('chkFactsheetEn').checked = data.export_options.export_factsheet_en !== false;
+                }
 
-                // Update Qualitative & Calibration
+                // Update Section 4 Qualitative & Calibration
                 const mgr = data.manager_input || {};
                 document.getElementById('inpQualitativeView').value = mgr.qualitative_view || '';
                 document.getElementById('inpConflictCalibration').value = data.monthly_conflict_calibration || '';
@@ -804,64 +874,133 @@
                 log(`✓ 已采纳 Agent 深度归因建议并填入第一页归因框`, 'text-emerald-400');
             }
         }
+        function getHoldingsFromTable() {
+            const rows = document.querySelectorAll('#holdingsTableBody tr');
+            const updatedHoldings = [];
+            rows.forEach((tr, idx) => {
+                const fname = tr.querySelector('.inp-fundname').value.trim();
+                if (!fname) return;
+                updatedHoldings.push({
+                    id: `fund_${idx+1}`,
+                    fund_name: fname,
+                    active: tr.querySelector('.chk-active').checked,
+                    return_1m: tr.querySelector('.inp-return').value.trim(),
+                    market_noise: tr.querySelector('.inp-noise').value.trim(),
+                    fundamental_support: tr.querySelector('.inp-support').value.trim(),
+                    advisory_recommendation: tr.querySelector('.sel-directive').value
+                });
+            });
+            return updatedHoldings;
+        }
 
-        async function saveAllSettings() {
-            const btn = document.getElementById('btnSaveAll');
-            btn.disabled = true;
-            btn.innerText = '正在保存...';
+        async function saveSection(secId) {
+            const month = document.getElementById('selReportMonth').value;
+            let btn = null;
+            let sectionName = '';
+            let payload = {
+                report_month: month
+            };
+
+            if (secId === 1) {
+                btn = document.getElementById('btnSaveSec1');
+                sectionName = 'Section 1 (宏观与期别)';
+                payload.settle_date = document.getElementById('inpSettleDate').value.trim();
+                payload.valuation_date_zh = document.getElementById('inpValuationLabelZh').value.trim();
+                payload.dynamic_sequence_months = parseInt(document.getElementById('inpSequenceCount').value.trim()) || 39;
+                payload.benchmark = document.getElementById('inpBenchmark').value;
+                payload.section_name = sectionName;
+            } else if (secId === 2) {
+                btn = document.getElementById('btnSaveSec2');
+                sectionName = 'Section 2 (取值规则映射)';
+                payload.google_sheet_id = document.getElementById('inpGoogleSheetId').value.trim();
+                payload.calc_engine_tab = document.getElementById('inpCalcEngineTab').value.trim();
+                payload.tab_strategy = document.getElementById('selTabStrategy').value;
+                payload.section_name = sectionName;
+            } else if (secId === 3) {
+                btn = document.getElementById('btnSaveSec3');
+                sectionName = 'Section 3 (来源文件与输出)';
+                payload.reference_monthly_update = document.getElementById('inpMonthlyUpdate').value.trim();
+                payload.reference_factsheets_dir = document.getElementById('inpFactsheetsDir').value.trim();
+                payload.target_output_dir = document.getElementById('inpTargetOutputDir').value.trim();
+                payload.google_drive_root = document.getElementById('inpTargetOutputDir').value.trim();
+                payload.export_options = {
+                    export_memo_zh: document.getElementById('chkMemoZh').checked,
+                    export_memo_en: document.getElementById('chkMemoEn').checked,
+                    export_factsheet_zh: document.getElementById('chkFactsheetZh').checked,
+                    export_factsheet_en: document.getElementById('chkFactsheetEn').checked,
+                    target_dir: document.getElementById('inpTargetOutputDir').value.trim()
+                };
+                payload.section_name = sectionName;
+            } else if (secId === '4a') {
+                btn = document.getElementById('btnSaveSec4A');
+                sectionName = 'Section 4.1 (归因核心观点与校准)';
+                payload.qualitative_view = document.getElementById('inpQualitativeView').value.trim();
+                payload.monthly_conflict_calibration = document.getElementById('inpConflictCalibration').value.trim();
+                payload.section_name = sectionName;
+            } else if (secId === '4b') {
+                btn = document.getElementById('btnSaveSec4B');
+                sectionName = 'Section 4.2 (标的矩阵与顾问建议)';
+                payload.rebalance_verdict = document.getElementById('selRebalanceVerdict').value;
+                payload.rebalance_note = document.getElementById('inpRebalanceNote').value.trim();
+                payload.holdings_conviction = getHoldingsFromTable();
+                payload.section_name = sectionName;
+            } else {
+                // All sections
+                btn = document.getElementById('btnSaveAll');
+                sectionName = '全局全部配置 (Sections 1-4)';
+                payload.settle_date = document.getElementById('inpSettleDate').value.trim();
+                payload.valuation_date_zh = document.getElementById('inpValuationLabelZh').value.trim();
+                payload.dynamic_sequence_months = parseInt(document.getElementById('inpSequenceCount').value.trim()) || 39;
+                payload.benchmark = document.getElementById('inpBenchmark').value;
+                payload.google_sheet_id = document.getElementById('inpGoogleSheetId').value.trim();
+                payload.calc_engine_tab = document.getElementById('inpCalcEngineTab').value.trim();
+                payload.tab_strategy = document.getElementById('selTabStrategy').value;
+                payload.reference_monthly_update = document.getElementById('inpMonthlyUpdate').value.trim();
+                payload.reference_factsheets_dir = document.getElementById('inpFactsheetsDir').value.trim();
+                payload.target_output_dir = document.getElementById('inpTargetOutputDir').value.trim();
+                payload.google_drive_root = document.getElementById('inpTargetOutputDir').value.trim();
+                payload.qualitative_view = document.getElementById('inpQualitativeView').value.trim();
+                payload.monthly_conflict_calibration = document.getElementById('inpConflictCalibration').value.trim();
+                payload.rebalance_verdict = document.getElementById('selRebalanceVerdict').value;
+                payload.rebalance_note = document.getElementById('inpRebalanceNote').value.trim();
+                payload.holdings_conviction = getHoldingsFromTable();
+                payload.export_options = {
+                    export_memo_zh: document.getElementById('chkMemoZh').checked,
+                    export_memo_en: document.getElementById('chkMemoEn').checked,
+                    export_factsheet_zh: document.getElementById('chkFactsheetZh').checked,
+                    export_factsheet_en: document.getElementById('chkFactsheetEn').checked,
+                    target_dir: document.getElementById('inpTargetOutputDir').value.trim()
+                };
+                payload.section_name = sectionName;
+            }
+
+            let origHtml = '';
+            if (btn) {
+                origHtml = btn.innerHTML;
+                btn.disabled = true;
+                btn.innerHTML = '<span>⏳ 保存中...</span>';
+            }
 
             try {
-                const month = document.getElementById('selReportMonth').value;
-                const rows = document.querySelectorAll('#holdingsTableBody tr');
-                
-                const updatedHoldings = [];
-                rows.forEach((tr, idx) => {
-                    const fname = tr.querySelector('.inp-fundname').value.trim();
-                    if (!fname) return;
-                    updatedHoldings.push({
-                        id: `fund_${idx+1}`,
-                        fund_name: fname,
-                        active: tr.querySelector('.chk-active').checked,
-                        return_1m: tr.querySelector('.inp-return').value.trim(),
-                        market_noise: tr.querySelector('.inp-noise').value.trim(),
-                        fundamental_support: tr.querySelector('.inp-support').value.trim(),
-                        advisory_recommendation: tr.querySelector('.sel-directive').value
-                    });
-                });
-
-                const payload = {
-                    report_month: month,
-                    target_output_dir: document.getElementById('inpTargetOutputDir').value.trim(),
-                    google_drive_root: document.getElementById('inpTargetOutputDir').value.trim(),
-                    reference_monthly_update: document.getElementById('inpMonthlyUpdate').value.trim(),
-                    reference_factsheets_dir: document.getElementById('inpFactsheetsDir').value.trim(),
-                    monthly_conflict_calibration: document.getElementById('inpConflictCalibration').value.trim(),
-                    qualitative_view: document.getElementById('inpQualitativeView').value.trim(),
-                    rebalance_verdict: document.getElementById('selRebalanceVerdict').value,
-                    rebalance_note: document.getElementById('inpRebalanceNote').value.trim(),
-                    holdings_conviction: updatedHoldings,
-                    export_options: {
-                        export_memo_zh: document.getElementById('chkMemoZh').checked,
-                        export_memo_en: document.getElementById('chkMemoEn').checked,
-                        export_factsheet_zh: document.getElementById('chkFactsheetZh').checked,
-                        export_factsheet_en: document.getElementById('chkFactsheetEn').checked,
-                        target_dir: document.getElementById('inpTargetOutputDir').value.trim()
-                    }
-                };
-
                 const res = await fetch('/api/save_config', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
-                const resp = await res.json();
-                log(`✓ ${resp.message || '配置已成功保存！'}`, 'text-emerald-400');
+                const data = await res.json();
+                log(`✓ ${data.message || `${sectionName}已成功保存！`}`, 'text-emerald-400');
             } catch(e) {
-                log(`✗ 保存出错: ${e.message}`, 'text-rose-400');
+                log(`✗ 保存 ${sectionName} 出错: ${e.message}`, 'text-rose-400');
             } finally {
-                btn.disabled = false;
-                btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg><span>💾 保存全部定见与配置</span>';
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = origHtml;
+                }
             }
+        }
+
+        async function saveAllSettings() {
+            await saveSection('all');
         }
 
         async function triggerFastBuild() {
@@ -926,9 +1065,10 @@
                 btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg><span>🖨️ 导出选定全套 PDF 并同步云端</span>';
             }
         }
-
         window.addEventListener('DOMContentLoaded', () => {
-            loadConfig('2026-08');
+            const urlParams = new URLSearchParams(window.location.search);
+            const initMonth = urlParams.get('month') || '2026-08';
+            loadConfig(initMonth);
         });
     </script>
 </body>

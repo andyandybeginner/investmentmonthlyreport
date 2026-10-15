@@ -249,13 +249,18 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
             else:
                 cfg = {}
 
-            # Update paths and settings
-            for key in ['google_drive_root', 'reference_monthly_update', 'reference_factsheets_dir', 
-                        'monthly_conflict_calibration', 'target_output_dir', 'export_options', 'settle_date']:
+            # Update paths and settings (all Section 1, 2, 3 parameters)
+            supported_keys = [
+                'google_drive_root', 'reference_monthly_update', 'reference_factsheets_dir', 
+                'monthly_conflict_calibration', 'target_output_dir', 'export_options', 'settle_date',
+                'valuation_date_zh', 'dynamic_sequence_months', 'benchmark', 'google_sheet_id',
+                'calc_engine_tab', 'tab_strategy', 'price_rules', 'perf_rules', 'report_month'
+            ]
+            for key in supported_keys:
                 if key in req_data:
                     cfg[key] = req_data[key]
 
-            # Update manager_input
+            # Update manager_input (Section 4 parameters)
             mgr = cfg.setdefault('manager_input', {})
             if 'qualitative_view' in req_data:
                 mgr['qualitative_view'] = req_data['qualitative_view']
@@ -269,10 +274,14 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
             with open(cfg_path, 'w', encoding='utf-8') as f:
                 json.dump(cfg, f, ensure_ascii=False, indent=2)
 
+            sec_name = req_data.get('section_name', '设定')
             self.send_response(200)
             self.send_header('Content-Type', 'application/json; charset=utf-8')
             self.end_headers()
-            self.wfile.write(json.dumps({"status": "success", "message": f"{month} 配置与定见已完整持久化保存！"}).encode('utf-8'))
+            self.wfile.write(json.dumps({
+                "status": "success", 
+                "message": f"{month} {sec_name}已成功持久化保存至 config/config_{month.replace('-', '_')}.json！"
+            }, ensure_ascii=False).encode('utf-8'))
 
         # Agent Sentiment Synthesis
         elif clean_path == '/api/analyze_sentiment':

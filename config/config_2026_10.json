@@ -18,7 +18,7 @@
   "monthly_alpha_1m": -0.77,
   "monthly_conflict_calibration": "长端美债收益率与固收资产校准：研报强调警惕长端美债与久期风险，本组合坚持纯股票高增长架构配搭大华黄金与富敦绝对收益底仓，规避了传统60/40组合在股债正相关环境下的减震失效陷阱。",
   "manager_input": {
-    "qualitative_view": "10月宏观流动性与政策托底持续发力，组合核心持仓稳固，大盘整固创造优质逢低配置机会。",
+    "qualitative_view": "【测试主管定见】10月份全球资产配置动态跟踪正常。",
     "rebalance_verdict": "持有",
     "rebalance_note": "维持既有配置组合，不触发被动调仓。",
     "holdings_conviction": [
@@ -86,5 +86,9 @@
         "advisory_recommendation": "持有"
       }
     ]
-  }
+  },
+  "dynamic_sequence_months": 41,
+  "google_sheet_id": "1VXy6RGThyuQIBwYg9VF3NbWc7wXyfLFQcMGPgEf2Q4I",
+  "calc_engine_tab": "Calculation_Engine",
+  "tab_strategy": "name"
 }
