@@ -19,6 +19,44 @@ import fitz
 def generate_report():
     print("🚀 Starting August 2026 Memo SOP Execution Pipeline...")
     
+    # 0. Load Configuration
+    cfg_file = "config/config_2026_08.json"
+    if os.path.exists(cfg_file):
+        with open(cfg_file, "r", encoding="utf-8") as f:
+            cfg = json.load(f)
+    else:
+        cfg = {}
+
+    mgr = cfg.get("manager_input", {})
+    qualitative_view = mgr.get("qualitative_view", "8月受长端美债收益率攀升至5.3%创2007年新高影响，全球科技成长股出现估值分母端短期压制，组合科技板块回调；然而大华黄金单月暴涨+24.00%（穿透真实纯黄金敞口10.46%），发挥了极其卓越的非对称抗通胀与避险压舱石效应，驱动组合全月实现+0.35%正收益，跑赢标普500同期表现。")
+    rebalance_verdict = mgr.get("rebalance_verdict", "坚持持有")
+    rebalance_note = mgr.get("rebalance_note", "实际权重漂移均在安全阈值内，大华黄金避险收益强劲平滑科技波动，8月维持既有 7 只标的目标配比不变，不触发被动赎回。")
+    conflict_note = cfg.get("monthly_conflict_calibration", "黄金配置与穿透校准：研报对黄金维持审慎（建议至多10%配置）。本组合大华黄金目标权重15%，底层穿透仅约72.08%为纯黄金资产，真实纯黄金敞口约10.46%，与研报10%避险上限严格吻合，并在8月金价暴涨+24.00%中发挥关键防守压舱石效应。")
+    
+    holdings_conviction = mgr.get("holdings_conviction", [])
+    active_funds = [f for f in holdings_conviction if f.get("active", True)]
+    is_compact = len(active_funds) > 3
+    py_class = "p-1.5" if is_compact else "p-2"
+    txt_class = "text-[10px]" if is_compact else "text-[11px]"
+
+    conviction_rows = ""
+    for h in active_funds:
+        fname = h.get("fund_name", "")
+        ret = h.get("return_1m", "")
+        ret_color = "text-emerald-600" if ret.startswith("+") else "text-rose-600"
+        noise = h.get("market_noise", "")
+        fundam = h.get("fundamental_support", "")
+        dir_text = h.get("advisory_directive", "坚持持有")
+        badge_bg = "bg-emerald-100 text-emerald-800" if dir_text == "坚持持有" else ("bg-rose-100 text-rose-800" if "削减" in dir_text else "bg-amber-100 text-amber-800")
+        conviction_rows += f"""
+                    <tr>
+                        <td class="{py_class} pl-3 font-bold text-slate-900 truncate max-w-[210px]">{fname}</td>
+                        <td class="{py_class} text-right font-mono {ret_color} font-bold">{ret}</td>
+                        <td class="{py_class} text-slate-600 {txt_class}">{noise}</td>
+                        <td class="{py_class} text-slate-800 font-medium {txt_class}">{fundam}</td>
+                        <td class="{py_class} text-center pr-3 whitespace-nowrap"><span class="inline-block px-2.5 py-0.5 rounded {badge_bg} font-bold text-[10px] whitespace-nowrap">{dir_text}</span></td>
+                    </tr>"""
+
     # 1. Output HTML path
     html_file = "iFAST_Equity_Growth_Monthly_Report_August2026.html"
     
@@ -28,7 +66,6 @@ def generate_report():
         base_html = f.read()
         
     # We will assemble custom components for August 2026
-    # Let's inspect what top_nav and annotation toolbar need:
     with open("src/components/top_nav.html", "r", encoding="utf-8") as f:
         top_nav = f.read()
     with open("src/components/annotation_toolbar.html", "r", encoding="utf-8") as f:
@@ -293,9 +330,8 @@ def generate_report():
                     月度归因与调仓定见
                 </h5>
                 <p class="text-[11px] leading-relaxed text-slate-700">
-                    8月全球宏观受长端美债收益率飙升（30年期破5.3%）与全球降息节奏分歧扰动，芯片科技板块（-5.64%）与A股（-3.09%）经历健康的技术性整固。在此背景下，<strong>组合逆周期对冲资产发挥关键防御支柱价值：大华黄金及综合单月暴涨 +24.00%，贡献 +1.94% 超额阿尔法；配合生命科学（+2.53%）与日本高股息（+1.30%），驱动组合逆势录得 +0.35% 正回报，显著优于未重组旧组合（-1.65%）</strong>。
-                    <strong>关键财务穿透：</strong>大华黄金穿透后纯黄金敞口为 10.46%，严格吻合研报 10% 避险上限；各板块偏离度均保持在安全阈值（<1%）内。
-                    <strong>调仓结论：</strong>各大标的底层逻辑坚实，本月维持既有战略配比（Maintain），无需被动调仓。
+                    {{QUALITATIVE_VIEW}}
+                    <strong>调仓结论（{{REBALANCE_VERDICT}}）：</strong>{{REBALANCE_NOTE}}
                 </p>
             </div>
 
@@ -539,10 +575,10 @@ def generate_report():
                     <!-- Driver 3: Areas of Caution & Gold Look-Through -->
                     <div class="bg-rose-50/70 border border-rose-200 rounded-xl p-2.5 space-y-1 shadow-xs flex-[1.3] flex flex-col justify-start">
                         <span class="font-bold text-xs text-rose-900 flex items-center gap-1">
-                            ⚠️ 审慎防御领域与资产警惕 (含黄金穿透校准)
+                            ⚠️ 审慎防御领域与资产警惕 (含月度校准)
                         </span>
                         <p class="text-[10px] text-slate-600 leading-relaxed">
-                            财政部扩大长期国债回购难挡长端收益率回升，市场要求更高的期限溢价补偿。建议严控久期，转向短久期债券与亚洲低估值标的。<strong>黄金配置与穿透校准：</strong>研报对黄金维持审慎（指出本轮周期黄金避险属性减弱，仅建议至多 10% 分散配置）。<strong>组合穿透：</strong>本组合配置大华黄金及综合（United Gold & General）目标权重设为 15%，因其底层仅约 72% 为纯黄金相关资产（其余为多元贵金属与基础矿产），穿透后真实纯黄金敞口约 10.46%，与研报 10% 避险上限严格吻合，并在本月金价暴涨+24.00%中发挥关键防守压舱石效应。
+                            财政部扩大长期国债回购难挡长端收益率回升，市场要求更高的期限溢价补偿。建议严控久期，转向短久期债券与亚洲低估值标的。<strong>月度资产穿透与宏观校准：</strong>{{CONFLICT_NOTE}}
                         </p>
                     </div>
                 </div>
@@ -843,36 +879,16 @@ def generate_report():
                         <th class="p-2 text-center pr-3 whitespace-nowrap min-w-[85px]">顾问决策指令</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-200 bg-white text-[11.5px]">
-                    <tr>
-                        <td class="p-2 pl-3 font-bold text-slate-900">United Gold and General A Acc SGD</td>
-                        <td class="p-2 text-right font-mono text-emerald-600 font-bold">+24.00%</td>
-                        <td class="p-2 text-slate-600">金价短期急涨后可能面临获利盘了结与美元指数技术性反弹。</td>
-                        <td class="p-2 text-slate-800 font-medium">美债30年期收益率升破5.3%，去美元化与全球央行购金逻辑坚实，非对称对冲大放异彩。</td>
-                        <td class="p-2 text-center pr-3 whitespace-nowrap"><span class="inline-block px-2.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10.5px] whitespace-nowrap">坚持持有</span></td>
-                    </tr>
-                    <tr>
-                        <td class="p-2 pl-3 font-bold text-slate-900">EASTSPRING - GLOBAL TECHNOLOGY SGD</td>
-                        <td class="p-2 text-right font-mono text-rose-600 font-bold">-5.64%</td>
-                        <td class="p-2 text-slate-600">长端美债收益率攀升引发半导体估值分母端压制，芯片股短期震荡。</td>
-                        <td class="p-2 text-slate-800 font-medium">英伟达财报亮眼，云巨头资本开支扩张，AI 硬件供需瓶颈突出，回调创造极佳逢低吸纳窗口。</td>
-                        <td class="p-2 text-center pr-3 whitespace-nowrap"><span class="inline-block px-2.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10.5px] whitespace-nowrap">坚持持有</span></td>
-                    </tr>
-                    <tr>
-                        <td class="p-2 pl-3 font-bold text-slate-900">United China A Shares Innovation A Acc</td>
-                        <td class="p-2 text-right font-mono text-rose-600 font-bold">-3.09%</td>
-                        <td class="p-2 text-slate-600">7月宏观数据复苏不均，零售消费温和，房地产投资持续收缩。</td>
-                        <td class="p-2 text-slate-800 font-medium">在岸科技制造与国产AI技术稳步突破，估值处于历史绝对低位，政策托底与流动性注入预期强烈。</td>
-                        <td class="p-2 text-center pr-3 whitespace-nowrap"><span class="inline-block px-2.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10.5px] whitespace-nowrap">坚持持有</span></td>
-                    </tr>
+                <tbody class="divide-y divide-slate-200 bg-white text-[11px]">
+{{CONVICTION_ROWS}}
                 </tbody>
             </table>
         </div>
 
         <!-- 3. Monthly Rebalancing Decision Box -->
         <div class="bg-blue-50 border border-blue-200 rounded-lg px-3.5 py-2 text-xs text-blue-950 flex justify-between items-center">
-            <span class="font-bold text-[#0f2347]">月度调仓结论：</span>
-            <span class="text-[12px] text-slate-700">实际权重漂移均在安全阈值内，大华黄金避险收益强劲平滑科技波动，<strong>8月维持既有 7 只标的目标配比不变，不触发被动赎回</strong>。</span>
+            <span class="font-bold text-[#0f2347]">月度调仓结论（{{REBALANCE_VERDICT}}）：</span>
+            <span class="text-[12px] text-slate-700">{{REBALANCE_NOTE}}</span>
         </div>
 
     </div>
@@ -1320,6 +1336,17 @@ def generate_report():
         }}
     }}
     """
+
+    # Replace dynamic manager and config inputs
+    slide1_html = slide1_html.replace("{{QUALITATIVE_VIEW}}", qualitative_view)
+    slide1_html = slide1_html.replace("{{REBALANCE_VERDICT}}", rebalance_verdict)
+    slide1_html = slide1_html.replace("{{REBALANCE_NOTE}}", rebalance_note)
+
+    slide2_html = slide2_html.replace("{{CONFLICT_NOTE}}", conflict_note)
+
+    slide4_html = slide4_html.replace("{{CONVICTION_ROWS}}", conviction_rows)
+    slide4_html = slide4_html.replace("{{REBALANCE_VERDICT}}", rebalance_verdict)
+    slide4_html = slide4_html.replace("{{REBALANCE_NOTE}}", rebalance_note)
 
     # Assemble HTML
     final_html = base_html.replace("{{TOP_NAV}}", top_nav)

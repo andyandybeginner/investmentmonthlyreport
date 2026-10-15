@@ -3,13 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HR 模板投资组合 · 投研工作流控制台</title>
+    <title>HR 模板投资组合 · 投研工作流控制中心</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif; }
         .mono-num { font-family: 'JetBrains Mono', monospace; }
+        input[type="text"], textarea, select {
+            background-color: #0f172a;
+            border-color: #334155;
+            color: #f1f5f9;
+        }
+        input[type="text"]:focus, textarea:focus, select:focus {
+            border-color: #f59e0b;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
+        }
     </style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col">
@@ -32,7 +42,7 @@
         <div class="flex items-center gap-3">
             <div class="flex items-center gap-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700 text-xs">
                 <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span class="text-slate-300">本地服务运行中</span>
+                <span class="text-slate-300">本地服务运行中 (Port 8080)</span>
             </div>
             <a href="/preview" target="_blank" class="px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs flex items-center gap-1.5 transition shadow-sm">
                 <span>浏览最新备忘录</span>
@@ -48,18 +58,18 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div class="bg-slate-800/60 border border-slate-700 rounded-2xl p-4 flex flex-col justify-between">
                 <span class="text-xs font-semibold text-slate-400">当前参考报告月</span>
-                <div class="text-xl font-black text-amber-400 mt-1">2026年8月</div>
-                <span class="text-[11px] text-slate-500 mt-1">结算日：2026-09-03</span>
+                <div class="text-xl font-black text-amber-400 mt-1" id="statReportMonth">2026年8月</div>
+                <span class="text-[11px] text-slate-500 mt-1" id="statSettleDate">结算日：2026-09-03</span>
             </div>
             <div class="bg-slate-800/60 border border-slate-700 rounded-2xl p-4 flex flex-col justify-between">
                 <span class="text-xs font-semibold text-slate-400">参考组合资产规模</span>
-                <div class="text-xl font-black text-white mono-num mt-1">$183,380.86 SGD</div>
-                <span class="text-[11px] text-emerald-400 mt-1 font-semibold">当月收益: +0.35%</span>
+                <div class="text-xl font-black text-white mono-num mt-1" id="statAum">$183,380.86 SGD</div>
+                <span class="text-[11px] text-emerald-400 mt-1 font-semibold" id="stat1MReturn">当月收益: +0.35%</span>
             </div>
             <div class="bg-slate-800/60 border border-slate-700 rounded-2xl p-4 flex flex-col justify-between">
                 <span class="text-xs font-semibold text-slate-400">累计收益 (39个月)</span>
-                <div class="text-xl font-black text-emerald-400 mono-num mt-1">+83.38%</div>
-                <span class="text-[11px] text-amber-300 mt-1 font-semibold">超额 Alpha: +14.66%</span>
+                <div class="text-xl font-black text-emerald-400 mono-num mt-1" id="statCumulative">+83.38%</div>
+                <span class="text-[11px] text-amber-300 mt-1 font-semibold" id="statAlpha">超额 Alpha: +14.66%</span>
             </div>
             <div class="bg-slate-800/60 border border-slate-700 rounded-2xl p-4 flex flex-col justify-between">
                 <span class="text-xs font-semibold text-slate-400">全局基准锚定</span>
@@ -68,76 +78,86 @@
             </div>
         </div>
 
-        <!-- Section 1: Latest Monthly Update Files & Source Paths -->
+        <!-- Section 1: Latest Monthly Update Files & Source Paths (Editable & Scannable) -->
         <section class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-6 shadow-xl">
             <div class="flex items-center justify-between pb-4 border-b border-slate-700/80 mb-5">
                 <div class="flex items-center gap-2.5">
                     <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center font-bold text-sm">📁</div>
                     <div>
-                        <h2 class="text-base font-bold text-white">1. 最新 Monthly Update 文件定位与研报索引</h2>
-                        <p class="text-xs text-slate-400">自动检测 Google Drive 云端挂载路径中的月报与底层 7 只基金 Factsheet</p>
+                        <h2 class="text-base font-bold text-white">1. 最新 Monthly Update 文件定位与数据源配置 (可修改与自动探测)</h2>
+                        <p class="text-xs text-slate-400">支持自由修改本地与 Google Drive 路径，一键扫描云端或子目录中的最新月报与 Factsheets</p>
                     </div>
                 </div>
-                <span class="text-xs font-mono text-slate-400 bg-slate-900/60 px-3 py-1 rounded-md border border-slate-700">G:\我的云端硬盘\0. 工作\2. 投资分析计划 01102026\3. Monthly Report</span>
+                <div class="flex items-center gap-2">
+                    <button onclick="scanDrive()" id="btnScanDrive" class="px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold text-xs flex items-center gap-1.5 transition shadow-sm">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        <span>扫描网盘目录</span>
+                    </button>
+                    <button onclick="savePathConfig()" class="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1.5 transition shadow-sm">
+                        <span>保存路径设定</span>
+                    </button>
+                </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                <!-- Monthly Updates -->
-                <div class="bg-slate-900/60 rounded-xl p-4 border border-slate-700/60 space-y-3">
-                    <span class="font-bold text-amber-400 flex items-center gap-2">
-                        <span>📰</span> iFAST 官方月度投资研报 (Monthly Investment Updates)
-                    </span>
-                    <ul class="space-y-2 text-slate-300">
-                        <li class="flex items-center justify-between p-2 rounded bg-slate-800/60 border border-slate-700/50">
-                            <div>
-                                <strong class="text-white block">iFAST Monthly Investment Update Sep 2026.pdf</strong>
-                                <span class="text-[11px] text-slate-400">用于生成 8 月备忘录 · P.4 宏观与星级榜 · P.5-6 新加坡基金专题</span>
-                            </div>
-                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">当前引用</span>
-                        </li>
-                        <li class="flex items-center justify-between p-2 rounded bg-slate-800/40 border border-slate-700/30">
-                            <div>
-                                <strong class="text-slate-300 block">iFAST Monthly Investment Update October 2026.pdf</strong>
-                                <span class="text-[11px] text-slate-400">用于生成 9 月备忘录 · P.7 宏观展望 · P.12 当债券不再扮演债券</span>
-                            </div>
-                            <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-700 text-slate-400">已归档就绪</span>
-                        </li>
-                    </ul>
+            <div class="space-y-4 text-xs">
+                <!-- Root Directory Input -->
+                <div>
+                    <label class="block font-bold text-slate-300 mb-1 flex items-center justify-between">
+                        <span>Google Drive 根路径 (Google Drive Root Path)</span>
+                        <span id="driveStatusBadge" class="text-[11px] text-emerald-400 font-semibold">✓ 路径已连接</span>
+                    </label>
+                    <input id="inpDriveRoot" type="text" class="w-full rounded-xl p-2.5 text-xs font-mono text-slate-200 border border-slate-700" value="G:\我的云端硬盘\0. 工作\2. 投资分析计划 01102026\3. Monthly Report">
                 </div>
 
-                <!-- Factsheets Folders -->
-                <div class="bg-slate-900/60 rounded-xl p-4 border border-slate-700/60 space-y-3">
-                    <span class="font-bold text-blue-400 flex items-center gap-2">
-                        <span>📊</span> 底层 7 只基金官方月度 Factsheet 存储目录
-                    </span>
-                    <ul class="space-y-2 text-slate-300">
-                        <li class="p-2 rounded bg-slate-800/60 border border-slate-700/50 flex justify-between items-center">
-                            <div>
-                                <strong class="text-white">...\3. Monthly Report\Sep 2026\</strong>
-                                <p class="text-[11px] text-slate-400">对应 8 月备忘录穿透核算（7 只基金 Factsheet 均已就绪）</p>
-                            </div>
-                            <span class="text-emerald-400 font-mono font-bold">7 / 7 文件</span>
-                        </li>
-                        <li class="p-2 rounded bg-slate-800/40 border border-slate-700/30 flex justify-between items-center">
-                            <div>
-                                <strong class="text-slate-300">...\3. Monthly Report\Oct 2026\</strong>
-                                <p class="text-[11px] text-slate-400">对应 9 月备忘录穿透核算（7 只基金 Factsheet 均已就绪）</p>
-                            </div>
-                            <span class="text-blue-400 font-mono font-bold">7 / 7 文件</span>
-                        </li>
-                    </ul>
+                <!-- Two Column Source Selectors -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Monthly Update PDF Selector -->
+                    <div class="bg-slate-900/60 rounded-xl p-4 border border-slate-700/60 space-y-2.5">
+                        <span class="font-bold text-amber-400 flex items-center gap-1.5">
+                            <span>📰</span> 最新 iFAST 官方月度投资研报 (Reference Monthly Update PDF)
+                        </span>
+                        <div>
+                            <label class="block text-[11px] text-slate-400 mb-1">从探测列表中快捷选择：</label>
+                            <select id="selMonthlyUpdate" onchange="onMonthlyUpdateSelect(this.value)" class="w-full rounded-lg p-2 text-xs font-mono">
+                                <option value="iFAST Monthly Investment Update Sep 2026.pdf" selected>iFAST Monthly Investment Update Sep 2026.pdf (8月备忘录参考)</option>
+                                <option value="iFAST Monthly Investment Update October 2026.pdf">iFAST Monthly Investment Update October 2026.pdf (9月备忘录参考)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-slate-400 mb-1">或手动指定文件名 / 相对路径：</label>
+                            <input id="inpMonthlyUpdateCustom" type="text" class="w-full rounded-lg p-2 text-xs font-mono" value="iFAST Monthly Investment Update Sep 2026.pdf">
+                        </div>
+                    </div>
+
+                    <!-- Factsheets Folder Selector -->
+                    <div class="bg-slate-900/60 rounded-xl p-4 border border-slate-700/60 space-y-2.5">
+                        <span class="font-bold text-blue-400 flex items-center gap-1.5">
+                            <span>📊</span> 底层 7 只基金 Factsheet 存放子文件夹 (Reference Factsheets Directory)
+                        </span>
+                        <div>
+                            <label class="block text-[11px] text-slate-400 mb-1">从探测目录中快捷选择：</label>
+                            <select id="selFactsheetsDir" onchange="onFactsheetsDirSelect(this.value)" class="w-full rounded-lg p-2 text-xs font-mono">
+                                <option value="Sep 2026" selected>Sep 2026 (7只基金 Factsheet 均就绪)</option>
+                                <option value="Oct 2026">Oct 2026 (7只基金 Factsheet 均就绪)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-slate-400 mb-1">或手动指定文件夹名称：</label>
+                            <input id="inpFactsheetsDirCustom" type="text" class="w-full rounded-lg p-2 text-xs font-mono" value="Sep 2026">
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- Section 2: Data Structure & Pipeline Mapping -->
+        <!-- Section 2: Data Structure & Pipeline Mapping (Clear Explanation of ByName Lookup) -->
         <section class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-6 shadow-xl">
             <div class="flex items-center justify-between pb-4 border-b border-slate-700/80 mb-5">
                 <div class="flex items-center gap-2.5">
                     <div class="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center font-bold text-sm">🗄️</div>
                     <div>
-                        <h2 class="text-base font-bold text-white">2. 引用的底层数据结构与映射字典</h2>
-                        <p class="text-xs text-slate-400">主 Google Sheet 工作表架构与专属价格列表取值规则</p>
+                        <h2 class="text-base font-bold text-white">2. 引用的底层数据结构与工作表取值规则澄清</h2>
+                        <p class="text-xs text-slate-400">解释 Google Sheet 架构与精确查询机制，保障数据一致性</p>
                     </div>
                 </div>
                 <span class="text-xs font-mono text-slate-400 bg-slate-900/60 px-3 py-1 rounded-md border border-slate-700">Sheet ID: 1VXy6RGThyuQIBwYg9VF3NbWc7wXyfLFQcMGPgEf2Q4I</span>
@@ -147,112 +167,116 @@
                 <!-- Engine Tab -->
                 <div class="bg-slate-900/60 rounded-xl p-4 border border-slate-700/60 space-y-2">
                     <span class="font-bold text-white flex items-center gap-1.5">
-                        <span class="w-2 h-2 rounded bg-rose-500"></span> Calculation_Engine 工作表
+                        <span class="w-2 h-2 rounded bg-rose-500"></span> Calculation_Engine 总表结构
                     </span>
                     <p class="text-slate-400 text-[11.5px] leading-relaxed">
                         记录 39 个月完整复权净值时间序列。<strong>F 列</strong>为当前重组组合净值，<strong>H 列</strong>为标普 500 同成立日回报，<strong>I 列</strong>为 MSCI 全球指数同成立日回报。
                     </p>
                 </div>
 
-                <!-- Individual Fund Price List Rule -->
+                <!-- ByName Query Rule Clarification -->
                 <div class="bg-slate-900/60 rounded-xl p-4 border border-slate-700/60 space-y-2">
                     <span class="font-bold text-amber-400 flex items-center gap-1.5">
-                        <span class="w-2 h-2 rounded bg-amber-500"></span> 专属 Price List 取值红线 (Tab 12-18)
+                        <span class="w-2 h-2 rounded bg-amber-500"></span> 按工作表名称精确穿透 (Exact ByName)
                     </span>
                     <p class="text-slate-400 text-[11.5px] leading-relaxed">
-                        底层基金当月回报率 (1M) <strong>严禁从总表简单相除</strong>，必须穿透各标的独立 Price List（如大华黄金自然月暴涨 +24.00%），以报告月末对上月末最后有效收盘价计算。
+                        <strong class="text-slate-200">系统完全不依赖物理 Tab 序号！</strong>无论您在表格中如何拖拽移动工作表顺序或插入新表，系统均通过 Google API 以基金工作表全名精确抓取各标的专属净值。
                     </p>
                 </div>
 
-                <!-- Look-Through Rule -->
+                <!-- Price List & Dynamic Calibration Notice -->
                 <div class="bg-slate-900/60 rounded-xl p-4 border border-slate-700/60 space-y-2">
                     <span class="font-bold text-emerald-400 flex items-center gap-1.5">
-                        <span class="w-2 h-2 rounded bg-emerald-500"></span> 资产穿透与宏观冲突校准
+                        <span class="w-2 h-2 rounded bg-emerald-500"></span> 专属 Price List 自然月取值红线
                     </span>
                     <p class="text-slate-400 text-[11.5px] leading-relaxed">
-                        大华黄金配比 15%，Factsheet 穿透底层仅 72.08% 纯黄金，实际真实纯黄金敞口为 <strong>10.46%</strong>，与研报 10% 避险上限完全一致，无需盲目削减。
+                        底层基金当月回报率 (1M) 严禁从总表简单相除，必须穿透各标的独立 Price List（如大华黄金自然月暴涨 +24.00%），以报告月末对上月末最后有效收盘价计算。
                     </p>
                 </div>
             </div>
         </section>
 
-        <!-- Section 3: Manager Qualitative Input & Conviction Workspace -->
+        <!-- Section 3: Manager Qualitative Input & Full 7-Fund Conviction Workspace -->
         <section class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-6 shadow-xl">
             <div class="flex items-center justify-between pb-4 border-b border-slate-700/80 mb-5">
                 <div class="flex items-center gap-2.5">
                     <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold text-sm">✍️</div>
                     <div>
-                        <h2 class="text-base font-bold text-white">3. 顾问专属定见与月度归因协同工作区</h2>
-                        <p class="text-xs text-slate-400">第一页归因说明与第四页调仓信念可在此录入初始定见，系统将自动融合生成</p>
+                        <h2 class="text-base font-bold text-white">3. 顾问专属定见与 7 只标的信念复盘工作区 (支持全标的动态编辑)</h2>
+                        <p class="text-xs text-slate-400">第一页月度归因、第二页宏观冲突校准、第四页 7 只标的信念审查均可在此按需调整</p>
                     </div>
                 </div>
-                <button id="btnSaveInput" onclick="saveManagerInput()" class="px-4 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition flex items-center gap-1.5 shadow-sm">
-                    <span>保存定见设定</span>
+                <button id="btnSaveAll" onclick="saveAllConfig()" class="px-5 py-2 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-xs transition flex items-center gap-2 shadow-lg shadow-emerald-600/20">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+                    <span>💾 保存全部配置与定见</span>
                 </button>
             </div>
 
-            <div class="space-y-4 text-xs">
-                <!-- Field 1: Manager Market View -->
-                <div>
-                    <label class="block font-bold text-slate-300 mb-1.5 flex items-center justify-between">
-                        <span>第一页 · 月度归因核心观点 (Manager's Qualitative Market Attribution)</span>
-                        <span class="text-[11px] text-slate-400 font-normal">支持直接输入您的核心宏观与标的定见</span>
-                    </label>
-                    <textarea id="inpQualitativeView" rows="3" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-slate-200 text-xs focus:ring-2 focus:ring-amber-500 focus:outline-none leading-relaxed">8月受长端美债收益率攀升至5.3%创2007年新高影响，全球科技成长股出现估值分母端短期压制，组合科技板块回调；然而大华黄金单月暴涨+24.00%（穿透真实纯黄金敞口10.46%），发挥了极其卓越的非对称抗通胀与避险压舱石效应，驱动组合全月实现+0.35%正收益，跑赢标普500同期表现。</textarea>
+            <div class="space-y-5 text-xs">
+                <!-- Row 1: Manager Market View & Slide 2 Dynamic Calibration -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Slide 1 Qualitative Attribution -->
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1.5 flex items-center justify-between">
+                            <span>第一页 · 月度归因核心观点 (Slide 1 Qualitative Attribution)</span>
+                            <span class="text-[11px] text-amber-400">经理人初始输入</span>
+                        </label>
+                        <textarea id="inpQualitativeView" rows="4" class="w-full rounded-xl p-3 text-xs leading-relaxed border border-slate-700"></textarea>
+                    </div>
+
+                    <!-- Slide 2 Dynamic Look-Through Calibration -->
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1.5 flex items-center justify-between">
+                            <span>第二页 · 月度资产穿透与宏观冲突校准 (Slide 2 Dynamic Calibration)</span>
+                            <span class="text-[11px] text-emerald-400">按月动态调整，非死板规则</span>
+                        </label>
+                        <textarea id="inpConflictCalibration" rows="4" class="w-full rounded-xl p-3 text-xs leading-relaxed border border-slate-700"></textarea>
+                    </div>
                 </div>
 
-                <!-- Field 2: Rebalance Directive -->
+                <!-- Row 2: Rebalance Directive & Narrative -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                        <label class="block font-bold text-slate-300 mb-1.5">第四页 · 月度顾问决策定见</label>
-                        <select id="selRebalanceVerdict" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-slate-200 text-xs focus:ring-2 focus:ring-amber-500 focus:outline-none font-bold">
-                            <option value="坚持持有" selected>坚持持有 (Maintain Hold)</option>
+                        <label class="block font-bold text-slate-300 mb-1.5">第四页 · 月度顾问决策指令</label>
+                        <select id="selRebalanceVerdict" class="w-full rounded-xl p-2.5 text-xs font-bold border border-slate-700">
+                            <option value="坚持持有">坚持持有 (Maintain Hold)</option>
                             <option value="审慎削减">审慎削减 (Trim Exposure)</option>
                             <option value="主动调仓">主动调仓 (Rebalance / Reconstitute)</option>
                         </select>
                     </div>
                     <div class="md:col-span-2">
                         <label class="block font-bold text-slate-300 mb-1.5">调仓结论说明 (Rebalance Narrative)</label>
-                        <input id="inpRebalanceNote" type="text" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-slate-200 text-xs focus:ring-2 focus:ring-amber-500 focus:outline-none" value="实际权重漂移均在安全阈值内，大华黄金避险收益强劲平滑科技波动，8月维持既有 7 只标的目标配比不变，不触发被动赎回。">
+                        <input id="inpRebalanceNote" type="text" class="w-full rounded-xl p-2.5 text-xs border border-slate-700">
                     </div>
                 </div>
 
-                <!-- Conviction Table Summary -->
+                <!-- Row 3: Full 7 Holdings Conviction Matrix Table -->
                 <div class="pt-2">
-                    <span class="block font-bold text-slate-300 mb-2">第四页 · 审查标的决策指令预览</span>
-                    <div class="bg-slate-900/60 rounded-xl border border-slate-700/60 overflow-hidden">
-                        <table class="w-full text-left">
-                            <thead class="bg-slate-800/80 text-slate-400 text-[11px] border-b border-slate-700/80">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+                            <h3 class="font-bold text-sm text-white">第四页 · 7 只优选标的信念审查决策矩阵 (可自由勾选与编辑)</h3>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="toggleAllFunds(true)" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] border border-slate-700">全选 7 只</button>
+                            <button onclick="selectTopThreeFunds()" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] border border-slate-700">只选重点 3 只</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-900/80 rounded-xl border border-slate-700/80 overflow-x-auto shadow-inner">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead class="bg-slate-800/90 text-slate-400 text-[11px] border-b border-slate-700">
                                 <tr>
-                                    <th class="p-2.5">审查标的</th>
-                                    <th class="p-2.5 text-right">月度回报</th>
-                                    <th class="p-2.5">短期市场杂音</th>
-                                    <th class="p-2.5">长期基本面支撑</th>
-                                    <th class="p-2.5 text-center">顾问决策</th>
+                                    <th class="p-2.5 text-center w-12">展示</th>
+                                    <th class="p-2.5 w-56">审查标的 (Fund Name)</th>
+                                    <th class="p-2.5 text-right w-24">当月回报</th>
+                                    <th class="p-2.5 w-64">短期市场噪音 (Short-term Noise)</th>
+                                    <th class="p-2.5">底层基本面支撑 (Fundamental Support)</th>
+                                    <th class="p-2.5 text-center w-28">顾问决策指令</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-slate-800 text-[11px] text-slate-300">
-                                <tr>
-                                    <td class="p-2.5 font-bold text-white">United Gold and General</td>
-                                    <td class="p-2.5 text-right text-emerald-400 mono-num font-bold">+24.00%</td>
-                                    <td class="p-2.5 text-slate-400">急涨后获利盘了结与美元反弹</td>
-                                    <td class="p-2.5">美债30年破5.3%，去美元化与央行购金需求坚实</td>
-                                    <td class="p-2.5 text-center"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">坚持持有</span></td>
-                                </tr>
-                                <tr>
-                                    <td class="p-2.5 font-bold text-white">EASTSPRING - Global Tech</td>
-                                    <td class="p-2.5 text-right text-rose-400 mono-num font-bold">-5.64%</td>
-                                    <td class="p-2.5 text-slate-400">长端利率攀升致使估值分母端压制</td>
-                                    <td class="p-2.5">英伟达业绩亮眼，AI基础设施开支高增，回调提供窗口</td>
-                                    <td class="p-2.5 text-center"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">坚持持有</span></td>
-                                </tr>
-                                <tr>
-                                    <td class="p-2.5 font-bold text-white">United China A Shares</td>
-                                    <td class="p-2.5 text-right text-rose-400 mono-num font-bold">-3.09%</td>
-                                    <td class="p-2.5 text-slate-400">宏观经济复苏温和，地产仍在出清</td>
-                                    <td class="p-2.5">在岸自主创新稳步突破，估值历史绝对低位</td>
-                                    <td class="p-2.5 text-center"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">坚持持有</span></td>
-                                </tr>
+                            <tbody id="holdingsTableBody" class="divide-y divide-slate-800 text-[11.5px] text-slate-300">
+                                <!-- Populated dynamically by loadConfig() -->
                             </tbody>
                         </table>
                     </div>
@@ -267,12 +291,12 @@
                     <div class="w-8 h-8 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center font-bold text-sm">⚡</div>
                     <div>
                         <h2 class="text-base font-bold text-white">4. 极速编译与正式导出操作中心</h2>
-                        <p class="text-xs text-slate-400">解耦式模块化引擎，毫秒级快速生成，无需反复启动重量级无头浏览器</p>
+                        <p class="text-xs text-slate-400">解耦式模块化引擎，毫秒级快速生成，修改后一键更新</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-2">
                     <span class="text-xs text-slate-400">选择期别：</span>
-                    <select id="selReportMonth" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-200 font-bold">
+                    <select id="selReportMonth" onchange="loadConfig(this.value)" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-200 font-bold">
                         <option value="2026-08" selected>2026年8月备忘录 (结算日 2026-09-03)</option>
                         <option value="2026-09">2026年9月备忘录 (结算日 2026-10-05)</option>
                     </select>
@@ -297,10 +321,10 @@
             </div>
 
             <!-- Console / Status Output Window -->
-            <div class="mt-5 bg-slate-950/80 rounded-xl border border-slate-800 p-4 font-mono text-[11.5px] text-slate-300 space-y-1" id="consoleBox">
+            <div class="mt-5 bg-slate-950/80 rounded-xl border border-slate-800 p-4 font-mono text-[11.5px] text-slate-300 space-y-1 h-36 overflow-y-auto" id="consoleBox">
                 <div class="text-slate-500">// 控制台输出就绪...</div>
                 <div class="text-emerald-400">✓ 系统已加载 2026年8月 备忘录配置与 39 期真实净值数据</div>
-                <div class="text-slate-400">✓ Google Drive 输出目录：G:\我的云端硬盘\0. 工作\2. 投资分析计划 01102026\3. Monthly Report</div>
+                <div class="text-slate-400">✓ Google Drive 输出目录已就绪</div>
             </div>
         </section>
 
@@ -312,6 +336,8 @@
     </footer>
 
     <script>
+        let currentConfig = {};
+
         function log(msg, color='text-slate-300') {
             const box = document.getElementById('consoleBox');
             const div = document.createElement('div');
@@ -321,29 +347,207 @@
             box.scrollTop = box.scrollHeight;
         }
 
-        async function saveManagerInput() {
-            const btn = document.getElementById('btnSaveInput');
-            btn.disabled = true;
-            btn.innerText = '正在保存...';
+        async function loadConfig(month = '2026-08') {
             try {
+                const res = await fetch(`/api/get_config?month=${month}`);
+                const data = await res.json();
+                currentConfig = data;
+
+                // Update Stats
+                if (data.report_month) document.getElementById('statReportMonth').textContent = data.report_month === '2026-08' ? '2026年8月' : data.report_month;
+                if (data.settle_date) document.getElementById('statSettleDate').textContent = '结算日：' + data.settle_date;
+                if (data.portfolio_aum_sgd) document.getElementById('statAum').textContent = '$' + data.portfolio_aum_sgd.toLocaleString('en-US', {minimumFractionDigits: 2}) + ' SGD';
+                if (data.monthly_return_1m !== undefined) document.getElementById('stat1MReturn').textContent = `当月收益: +${data.monthly_return_1m}%`;
+                if (data.cumulative_return_current !== undefined) document.getElementById('statCumulative').textContent = `+${data.cumulative_return_current}%`;
+                if (data.alpha_vs_msci !== undefined) document.getElementById('statAlpha').textContent = `超额 Alpha: +${data.alpha_vs_msci}%`;
+
+                // Update Paths
+                if (data.google_drive_root) document.getElementById('inpDriveRoot').value = data.google_drive_root;
+                if (data.reference_monthly_update) {
+                    document.getElementById('inpMonthlyUpdateCustom').value = data.reference_monthly_update;
+                    document.getElementById('selMonthlyUpdate').value = data.reference_monthly_update;
+                }
+                if (data.reference_factsheets_dir) {
+                    document.getElementById('inpFactsheetsDirCustom').value = data.reference_factsheets_dir;
+                    document.getElementById('selFactsheetsDir').value = data.reference_factsheets_dir;
+                }
+
+                // Update Qualitative & Calibration
+                const mgr = data.manager_input || {};
+                document.getElementById('inpQualitativeView').value = mgr.qualitative_view || '';
+                document.getElementById('inpConflictCalibration').value = data.monthly_conflict_calibration || '';
+                document.getElementById('selRebalanceVerdict').value = mgr.rebalance_verdict || '坚持持有';
+                document.getElementById('inpRebalanceNote').value = mgr.rebalance_note || '';
+
+                // Render 7 Holdings Table
+                renderHoldingsTable(mgr.holdings_conviction || []);
+                log(`✓ 已成功加载 ${month} 完整配置文件与 7 只标的数据`, 'text-emerald-400');
+            } catch(e) {
+                log(`✗ 读取配置失败: ${e.message}`, 'text-rose-400');
+            }
+        }
+
+        function renderHoldingsTable(holdings) {
+            const tbody = document.getElementById('holdingsTableBody');
+            tbody.innerHTML = '';
+            holdings.forEach((h, idx) => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-850/60 transition';
+                tr.dataset.index = idx;
+
+                const isChecked = h.active !== false;
+                const retColor = (h.return_1m || '').startsWith('+') ? 'text-emerald-400' : 'text-rose-400';
+
+                tr.innerHTML = `
+                    <td class="p-2.5 text-center">
+                        <input type="checkbox" class="chk-active rounded bg-slate-900 border-slate-700 text-amber-500 focus:ring-amber-500" ${isChecked ? 'checked' : ''}>
+                    </td>
+                    <td class="p-2.5 font-bold text-white max-w-[220px]">
+                        <span class="block truncate" title="${h.fund_name}">${h.fund_name}</span>
+                    </td>
+                    <td class="p-2.5 text-right font-mono font-bold">
+                        <input type="text" class="inp-return w-20 text-right p-1 rounded bg-slate-900 border border-slate-700 ${retColor} mono-num font-bold text-xs" value="${h.return_1m || ''}">
+                    </td>
+                    <td class="p-2.5">
+                        <textarea rows="2" class="inp-noise w-full p-1.5 rounded bg-slate-900 border border-slate-700 text-slate-300 text-[11px] leading-snug">${h.market_noise || ''}</textarea>
+                    </td>
+                    <td class="p-2.5">
+                        <textarea rows="2" class="inp-support w-full p-1.5 rounded bg-slate-900 border border-slate-700 text-slate-300 text-[11px] leading-snug">${h.fundamental_support || ''}</textarea>
+                    </td>
+                    <td class="p-2.5 text-center">
+                        <select class="sel-directive w-full p-1 rounded bg-slate-900 border border-slate-700 text-[11px] font-bold text-slate-200">
+                            <option value="坚持持有" ${h.advisory_directive === '坚持持有' ? 'selected' : ''}>坚持持有</option>
+                            <option value="审慎削减" ${h.advisory_directive === '审慎削减' ? 'selected' : ''}>审慎削减</option>
+                            <option value="主动调仓" ${h.advisory_directive === '主动调仓' ? 'selected' : ''}>主动调仓</option>
+                        </select>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function toggleAllFunds(active) {
+            document.querySelectorAll('#holdingsTableBody .chk-active').forEach(cb => {
+                cb.checked = active;
+            });
+        }
+
+        function selectTopThreeFunds() {
+            document.querySelectorAll('#holdingsTableBody .chk-active').forEach((cb, idx) => {
+                cb.checked = (idx < 3);
+            });
+        }
+
+        function onMonthlyUpdateSelect(val) {
+            document.getElementById('inpMonthlyUpdateCustom').value = val;
+        }
+
+        function onFactsheetsDirSelect(val) {
+            document.getElementById('inpFactsheetsDirCustom').value = val;
+        }
+
+        async function scanDrive() {
+            const btn = document.getElementById('btnScanDrive');
+            btn.disabled = true;
+            btn.innerHTML = '<span>正在扫描...</span>';
+            log('🔍 正在探测 Google Drive 根路径及子目录...', 'text-amber-400');
+            try {
+                const root = encodeURIComponent(document.getElementById('inpDriveRoot').value.trim());
+                const res = await fetch(`/api/scan_drive?path=${root}`);
+                const data = await res.json();
+                
+                const badge = document.getElementById('driveStatusBadge');
+                if (data.exists) {
+                    badge.textContent = '✓ 路径已连接 (检测到 ' + data.monthly_updates.length + ' 份月报)';
+                    badge.className = 'text-[11px] text-emerald-400 font-semibold';
+                    log(`✓ 网盘探测成功！发现 ${data.monthly_updates.length} 份月报 PDF，${data.factsheet_dirs.length} 个子目录`, 'text-emerald-400');
+                } else {
+                    badge.textContent = '✗ 路径未挂载或不存在';
+                    badge.className = 'text-[11px] text-rose-400 font-semibold';
+                    log(`⚠️ 未检测到指定的网盘路径，已启用本地备份数据源`, 'text-amber-300');
+                }
+
+                // Populate Dropdown for Monthly Updates
+                const selPdf = document.getElementById('selMonthlyUpdate');
+                selPdf.innerHTML = '';
+                data.monthly_updates.forEach(item => {
+                    const opt = document.createElement('option');
+                    opt.value = item.name;
+                    opt.textContent = `${item.name} (${item.rel_path})`;
+                    selPdf.appendChild(opt);
+                });
+
+                // Populate Dropdown for Factsheet Dirs
+                const selDirs = document.getElementById('selFactsheetsDir');
+                selDirs.innerHTML = '';
+                data.factsheet_dirs.forEach(d => {
+                    const opt = document.createElement('option');
+                    opt.value = d;
+                    opt.textContent = d;
+                    selDirs.appendChild(opt);
+                });
+
+            } catch(e) {
+                log(`✗ 扫描失败: ${e.message}`, 'text-rose-400');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><span>扫描网盘目录</span>';
+            }
+        }
+
+        async function savePathConfig() {
+            log('💾 正在保存文件与数据源路径设定...', 'text-amber-400');
+            await saveAllConfig();
+        }
+
+        async function saveAllConfig() {
+            const btn = document.getElementById('btnSaveAll');
+            btn.disabled = true;
+            btn.innerText = '正在保存全部配置...';
+
+            try {
+                const month = document.getElementById('selReportMonth').value;
+                const rows = document.querySelectorAll('#holdingsTableBody tr');
+                const originalHoldings = (currentConfig.manager_input && currentConfig.manager_input.holdings_conviction) || [];
+                
+                const updatedHoldings = [];
+                rows.forEach((tr, idx) => {
+                    const orig = originalHoldings[idx] || {};
+                    updatedHoldings.push({
+                        id: orig.id || `fund_${idx+1}`,
+                        fund_name: orig.fund_name || tr.querySelector('td:nth-child(2) span').textContent.trim(),
+                        active: tr.querySelector('.chk-active').checked,
+                        return_1m: tr.querySelector('.inp-return').value.trim(),
+                        market_noise: tr.querySelector('.inp-noise').value.trim(),
+                        fundamental_support: tr.querySelector('.inp-support').value.trim(),
+                        advisory_directive: tr.querySelector('.sel-directive').value
+                    });
+                });
+
                 const payload = {
-                    month: document.getElementById('selReportMonth').value,
-                    qualitative_view: document.getElementById('inpQualitativeView').value,
+                    report_month: month,
+                    google_drive_root: document.getElementById('inpDriveRoot').value.trim(),
+                    reference_monthly_update: document.getElementById('inpMonthlyUpdateCustom').value.trim(),
+                    reference_factsheets_dir: document.getElementById('inpFactsheetsDirCustom').value.trim(),
+                    monthly_conflict_calibration: document.getElementById('inpConflictCalibration').value.trim(),
+                    qualitative_view: document.getElementById('inpQualitativeView').value.trim(),
                     rebalance_verdict: document.getElementById('selRebalanceVerdict').value,
-                    rebalance_note: document.getElementById('inpRebalanceNote').value
+                    rebalance_note: document.getElementById('inpRebalanceNote').value.trim(),
+                    holdings_conviction: updatedHoldings
                 };
-                const res = await fetch('/api/save_manager_input', {
+
+                const res = await fetch('/api/save_config', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
-                const data = await res.json();
-                log(`✓ 顾问定见已成功持久化存储至配置文件！`, 'text-emerald-400');
+                const resp = await res.json();
+                log(`✓ ${resp.message || '配置已成功保存！'}`, 'text-emerald-400');
             } catch(e) {
-                log(`✗ 保存失败: ${e.message}`, 'text-rose-400');
+                log(`✗ 保存出错: ${e.message}`, 'text-rose-400');
             } finally {
                 btn.disabled = false;
-                btn.innerText = '保存定见设定';
+                btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg><span>💾 保存全部配置与定见</span>';
             }
         }
 
@@ -354,6 +558,9 @@
             log('🚀 触发极速编译流程...', 'text-amber-400');
             const t0 = performance.now();
             try {
+                // First save all current inputs so build reflects latest inputs
+                await saveAllConfig();
+                
                 const month = document.getElementById('selReportMonth').value;
                 const res = await fetch('/api/build_report', {
                     method: 'POST',
@@ -389,6 +596,11 @@
                 btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg><span>导出官方高分 A4 PDF 并同步云端</span>';
             }
         }
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', () => {
+            loadConfig('2026-08');
+        });
     </script>
 </body>
 </html>
