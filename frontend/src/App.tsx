@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { PortfolioState, ViewMode, Language, RecommendationType } from './types';
+import React, { useState, useEffect, useRef } from 'react';
+import { PortfolioState, ViewMode, Language } from './types';
 import { TopNav } from './components/common/TopNav';
 import { Dashboard } from './components/dashboard/Dashboard';
 import { Slide1 } from './components/slides/Slide1';
@@ -8,8 +8,61 @@ import { Slide3 } from './components/slides/Slide3';
 import { Slide4 } from './components/slides/Slide4';
 import { Slide5 } from './components/slides/Slide5';
 import { Factsheet } from './components/slides/Factsheet';
+import { MASTER_TIME_SERIES } from './utils/performance';
 
-// Default initial state populated with verified September 2026 data
+// Proportional A4 Landscape (297mm : 210mm = 1400px : 990px) Scale Wrapper for Split Studio
+const A4ProportionalSlide: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const outerRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState<number>(0.58);
+
+  useEffect(() => {
+    const el = outerRef.current;
+    if (!el) return;
+
+    const updateScale = () => {
+      const w = el.clientWidth;
+      if (w > 0) {
+        setScale(Math.min(1, w / 1400));
+      }
+    };
+
+    updateScale();
+    const ro = new ResizeObserver(updateScale);
+    ro.observe(el);
+    window.addEventListener('resize', updateScale);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', updateScale);
+    };
+  }, []);
+
+  const scaledHeight = Math.round(990 * scale);
+
+  return (
+    <div
+      ref={outerRef}
+      className="w-full relative overflow-hidden rounded-xl shadow-xl border border-slate-700/70 bg-white"
+      style={{ height: `${scaledHeight}px` }}
+    >
+      <div
+        className="a4-scaled-slide-inner"
+        style={{
+          width: '1400px',
+          height: '990px',
+          transform: `scale(${scale})`,
+          transformOrigin: 'top left',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+        }}
+      >
+        {children}
+      </div>
+    </div>
+  );
+};
+
+// Default initial state populated with verified September 2026 objective data
 const INITIAL_PORTFOLIO_STATE: PortfolioState = {
   month: "2026-09",
   settle_date: "2026-10-05",
@@ -29,11 +82,11 @@ const INITIAL_PORTFOLIO_STATE: PortfolioState = {
   monthly_alpha_1m: -1.18,
 
   // Manager Views (70% Supporting + 30% Counter-Argument, <= 200 chars)
-  qualitative_view: "【正向论据 70%】美联储降息50基点叠加国内刺激，流动性拐点确立；股债正相关常态下，组合坚守纯股票成长、富敦绝对收益底仓与大华黄金三支柱，成立以来累计回报+81.16%，超额收益+12.49%。【反方审视 30%】尽管长端美债收益率反弹与地缘摩擦令当月净值微调1.21%，但回撤主要源于科技与A股短期估值消化，核心盈利逻辑稳固，维持全员持有定力。",
-  qualitative_view_en: "[Supporting Evidence 70%] Following the 50 bps rate cut and domestic stimulus, a global liquidity inflection is firmly established; amid persistent positive stock-bond correlations, the portfolio adheres to its three-pillar all-equity growth, Fullerton market-neutral core, and United Gold hedge architecture, delivering +81.16% cumulative return and +12.49% alpha since inception. [Counter-Arguments 30%] Although rebounding long-end Treasury yields and geopolitical friction caused a minor 1.21% monthly pullback, the dip reflects temporary valuation digestion rather than fundamental decay, warranting a firm HOLD verdict across all 7 funds.",
+  qualitative_view: "当月的组合回报不及基准指数，主要是黄金基金在8月24%单月暴涨之后的收益落袋。云巨头八千亿美元资本开支与存储芯片产能售罄印证亚洲算力高景气，叠加国内超常规政策刺激及股债正相关下“纯权益增长+35%富敦市场中性底仓+10.5%穿透纯金对冲”三支柱稳健协同，底层安全边际厚实。虽美联储加息推升十年期美债收益率破5.2%及中东油价破百带来短期分母端扰动。",
+  qualitative_view_en: "Monthly portfolio return trailed the benchmark index primarily due to profit-taking in the Gold fund following its 24% single-month surge in August. USD 800bn hyperscaler CapEx and sold-out memory chip capacity validate Asian compute momentum, reinforced by domestic stimulus and our three-pillar architecture (pure equity growth + 35% Fullerton market-neutral core + 10.5% look-through pure gold hedge) amid positive stock-bond correlations. Despite Fed rate hikes pushing 10Y Treasury yields above 5.2% and Middle East oil surpassing USD 100 causing short-term denominator headwinds, underlying safety margins remain solid.",
   rebalance_verdict: "持有",
   rebalance_note: "全员保持持有，各支柱运作良好，无须被动调仓",
-  rebalance_note_en: "Maintain all holdings; pillars operate smoothly with no forced rebalancing required.",
+  rebalance_note_en: "Core asset theses remain solid; weighting drifts sit comfortably within safety bands. Existing target allocations for all 7 funds remain unchanged for September.",
   conflict_note: "大华黄金穿透后纯黄金敞口 10.46%，严格契合研报 10% 避险上限。",
   conflict_note_en: "United Gold look-through pure gold exposure is 10.46%, strictly complying with the research report's 10% ceiling.",
 
@@ -46,22 +99,23 @@ const INITIAL_PORTFOLIO_STATE: PortfolioState = {
   page_returns: 6,
   page_stars: 7,
 
-  // 7 Underlying Funds
+  // 7 Underlying Funds (Objective Weights, NAVs, 1M Returns & Contributions)
   holdings: [
     {
       id: "fund-fullerton",
-      fund_name: "Fullerton Global Absolute Alpha",
-      role: "全天候底仓防守",
-      role_en: "Core Ballast & Hedging",
+      fund_name: "FULLERTON LUX - GLOBAL ABSOLUTE ALPHA",
+      role: "全天候底仓",
+      role_en: "Core Ballast",
       target_weight: 35.0,
       current_weight: 35.09,
+      nav: "$18.0091",
       return_1m: 0.21,
       contrib_1m: 0.07,
       active: true,
-      market_noise: "多空两端博弈加剧，个股对冲摩擦",
-      market_noise_en: "Long/short market dispersion friction",
-      fundamental_support: "市场中性选股阿尔法，极低贝塔与下行减震",
-      fundamental_support_en: "Market-neutral pair trading alpha, Sortino 0.93 ballast",
+      market_noise: "多空对冲在强趋势成长单边行情中弹性较为温和。",
+      market_noise_en: "Long/short market neutral strategy exhibits moderate upside beta during aggressive one-way rallies.",
+      fundamental_support: "恪守低贝塔多空选股原则，全月实现+0.21%绝对正收益，稳定发挥大额底仓减震压舱价值。",
+      fundamental_support_en: "Strict adherence to bottom-up pair-trading generated +0.21% positive absolute return, reliably stabilizing overall portfolio.",
       recommendation: "持有",
       sharpe_3y: "0.62*",
       vol_3y: "13.80%",
@@ -70,18 +124,19 @@ const INITIAL_PORTFOLIO_STATE: PortfolioState = {
     },
     {
       id: "fund-eastspring",
-      fund_name: "Eastspring Global Technology",
-      role: "先锋成长引擎",
-      role_en: "High-Growth Vanguard",
-      target_weight: 17.5,
+      fund_name: "EASTSPRING - GLOBAL TECHNOLOGY SGD",
+      role: "科技成长",
+      role_en: "Tech Growth",
+      target_weight: 15.0,
       current_weight: 17.40,
-      return_1m: -1.85,
-      contrib_1m: -0.32,
+      nav: "$4.3330",
+      return_1m: 9.20,
+      contrib_1m: 1.60,
       active: true,
-      market_noise: "长端美债收益率反弹压制高估值芯片",
-      market_noise_en: "Elevated yields weighing on high-multiple tech",
-      fundamental_support: "人工智能算力与先进制程硬件超级周期确定性",
-      fundamental_support_en: "Secular AI compute & packaging demand (NVDA/TSMC)",
+      market_noise: "全球半导体短线震荡，美债收益率曲线陡峭化引发成长估值分歧。",
+      market_noise_en: "Short-term volatility across global semiconductors; steeper yield curve led to valuation dispersion.",
+      fundamental_support: "北美头部云服务商基础设施资本开支坚挺，人工智能硬件真实业绩强劲，单月大涨+9.20%，贡献核心超额。",
+      fundamental_support_en: "Cloud hyperscaler CapEx remains resilient; real AI hardware revenue growth drove a robust +9.20% gain, delivering dominant alpha.",
       recommendation: "持有",
       sharpe_3y: "1.10",
       vol_3y: "23.10%",
@@ -90,18 +145,19 @@ const INITIAL_PORTFOLIO_STATE: PortfolioState = {
     },
     {
       id: "fund-janus",
-      fund_name: "Janus Henderson Life Sciences",
-      role: "非周期刚性防御",
-      role_en: "Defensive Life Sciences",
-      target_weight: 14.0,
+      fund_name: "Janus Henderson Global Life Sciences",
+      role: "生命科学",
+      role_en: "Healthcare",
+      target_weight: 15.0,
       current_weight: 14.17,
-      return_1m: -0.42,
-      contrib_1m: -0.06,
+      nav: "$17.7700",
+      return_1m: -5.30,
+      contrib_1m: -0.75,
       active: true,
-      market_noise: "部分传统生物科技管线估值调整",
-      market_noise_en: "Broader biotech pipeline re-pricing",
-      fundamental_support: "重磅减重创新药放量与医疗健康刚性现金流",
-      fundamental_support_en: "GLP-1 blockbuster ramp & robust clinical cash flows (LLY/JNJ)",
+      market_noise: "高利率尾声阶段生物医药并购节奏略有放缓，板块出现获利了结回吐。",
+      market_noise_en: "M&A pace moderated during elevated rate regime, leading to short-term sector profit-taking.",
+      fundamental_support: "大型跨国制药与重磅肿瘤药现金流充沛，防御价值突出，回调创造健康加仓布局窗口。",
+      fundamental_support_en: "Robust free cash flows among mega-cap pharmaceuticals; pullback presents an attractive valuation entry window.",
       recommendation: "持有",
       sharpe_3y: "0.43",
       vol_3y: "14.98%",
@@ -110,18 +166,19 @@ const INITIAL_PORTFOLIO_STATE: PortfolioState = {
     },
     {
       id: "fund-gold",
-      fund_name: "United Gold and General Fund A",
-      role: "逆周期大宗对冲",
-      role_en: "Macro Hedge & Gold",
-      target_weight: 13.5,
+      fund_name: "United Gold and General A Acc SGD",
+      role: "黄金对冲",
+      role_en: "Gold & Commodity",
+      target_weight: 15.0,
       current_weight: 13.23,
-      return_1m: -0.80,
-      contrib_1m: -0.11,
+      nav: "$5.1323",
+      return_1m: -9.92,
+      contrib_1m: -1.31,
       active: true,
-      market_noise: "金价在历史高位区间多空博弈与技术整理",
-      market_noise_en: "Technical consolidation near all-time highs",
-      fundamental_support: "央行去美元化购金与地缘滞胀强反脆弱防线",
-      fundamental_support_en: "Central bank de-dollarization bids & geopolitical stagflation hedge",
+      market_noise: "8月暴涨+24%后短线投机盘获利了结回吐-9.92%，美元汇率短线技术性反抽。",
+      market_noise_en: "Speculative profit-taking after August's +24% surge combined with short-term DXY technical bounce.",
+      fundamental_support: "全球央行去美元化购金逻辑与长期地缘避险属性未变，前期大涨累积丰厚利润后正常整固，无需惊慌。",
+      fundamental_support_en: "Central bank de-dollarization reserve purchases and structural geopolitical hedging remain intact; healthy profit consolidation.",
       recommendation: "持有",
       sharpe_3y: "1.38^",
       vol_3y: "24.50%",
@@ -130,18 +187,19 @@ const INITIAL_PORTFOLIO_STATE: PortfolioState = {
     },
     {
       id: "fund-china",
-      fund_name: "United China A Shares Innovation",
-      role: "不对称估值重估",
-      role_en: "Valuation Margin Alpha",
+      fund_name: "United China A Shares Innovation A Acc",
+      role: "中国创新",
+      role_en: "China Innovation",
       target_weight: 12.0,
       current_weight: 12.24,
-      return_1m: -1.95,
-      contrib_1m: -0.24,
+      nav: "$0.8579",
+      return_1m: -3.87,
+      contrib_1m: -0.47,
       active: true,
-      market_noise: "国内宏观消费复苏节奏温和",
-      market_noise_en: "Moderate pace of domestic macro consumer recovery",
-      fundamental_support: "国内超常规刺激政策出台与先进制造自主可控",
-      fundamental_support_en: "Aggressive domestic stimulus catalysts & AI hardware independence",
+      market_noise: "短期宏观经济修复斜率较缓，房地产市场仍处于筑底期。",
+      market_noise_en: "Gradual economic recovery slope with property sector in prolonged base-building phase.",
+      fundamental_support: "中国央行重磅金融支持与流动性释放，在岸创新龙头估值处于历史估值低分位，当前权重12.24%高于目标配比，无须减仓，坚守均值回归。",
+      fundamental_support_en: "Decisive monetary stimulus and liquidity injection from PBOC; onshore innovation valuation sits at historical troughs; actual weight at 12.24% exceeds target, conviction firmly intact.",
       recommendation: "持有",
       sharpe_3y: "0.75^",
       vol_3y: "22.00%",
@@ -150,18 +208,19 @@ const INITIAL_PORTFOLIO_STATE: PortfolioState = {
     },
     {
       id: "fund-fssa",
-      fund_name: "FSSA Asian Growth Fund",
-      role: "泛亚优质复利标的",
-      role_en: "Asian Compounders",
+      fund_name: "FSSA Asian Growth Fund (Class A)",
+      role: "亚洲主题",
+      role_en: "Asia Focus",
       target_weight: 4.0,
       current_weight: 4.00,
-      return_1m: -0.65,
-      contrib_1m: -0.03,
+      nav: "$3.9428",
+      return_1m: 1.12,
+      contrib_1m: 0.04,
       active: true,
-      market_noise: "部分新兴市场估值消化压力",
-      market_noise_en: "Regional equity index volatility",
-      fundamental_support: "精选泛亚高质量宽护城河特许龙头企业",
-      fundamental_support_en: "Wide-moat compounders (TSMC, Samsung, Indian private banks)",
+      market_noise: "外围汇率预期交织，区域部分出口面临扰动。",
+      market_noise_en: "Currency volatility and selective regional export softness.",
+      fundamental_support: "聚焦印度消费蓝筹与泛亚高资本回报率龙头，在区域波动中稳健实现+1.12%正收益。",
+      fundamental_support_en: "Concentrated in high-quality Indian consumer leaders and pan-Asia high-ROE compounders, generating steady +1.12% return.",
       recommendation: "持有",
       sharpe_3y: "0.68^",
       vol_3y: "15.20%",
@@ -170,18 +229,19 @@ const INITIAL_PORTFOLIO_STATE: PortfolioState = {
     },
     {
       id: "fund-nikko",
-      fund_name: "Nikko AM Japan Dividend Equity",
-      role: "红利现金流安全垫",
-      role_en: "Dividend Anchor",
+      fund_name: "Nikko AM Japan Dividend",
+      role: "日本高息",
+      role_en: "Japan Dividend",
       target_weight: 4.0,
       current_weight: 3.87,
-      return_1m: 0.85,
-      contrib_1m: 0.03,
+      nav: "$2.2261",
+      return_1m: -1.73,
+      contrib_1m: -0.07,
       active: true,
-      market_noise: "日央行加息预期引发汇率扰动",
-      market_noise_en: "BOJ policy tightening currency fluctuations",
-      fundamental_support: "日企东证治理改革、股息率提升与回购注销",
-      fundamental_support_en: "TSE corporate governance reforms & shareholder cash returns",
+      market_noise: "日元汇率与央行利率政策预期交锋，东证指数短期高位整固。",
+      market_noise_en: "Yen fluctuations and BOJ monetary policy debates led to short-term consolidation in TOPIX.",
+      fundamental_support: "东京交易所市净率改革与企业股息回购持续推进，充沛现金流提供长期坚实托底。",
+      fundamental_support_en: "TSE governance reforms, rising share buybacks and robust corporate cash flows provide reliable long-term support.",
       recommendation: "持有",
       sharpe_3y: "1.01",
       vol_3y: "12.42%",
@@ -190,49 +250,8 @@ const INITIAL_PORTFOLIO_STATE: PortfolioState = {
     }
   ],
 
-  // 40 Months Time Series
-  time_series: [
-    { date: "2023-07", current: 1.0, past: 1.0, sp500: 1.0, msci: 1.0, event: { date: "2023-07", status: "Reconstitute", type: "restructure" } },
-    { date: "2023-08", current: 1.0056, past: 1.012, sp500: 0.985, msci: 0.978 },
-    { date: "2023-09", current: 1.0001, past: 1.008, sp500: 0.941, msci: 0.942 },
-    { date: "2023-10", current: 0.9343, past: 0.945, sp500: 0.923, msci: 0.915 },
-    { date: "2023-11", current: 0.9634, past: 0.982, sp500: 1.012, msci: 0.998 },
-    { date: "2023-12", current: 1.0137, past: 1.025, sp500: 1.058, msci: 1.045 },
-    { date: "2024-01", current: 1.0400, past: 1.051, sp500: 1.072, msci: 1.052 },
-    { date: "2024-02", current: 1.0654, past: 1.079, sp500: 1.130, msci: 1.096 },
-    { date: "2024-03", current: 1.0978, past: 1.112, sp500: 1.166, msci: 1.131 },
-    { date: "2024-04", current: 1.1422, past: 1.156, sp500: 1.118, msci: 1.092 },
-    { date: "2024-05", current: 1.1379, past: 1.152, sp500: 1.172, msci: 1.135 },
-    { date: "2024-06", current: 1.1715, past: 1.189, sp500: 1.213, msci: 1.159 },
-    { date: "2024-07", current: 1.1846, past: 1.201, sp500: 1.228, msci: 1.176 },
-    { date: "2024-08", current: 1.1181, past: 1.135, sp500: 1.258, msci: 1.205 },
-    { date: "2024-09", current: 1.2018, past: 1.218, sp500: 1.284, msci: 1.232 },
-    { date: "2024-10", current: 1.2186, past: 1.236, sp500: 1.272, msci: 1.204 },
-    { date: "2024-11", current: 1.2405, past: 1.258, sp500: 1.346, msci: 1.259 },
-    { date: "2024-12", current: 1.2291, past: 1.246, sp500: 1.312, msci: 1.224 },
-    { date: "2025-01", current: 1.2740, past: 1.292, sp500: 1.348, msci: 1.268 },
-    { date: "2025-02", current: 1.3015, past: 1.321, sp500: 1.332, msci: 1.249 },
-    { date: "2025-03", current: 1.2890, past: 1.308, sp500: 1.287, msci: 1.210 },
-    { date: "2025-04", current: 1.3120, past: 1.332, sp500: 1.241, msci: 1.241 },
-    { date: "2025-05", current: 1.3650, past: 1.385, sp500: 1.307, msci: 1.307 },
-    { date: "2025-06", current: 1.4120, past: 1.433, sp500: 1.359, msci: 1.359 },
-    { date: "2025-07", current: 1.4450, past: 1.467, sp500: 1.370, msci: 1.369, event: { date: "2025-07", status: "Reconstitute", type: "restructure" } },
-    { date: "2025-08", current: 1.4820, past: 1.504, sp500: 1.403, msci: 1.403 },
-    { date: "2025-09", current: 1.5160, past: 1.539, sp500: 1.461, msci: 1.461 },
-    { date: "2025-10", current: 1.5080, past: 1.531, sp500: 1.459, msci: 1.459 },
-    { date: "2025-11", current: 1.5540, past: 1.578, sp500: 1.487, msci: 1.487 },
-    { date: "2025-12", current: 1.5920, past: 1.616, sp500: 1.512, msci: 1.512 },
-    { date: "2026-01", current: 1.6350, past: 1.660, sp500: 1.500, msci: 1.500, event: { date: "2026-01", status: "Reconstitute", type: "restructure" } },
-    { date: "2026-02", current: 1.6680, past: 1.693, sp500: 1.501, msci: 1.501 },
-    { date: "2026-03", current: 1.6420, past: 1.667, sp500: 1.453, msci: 1.453 },
-    { date: "2026-04", current: 1.7120, past: 1.738, sp500: 1.619, msci: 1.619 },
-    { date: "2026-05", current: 1.7450, past: 1.772, sp500: 1.658, msci: 1.658 },
-    { date: "2026-06", current: 1.7310, past: 1.757, sp500: 1.627, msci: 1.627 },
-    { date: "2026-07", current: 1.7650, past: 1.792, sp500: 1.668, msci: 1.668 },
-    { date: "2026-08", current: 1.8338, past: 1.862, sp500: 1.687, msci: 1.687 },
-    { date: "2026-09", current: 1.8116, past: 1.8908, sp500: 1.7146, msci: 1.6867 },
-    { date: "2026-10", current: 1.8116, past: 1.8908, sp500: 1.7146, msci: 1.6867 }
-  ],
+  // Authoritative Calculation_Engine Time Series
+  time_series: MASTER_TIME_SERIES,
 
   // Events
   events: [
@@ -326,12 +345,23 @@ export const App: React.FC = () => {
           qualitative_view_en: portfolio.qualitative_view_en,
           rebalance_verdict: portfolio.rebalance_verdict,
           rebalance_note: portfolio.rebalance_note,
+          rebalance_note_en: portfolio.rebalance_note_en,
           holdings_conviction: portfolio.holdings.map(h => ({
-            name: h.fund_name,
-            weight: h.target_weight,
-            noise: h.market_noise,
-            support: h.fundamental_support,
-            action: h.recommendation
+            id: h.id,
+            fund_name: h.fund_name,
+            role: h.role,
+            role_en: h.role_en,
+            target_weight: `${h.target_weight.toFixed(2)}%`,
+            current_weight: `${h.current_weight.toFixed(2)}%`,
+            nav: h.nav || '—',
+            return_1m: `${h.return_1m >= 0 ? '+' : ''}${h.return_1m.toFixed(2)}%`,
+            contrib_1m: `${h.contrib_1m >= 0 ? '+' : ''}${h.contrib_1m.toFixed(2)}%`,
+            active: h.active !== false,
+            market_noise: h.market_noise,
+            market_noise_en: h.market_noise_en,
+            fundamental_support: h.fundamental_support,
+            fundamental_support_en: h.fundamental_support_en,
+            advisory_recommendation: h.recommendation
           }))
         }
       };
@@ -373,7 +403,6 @@ export const App: React.FC = () => {
   };
 
   const handleExportPdf = () => {
-    // If browser supports printing, trigger crisp native vector print
     window.print();
   };
 
@@ -404,6 +433,7 @@ export const App: React.FC = () => {
             onSave={handleSaveConfig}
             onSync={handleSyncSheet}
             isSyncing={isSyncing}
+            isSplitMode={false}
           />
         )}
 
@@ -418,7 +448,7 @@ export const App: React.FC = () => {
           </div>
         )}
 
-        {/* MODE 3: Split Studio (40% Workspace, 60% Live Preview) */}
+        {/* MODE 3: Split Studio (Left 5 Cols Workspace, Right 7 Cols Proportional A4 Scaled Preview) */}
         {viewMode === 'split' && (
           <div className="grid grid-cols-12 gap-4 px-4 py-4 items-start max-w-[1920px] mx-auto">
             {/* Left 5 Cols: Dashboard Editor */}
@@ -430,27 +460,40 @@ export const App: React.FC = () => {
                 onSave={handleSaveConfig}
                 onSync={handleSyncSheet}
                 isSyncing={isSyncing}
+                isSplitMode={true}
               />
             </div>
 
-            {/* Right 7 Cols: Live Slides Scaled */}
-            <div className="col-span-12 lg:col-span-7 h-[calc(100vh-80px)] overflow-y-auto pl-2 custom-scrollbar space-y-8 bg-slate-900/60 p-4 rounded-2xl border border-slate-800">
-              <div className="text-xs font-bold text-amber-400 bg-slate-950/80 px-3 py-1.5 rounded-lg border border-slate-800 flex justify-between items-center sticky top-0 z-30">
+            {/* Right 7 Cols: Live Slides Scaled Proportionally to A4 Landscape (1400 x 990) */}
+            <div className="col-span-12 lg:col-span-7 h-[calc(100vh-80px)] overflow-y-auto px-4 py-4 custom-scrollbar space-y-6 bg-slate-900/60 rounded-2xl border border-slate-800">
+              <div className="text-xs font-bold text-amber-400 bg-slate-950/90 px-3.5 py-2 rounded-lg border border-slate-800 flex justify-between items-center sticky top-0 z-30 shadow-md">
                 <span>
                   {lang === 'en'
-                    ? '⚡ Live Reactive Presentation Preview (Hot Reload)'
-                    : '⚡ 实时联动报告画板预览 (毫秒级热更新)'}
+                    ? '⚡ Live A4 Proportional Preview (297mm × 210mm Fixed Layout · Zero Reflow)'
+                    : '⚡ 实时联动报告画板预览 (A4 等比例缩小 · 1400×990 原生排版零位移)'}
                 </span>
-                <span className="text-slate-400 font-mono text-[10px]">
-                  {lang === 'en' ? 'Changes reflect here immediately' : '左侧修改将在此处实时同步渲染'}
+                <span className="text-slate-300 font-mono text-[10.5px]">
+                  {lang === 'en'
+                    ? 'Proportional Scale · All Drawers Locked'
+                    : '左侧修改实时渲染 · 各个板块保持固定位置等比缩放'}
                 </span>
               </div>
-              <div className="space-y-8">
-                <Slide1 state={portfolio} lang={lang} />
-                <Slide2 state={portfolio} lang={lang} />
-                <Slide3 state={portfolio} lang={lang} />
-                <Slide4 state={portfolio} lang={lang} />
-                <Slide5 state={portfolio} lang={lang} />
+              <div className="space-y-6">
+                <A4ProportionalSlide>
+                  <Slide1 state={portfolio} lang={lang} />
+                </A4ProportionalSlide>
+                <A4ProportionalSlide>
+                  <Slide2 state={portfolio} lang={lang} />
+                </A4ProportionalSlide>
+                <A4ProportionalSlide>
+                  <Slide3 state={portfolio} lang={lang} />
+                </A4ProportionalSlide>
+                <A4ProportionalSlide>
+                  <Slide4 state={portfolio} lang={lang} />
+                </A4ProportionalSlide>
+                <A4ProportionalSlide>
+                  <Slide5 state={portfolio} lang={lang} />
+                </A4ProportionalSlide>
               </div>
             </div>
           </div>

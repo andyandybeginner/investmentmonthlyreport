@@ -53,6 +53,8 @@
                 width: 100% !important;
                 margin: 0 !important;
                 padding: 0 !important;
+                transform: none !important;
+                height: auto !important;
             }
             .landscape-slide { 
                 box-shadow: none !important; 
@@ -70,38 +72,49 @@
                 display: flex !important;
                 flex-direction: column !important;
                 justify-content: space-between !important;
+                transform: none !important;
             }
             .landscape-slide:last-child {
                 break-after: auto !important;
                 page-break-after: auto !important;
             }
         }
+        body.embed-mode #topControlNav,
+        body.embed-mode #floatingToolbar {
+            display: none !important;
+        }
+        body.embed-mode {
+            padding: 12px !important;
+            overflow-x: hidden !important;
+        }
     </style>
 </head>
-<body class="p-3 md:p-8 flex flex-col items-center min-h-screen">
+<body class="p-3 md:p-8 flex flex-col items-center min-h-screen overflow-x-hidden">
 
         <!-- INJECT: TOP_NAV -->
     {{TOP_NAV}}
 
     <!-- Long Image Container Wrapping All 5 Slides -->
-    <div id="reportCanvasContainer" class="flex flex-col items-center">
-        <!-- INJECT: SLIDE_1 -->
-        {{SLIDE_1}}
+    <div id="reportScaleOuter" class="w-full flex justify-center overflow-hidden">
+        <div id="reportCanvasContainer" class="flex flex-col items-center origin-top">
+            <!-- INJECT: SLIDE_1 -->
+            {{SLIDE_1}}
 
-        <!-- INJECT: SLIDE_2 -->
-        {{SLIDE_2}}
+            <!-- INJECT: SLIDE_2 -->
+            {{SLIDE_2}}
 
-        <!-- INJECT: SLIDE_3 -->
-        {{SLIDE_3}}
+            <!-- INJECT: SLIDE_3 -->
+            {{SLIDE_3}}
 
-        <!-- INJECT: SLIDE_4 -->
-        {{SLIDE_4}}
+            <!-- INJECT: SLIDE_4 -->
+            {{SLIDE_4}}
 
-        <!-- INJECT: SLIDE_5 -->
-        {{SLIDE_5}}
+            <!-- INJECT: SLIDE_5 -->
+            {{SLIDE_5}}
 
-        <!-- INJECT: SLIDE_6 -->
-        {{SLIDE_6}}
+            <!-- INJECT: SLIDE_6 -->
+            {{SLIDE_6}}
+        </div>
     </div>
 
     <!-- INJECT: ANNOTATION_TOOLBAR -->
@@ -109,6 +122,34 @@
 
     <!-- Scripts Section -->
     <script>
+        (function() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('embed') === '1') {
+                document.body.classList.add('embed-mode');
+            }
+            function applyProportionalA4Scale() {
+                const container = document.getElementById('reportCanvasContainer');
+                const outer = document.getElementById('reportScaleOuter');
+                if (!container || !outer) return;
+                const availW = outer.clientWidth || (window.innerWidth - 24);
+                const slideW = 1400;
+                if (availW < slideW) {
+                    const s = availW / slideW;
+                    container.style.transform = 'scale(' + s.toFixed(4) + ')';
+                    container.style.transformOrigin = 'top center';
+                    outer.style.height = Math.ceil(container.scrollHeight * s) + 'px';
+                } else {
+                    container.style.transform = 'none';
+                    outer.style.height = 'auto';
+                }
+            }
+            window.addEventListener('resize', applyProportionalA4Scale);
+            window.addEventListener('DOMContentLoaded', function() {
+                setTimeout(applyProportionalA4Scale, 60);
+            });
+            window.addEventListener('load', applyProportionalA4Scale);
+        })();
+
         // INJECT: I18N
         {{I18N_JS}}
 

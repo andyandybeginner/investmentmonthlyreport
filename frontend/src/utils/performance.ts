@@ -353,6 +353,19 @@ export function synthesize7030AndTranslate(month: string, userOpinionZh: string)
   return { zh, en, charCount: zh.length };
 }
 
+export interface ObjectiveFundPreset {
+  target_weight: number;
+  current_weight: number;
+  nav: string;
+  return_1m: number;
+  contrib_1m: number;
+  market_noise: string;
+  market_noise_en: string;
+  fundamental_support: string;
+  fundamental_support_en: string;
+  recommendation: '持有' | '调仓' | '更换标的';
+}
+
 export interface MonthPreset {
   month: string;
   settle_date: string;
@@ -369,7 +382,7 @@ export interface MonthPreset {
   rebalance_verdict: string;
   rebalance_note: string;
   rebalance_note_en: string;
-  holdings_returns: { [fundId: string]: { return_1m: number; contrib_1m: number } };
+  holdings_returns: { [fundId: string]: ObjectiveFundPreset };
 }
 
 export const MONTH_PRESETS: { [month: string]: MonthPreset } = {
@@ -390,13 +403,90 @@ export const MONTH_PRESETS: { [month: string]: MonthPreset } = {
     rebalance_note: "实际权重漂移均在安全阈值内，大华黄金避险收益强劲平滑科技波动，8月维持既有 7 只标的目标配比不变，不触发被动赎回。",
     rebalance_note_en: "Weighting drifts remain safely bounded; United Gold gains offset tech drawdowns. Existing target allocations remain unchanged.",
     holdings_returns: {
-      "fund-gold": { return_1m: 24.00, contrib_1m: 1.94 },
-      "fund-eastspring": { return_1m: -5.64, contrib_1m: -0.99 },
-      "fund-china": { return_1m: -3.09, contrib_1m: -0.46 },
-      "fund-fullerton": { return_1m: 0.36, contrib_1m: 0.05 },
-      "fund-janus": { return_1m: 1.20, contrib_1m: 0.17 },
-      "fund-fssa": { return_1m: -1.20, contrib_1m: -0.05 },
-      "fund-nikko": { return_1m: 2.10, contrib_1m: 0.08 }
+      "fund-fullerton": {
+        target_weight: 35.0,
+        current_weight: 34.62,
+        nav: "$17.9714",
+        return_1m: 0.36,
+        contrib_1m: 0.12,
+        market_noise: "多空对冲策略在科技单边轮动行情下超额弹性相对温和。",
+        market_noise_en: "Long/short hedge strategy shows moderate relative elasticity during rotational tech markets.",
+        fundamental_support: "自下而上低贝塔多空配对交易，全月平稳穿越外围动荡，忠实履行组合下行减震底仓使命。",
+        fundamental_support_en: "Bottom-up low-beta pair trading navigated external turbulence smoothly, fulfilling core downside protection.",
+        recommendation: "持有"
+      },
+      "fund-eastspring": {
+        target_weight: 15.0,
+        current_weight: 15.73,
+        nav: "$3.9680",
+        return_1m: -5.64,
+        contrib_1m: -0.89,
+        market_noise: "长端美债收益率攀升引发半导体估值分母端压制，芯片股短期震荡。",
+        market_noise_en: "Rising long-end US Treasury yields pressured semiconductor valuation multiples in the near term.",
+        fundamental_support: "英伟达财报亮眼，云巨头资本开支扩张，人工智能硬件供需瓶颈突出，回调创造极佳逢低吸纳窗口。",
+        fundamental_support_en: "Strong NVIDIA earnings and expanding hyperscaler CapEx confirm tight AI hardware supply-demand fundamentals.",
+        recommendation: "持有"
+      },
+      "fund-janus": {
+        target_weight: 15.0,
+        current_weight: 14.78,
+        nav: "$18.7600",
+        return_1m: -0.21,
+        contrib_1m: -0.03,
+        market_noise: "高利率环境下生物医药并购融资成本抬升，板块交易情绪偏弱。",
+        market_noise_en: "Higher financing costs under elevated rates softened short-term biotech M&A trading sentiment.",
+        fundamental_support: "大型跨国药企重磅减重创新药与肿瘤研发管线现金流强劲，防御属性与长期估值修复潜力突出。",
+        fundamental_support_en: "Blockbuster GLP-1 weight-loss and oncology pipelines deliver resilient cash flows and defensive buffer.",
+        recommendation: "持有"
+      },
+      "fund-gold": {
+        target_weight: 15.0,
+        current_weight: 14.51,
+        nav: "$5.6975",
+        return_1m: 24.00,
+        contrib_1m: 3.48,
+        market_noise: "金价短期急涨后可能面临获利盘了结与美元指数技术性反弹。",
+        market_noise_en: "Potential short-term profit-taking and technical DXY rebound following August's rapid +24% rally.",
+        fundamental_support: "美债30年期收益率升破5.3%，去美元化与全球央行购金逻辑坚实，非对称对冲大放异彩。",
+        fundamental_support_en: "30Y US Treasury yields exceeding 5.3% reinforce central bank gold accumulation and asymmetric hedging.",
+        recommendation: "持有"
+      },
+      "fund-china": {
+        target_weight: 12.0,
+        current_weight: 12.58,
+        nav: "$0.8924",
+        return_1m: -3.09,
+        contrib_1m: -0.39,
+        market_noise: "7月宏观数据复苏不均，零售消费温和，房地产投资持续收缩。",
+        market_noise_en: "Uneven macro recovery data with soft retail consumption and contracting property investment.",
+        fundamental_support: "在岸科技制造与国产智能算力技术稳步突破，估值处于历史绝对低位，政策托底与流动性注入预期强烈。",
+        fundamental_support_en: "Breakthroughs in domestic AI compute and manufacturing at trough valuations with strong policy support expectations.",
+        recommendation: "持有"
+      },
+      "fund-fssa": {
+        target_weight: 4.0,
+        current_weight: 3.91,
+        nav: "$3.8991",
+        return_1m: 1.12,
+        contrib_1m: 0.04,
+        market_noise: "新兴市场汇率受强美元反弹扰动，部分出口型经济体面临通胀压力。",
+        market_noise_en: "EM currencies experienced intermittent volatility amid US dollar fluctuations.",
+        fundamental_support: "重仓印度与东南亚内需消费蓝筹，企业资本回报率与治理结构卓越，有效抵御外部波动。",
+        fundamental_support_en: "Overweight India and ASEAN domestic consumer leaders with superior ROE and governance resilience.",
+        recommendation: "持有"
+      },
+      "fund-nikko": {
+        target_weight: 4.0,
+        current_weight: 3.87,
+        nav: "$2.2653",
+        return_1m: 1.30,
+        contrib_1m: 0.05,
+        market_noise: "日本央行加息25个基点，日元套息交易平仓引发东证指数间歇性震荡。",
+        market_noise_en: "BOJ 25 bps rate hike and Yen carry trade unwinds triggered intermittent TOPIX volatility.",
+        fundamental_support: "东京证交所市净率改善改革持续深化，企业回购与股息分红创新高，日经反弹中现金流防御优异。",
+        fundamental_support_en: "Deepening TSE P/B reforms, record share buybacks, and rising dividends provide strong cash flow defense.",
+        recommendation: "持有"
+      }
     }
   },
   "2026-09": {
@@ -410,19 +500,97 @@ export const MONTH_PRESETS: { [month: string]: MonthPreset } = {
     page_topic: 12,
     slide3_topic_title_zh: "当债券不再扮演债券：60/40股债平衡组合是否已死？",
     slide3_topic_title_en: "When Bonds Stop Behaving Like Bonds: Is 60/40 Dead?",
-    qualitative_view: "【核心定见】坚守三支柱战略配置，维持全员持有。【正向支撑(70%)】云巨头八千亿美元资本开支与存储芯片产能售罄印证亚洲算力高景气，叠加国内超常规政策刺激及股债正相关下“纯权益增长+35%富敦市场中性底仓+10.5%穿透纯金对冲”三支柱稳健协同，底层安全边际厚实。【逆风审视(30%)】虽美联储加息推升十年期美债收益率破5.2%及中东油价破百带来短期分母端扰动，但基本面韧性充足。",
-    qualitative_view_en: "[Core Verdict] Uphold strategic allocations and maintain all holdings. [Supporting Evidence (70%)] USD 800bn hyperscaler CapEx and sold-out HBM capacity validate Asian semiconductor momentum, reinforced by domestic stimulus and our three-pillar architecture (pure equity growth + 35% Fullerton market-neutral core + 10.5% pure gold hedge) amid positive stock-bond correlations. [Counter-Headwinds (30%)] Despite Fed tightening pushing 10Y yields above 5.2% and Brent crude surpassing USD 100, structural fundamentals remain solid.",
+    qualitative_view: "当月的组合回报不及基准指数，主要是黄金基金在8月24%单月暴涨之后的收益落袋。云巨头八千亿美元资本开支与存储芯片产能售罄印证亚洲算力高景气，叠加国内超常规政策刺激及股债正相关下“纯权益增长+35%富敦市场中性底仓+10.5%穿透纯金对冲”三支柱稳健协同，底层安全边际厚实。虽美联储加息推升十年期美债收益率破5.2%及中东油价破百带来短期分母端扰动。",
+    qualitative_view_en: "Monthly portfolio return trailed the benchmark index primarily due to profit-taking in the Gold fund following its 24% single-month surge in August. USD 800bn hyperscaler CapEx and sold-out memory chip capacity validate Asian compute momentum, reinforced by domestic stimulus and our three-pillar architecture (pure equity growth + 35% Fullerton market-neutral core + 10.5% look-through pure gold hedge) amid positive stock-bond correlations. Despite Fed rate hikes pushing 10Y Treasury yields above 5.2% and Middle East oil surpassing USD 100 causing short-term denominator headwinds, underlying safety margins remain solid.",
     rebalance_verdict: "持有",
     rebalance_note: "全员保持持有，各支柱运作良好，无须被动调仓",
-    rebalance_note_en: "Maintain all holdings; pillars operate smoothly with no forced rebalancing required.",
+    rebalance_note_en: "Core asset theses remain solid; weighting drifts sit comfortably within safety bands. Existing target allocations for all 7 funds remain unchanged for September.",
     holdings_returns: {
-      "fund-fullerton": { return_1m: 0.21, contrib_1m: 0.07 },
-      "fund-eastspring": { return_1m: -1.85, contrib_1m: -0.32 },
-      "fund-janus": { return_1m: -0.42, contrib_1m: -0.06 },
-      "fund-gold": { return_1m: -0.80, contrib_1m: -0.11 },
-      "fund-china": { return_1m: -1.95, contrib_1m: -0.24 },
-      "fund-fssa": { return_1m: -0.65, contrib_1m: -0.03 },
-      "fund-nikko": { return_1m: 0.85, contrib_1m: 0.03 }
+      "fund-fullerton": {
+        target_weight: 35.0,
+        current_weight: 35.09,
+        nav: "$18.0091",
+        return_1m: 0.21,
+        contrib_1m: 0.07,
+        market_noise: "多空对冲在强趋势成长单边行情中弹性较为温和。",
+        market_noise_en: "Long/short market neutral strategy exhibits moderate upside beta during aggressive one-way rallies.",
+        fundamental_support: "恪守低贝塔多空选股原则，全月实现+0.21%绝对正收益，稳定发挥大额底仓减震压舱价值。",
+        fundamental_support_en: "Strict adherence to bottom-up pair-trading generated +0.21% positive absolute return, reliably stabilizing overall portfolio.",
+        recommendation: "持有"
+      },
+      "fund-eastspring": {
+        target_weight: 15.0,
+        current_weight: 17.40,
+        nav: "$4.3330",
+        return_1m: 9.20,
+        contrib_1m: 1.60,
+        market_noise: "全球半导体短线震荡，美债收益率曲线陡峭化引发成长估值分歧。",
+        market_noise_en: "Short-term volatility across global semiconductors; steeper yield curve led to valuation dispersion.",
+        fundamental_support: "北美头部云服务商基础设施资本开支坚挺，人工智能硬件真实业绩强劲，单月大涨+9.20%，贡献核心超额。",
+        fundamental_support_en: "Cloud hyperscaler CapEx remains resilient; real AI hardware revenue growth drove a robust +9.20% gain, delivering dominant alpha.",
+        recommendation: "持有"
+      },
+      "fund-janus": {
+        target_weight: 15.0,
+        current_weight: 14.17,
+        nav: "$17.7700",
+        return_1m: -5.30,
+        contrib_1m: -0.75,
+        market_noise: "高利率尾声阶段生物医药并购节奏略有放缓，板块出现获利了结回吐。",
+        market_noise_en: "M&A pace moderated during elevated rate regime, leading to short-term sector profit-taking.",
+        fundamental_support: "大型跨国制药与重磅肿瘤药现金流充沛，防御价值突出，回调创造健康加仓布局窗口。",
+        fundamental_support_en: "Robust free cash flows among mega-cap pharmaceuticals; pullback presents an attractive valuation entry window.",
+        recommendation: "持有"
+      },
+      "fund-gold": {
+        target_weight: 15.0,
+        current_weight: 13.23,
+        nav: "$5.1323",
+        return_1m: -9.92,
+        contrib_1m: -1.31,
+        market_noise: "8月暴涨+24%后短线投机盘获利了结回吐-9.92%，美元汇率短线技术性反抽。",
+        market_noise_en: "Speculative profit-taking after August's +24% surge combined with short-term DXY technical bounce.",
+        fundamental_support: "全球央行去美元化购金逻辑与长期地缘避险属性未变，前期大涨累积丰厚利润后正常整固，无需惊慌。",
+        fundamental_support_en: "Central bank de-dollarization reserve purchases and structural geopolitical hedging remain intact; healthy profit consolidation.",
+        recommendation: "持有"
+      },
+      "fund-china": {
+        target_weight: 12.0,
+        current_weight: 12.24,
+        nav: "$0.8579",
+        return_1m: -3.87,
+        contrib_1m: -0.47,
+        market_noise: "短期宏观经济修复斜率较缓，房地产市场仍处于筑底期。",
+        market_noise_en: "Gradual economic recovery slope with property sector in prolonged base-building phase.",
+        fundamental_support: "中国央行重磅金融支持与流动性释放，在岸创新龙头估值处于历史估值低分位，当前权重12.24%高于目标配比，无须减仓，坚守均值回归。",
+        fundamental_support_en: "Decisive monetary stimulus and liquidity injection from PBOC; onshore innovation valuation sits at historical troughs; actual weight at 12.24% exceeds target, conviction firmly intact.",
+        recommendation: "持有"
+      },
+      "fund-fssa": {
+        target_weight: 4.0,
+        current_weight: 4.00,
+        nav: "$3.9428",
+        return_1m: 1.12,
+        contrib_1m: 0.04,
+        market_noise: "外围汇率预期交织，区域部分出口面临扰动。",
+        market_noise_en: "Currency volatility and selective regional export softness.",
+        fundamental_support: "聚焦印度消费蓝筹与泛亚高资本回报率龙头，在区域波动中稳健实现+1.12%正收益。",
+        fundamental_support_en: "Concentrated in high-quality Indian consumer leaders and pan-Asia high-ROE compounders, generating steady +1.12% return.",
+        recommendation: "持有"
+      },
+      "fund-nikko": {
+        target_weight: 4.0,
+        current_weight: 3.87,
+        nav: "$2.2261",
+        return_1m: -1.73,
+        contrib_1m: -0.07,
+        market_noise: "日元汇率与央行利率政策预期交锋，东证指数短期高位整固。",
+        market_noise_en: "Yen fluctuations and BOJ monetary policy debates led to short-term consolidation in TOPIX.",
+        fundamental_support: "东京交易所市净率改革与企业股息回购持续推进，充沛现金流提供长期坚实托底。",
+        fundamental_support_en: "TSE governance reforms, rising share buybacks and robust corporate cash flows provide reliable long-term support.",
+        recommendation: "持有"
+      }
     }
   }
 };
+

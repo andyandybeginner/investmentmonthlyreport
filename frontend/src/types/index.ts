@@ -11,6 +11,7 @@ export interface FundHolding {
   role_en: string;
   target_weight: number;      // e.g. 35.0
   current_weight: number;     // e.g. 35.09
+  nav?: string;               // e.g. "$18.0091"
   return_1m: number;          // e.g. 0.21
   contrib_1m: number;         // e.g. 0.07
   active: boolean;

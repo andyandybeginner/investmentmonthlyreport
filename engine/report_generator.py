@@ -305,6 +305,330 @@ def generate_frontier_svg(lang="zh", width=580, height=280):
     svg.append('</svg>')
     return "\n".join(svg)
 
+OBJECTIVE_HOLDINGS_BY_MONTH = {
+    "2026-08": [
+        {
+            "id": "fund-fullerton",
+            "fund_name": "FULLERTON LUX - GLOBAL ABSOLUTE ALPHA",
+            "role": "全天候底仓",
+            "role_en": "Core Ballast",
+            "target_weight": "35.00%",
+            "current_weight": "34.62%",
+            "nav": "$17.9714",
+            "return_1m": "+0.36%",
+            "contrib_1m": "+0.12%",
+            "active": True,
+            "market_noise": "多空对冲策略在科技单边轮动行情下超额弹性相对温和。",
+            "market_noise_en": "Long/short hedge strategy shows moderate relative elasticity during rotational tech markets.",
+            "fundamental_support": "自下而上低贝塔多空配对交易，全月平稳穿越外围动荡，忠实履行组合下行减震底仓使命。",
+            "fundamental_support_en": "Bottom-up low-beta pair trading navigated external turbulence smoothly, fulfilling core downside protection.",
+            "advisory_recommendation": "持有"
+        },
+        {
+            "id": "fund-eastspring",
+            "fund_name": "EASTSPRING - GLOBAL TECHNOLOGY SGD",
+            "role": "科技成长",
+            "role_en": "Tech Growth",
+            "target_weight": "15.00%",
+            "current_weight": "15.73%",
+            "nav": "$3.9680",
+            "return_1m": "-5.64%",
+            "contrib_1m": "-0.89%",
+            "active": True,
+            "market_noise": "长端美债收益率攀升引发半导体估值分母端压制，芯片股短期震荡。",
+            "market_noise_en": "Rising long-end US Treasury yields pressured semiconductor valuation multiples in the near term.",
+            "fundamental_support": "英伟达财报亮眼，云巨头资本开支扩张，人工智能硬件供需瓶颈突出，回调创造极佳逢低吸纳窗口。",
+            "fundamental_support_en": "Strong NVIDIA earnings and expanding hyperscaler CapEx confirm tight AI hardware supply-demand fundamentals.",
+            "advisory_recommendation": "持有"
+        },
+        {
+            "id": "fund-janus",
+            "fund_name": "Janus Henderson Global Life Sciences",
+            "role": "生命科学",
+            "role_en": "Healthcare",
+            "target_weight": "15.00%",
+            "current_weight": "14.78%",
+            "nav": "$18.7600",
+            "return_1m": "-0.21%",
+            "contrib_1m": "-0.03%",
+            "active": True,
+            "market_noise": "高利率环境下生物医药并购融资成本抬升，板块交易情绪偏弱。",
+            "market_noise_en": "Higher financing costs under elevated rates softened short-term biotech M&A trading sentiment.",
+            "fundamental_support": "大型跨国药企重磅减重创新药与肿瘤研发管线现金流强劲，防御属性与长期估值修复潜力突出。",
+            "fundamental_support_en": "Blockbuster GLP-1 weight-loss and oncology pipelines deliver resilient cash flows and defensive buffer.",
+            "advisory_recommendation": "持有"
+        },
+        {
+            "id": "fund-gold",
+            "fund_name": "United Gold and General A Acc SGD",
+            "role": "黄金对冲",
+            "role_en": "Gold & Commodity",
+            "target_weight": "15.00%",
+            "current_weight": "14.51%",
+            "nav": "$5.6975",
+            "return_1m": "+24.00%",
+            "contrib_1m": "+3.48%",
+            "active": True,
+            "market_noise": "金价短期急涨后可能面临获利盘了结与美元指数技术性反弹。",
+            "market_noise_en": "Potential short-term profit-taking and technical DXY rebound following August's rapid +24% rally.",
+            "fundamental_support": "美债30年期收益率升破5.3%，去美元化与全球央行购金逻辑坚实，非对称对冲大放异彩。",
+            "fundamental_support_en": "30Y US Treasury yields exceeding 5.3% reinforce central bank gold accumulation and asymmetric hedging.",
+            "advisory_recommendation": "持有"
+        },
+        {
+            "id": "fund-china",
+            "fund_name": "United China A Shares Innovation A Acc",
+            "role": "中国创新",
+            "role_en": "China Innovation",
+            "target_weight": "12.00%",
+            "current_weight": "12.58%",
+            "nav": "$0.8924",
+            "return_1m": "-3.09%",
+            "contrib_1m": "-0.39%",
+            "active": True,
+            "market_noise": "7月宏观数据复苏不均，零售消费温和，房地产投资持续收缩。",
+            "market_noise_en": "Uneven macro recovery data with soft retail consumption and contracting property investment.",
+            "fundamental_support": "在岸科技制造与国产智能算力技术稳步突破，估值处于历史绝对低位，政策托底与流动性注入预期强烈。",
+            "fundamental_support_en": "Breakthroughs in domestic AI compute and manufacturing at trough valuations with strong policy support expectations.",
+            "advisory_recommendation": "持有"
+        },
+        {
+            "id": "fund-fssa",
+            "fund_name": "FSSA Asian Growth Fund (Class A)",
+            "role": "亚洲主题",
+            "role_en": "Asia Focus",
+            "target_weight": "4.00%",
+            "current_weight": "3.91%",
+            "nav": "$3.8991",
+            "return_1m": "+1.12%",
+            "contrib_1m": "+0.04%",
+            "active": True,
+            "market_noise": "新兴市场汇率受强美元反弹扰动，部分出口型经济体面临通胀压力。",
+            "market_noise_en": "EM currencies experienced intermittent volatility amid US dollar fluctuations.",
+            "fundamental_support": "重仓印度与东南亚内需消费蓝筹，企业资本回报率与治理结构卓越，有效抵御外部波动。",
+            "fundamental_support_en": "Overweight India and ASEAN domestic consumer leaders with superior ROE and governance resilience.",
+            "advisory_recommendation": "持有"
+        },
+        {
+            "id": "fund-nikko",
+            "fund_name": "Nikko AM Japan Dividend",
+            "role": "日本高息",
+            "role_en": "Japan Dividend",
+            "target_weight": "4.00%",
+            "current_weight": "3.87%",
+            "nav": "$2.2653",
+            "return_1m": "+1.30%",
+            "contrib_1m": "+0.05%",
+            "active": True,
+            "market_noise": "日本央行加息25个基点，日元套息交易平仓引发东证指数间歇性震荡。",
+            "market_noise_en": "BOJ 25 bps rate hike and Yen carry trade unwinds triggered intermittent TOPIX volatility.",
+            "fundamental_support": "东京证交所市净率改善改革持续深化，企业回购与股息分红创新高，日经反弹中现金流防御优异。",
+            "fundamental_support_en": "Deepening TSE P/B reforms, record share buybacks, and rising dividends provide strong cash flow defense.",
+            "advisory_recommendation": "持有"
+        }
+    ],
+    "2026-09": [
+        {
+            "id": "fund-fullerton",
+            "fund_name": "FULLERTON LUX - GLOBAL ABSOLUTE ALPHA",
+            "role": "全天候底仓",
+            "role_en": "Core Ballast",
+            "target_weight": "35.00%",
+            "current_weight": "35.09%",
+            "nav": "$18.0091",
+            "return_1m": "+0.21%",
+            "contrib_1m": "+0.07%",
+            "active": True,
+            "market_noise": "多空对冲在强趋势成长单边行情中弹性较为温和。",
+            "market_noise_en": "Long/short market neutral strategy exhibits moderate upside beta during aggressive one-way rallies.",
+            "fundamental_support": "恪守低贝塔多空选股原则，全月实现+0.21%绝对正收益，稳定发挥大额底仓减震压舱价值。",
+            "fundamental_support_en": "Strict adherence to bottom-up pair-trading generated +0.21% positive absolute return, reliably stabilizing overall portfolio.",
+            "advisory_recommendation": "持有"
+        },
+        {
+            "id": "fund-eastspring",
+            "fund_name": "EASTSPRING - GLOBAL TECHNOLOGY SGD",
+            "role": "科技成长",
+            "role_en": "Tech Growth",
+            "target_weight": "15.00%",
+            "current_weight": "17.40%",
+            "nav": "$4.3330",
+            "return_1m": "+9.20%",
+            "contrib_1m": "+1.60%",
+            "active": True,
+            "market_noise": "全球半导体短线震荡，美债收益率曲线陡峭化引发成长估值分歧。",
+            "market_noise_en": "Short-term volatility across global semiconductors; steeper yield curve led to valuation dispersion.",
+            "fundamental_support": "北美头部云服务商基础设施资本开支坚挺，人工智能硬件真实业绩强劲，单月大涨+9.20%，贡献核心超额。",
+            "fundamental_support_en": "Cloud hyperscaler CapEx remains resilient; real AI hardware revenue growth drove a robust +9.20% gain, delivering dominant alpha.",
+            "advisory_recommendation": "持有"
+        },
+        {
+            "id": "fund-janus",
+            "fund_name": "Janus Henderson Global Life Sciences",
+            "role": "生命科学",
+            "role_en": "Healthcare",
+            "target_weight": "15.00%",
+            "current_weight": "14.17%",
+            "nav": "$17.7700",
+            "return_1m": "-5.30%",
+            "contrib_1m": "-0.75%",
+            "active": True,
+            "market_noise": "高利率尾声阶段生物医药并购节奏略有放缓，板块出现获利了结回吐。",
+            "market_noise_en": "M&A pace moderated during elevated rate regime, leading to short-term sector profit-taking.",
+            "fundamental_support": "大型跨国制药与重磅肿瘤药现金流充沛，防御价值突出，回调创造健康加仓布局窗口。",
+            "fundamental_support_en": "Robust free cash flows among mega-cap pharmaceuticals; pullback presents an attractive valuation entry window.",
+            "advisory_recommendation": "持有"
+        },
+        {
+            "id": "fund-gold",
+            "fund_name": "United Gold and General A Acc SGD",
+            "role": "黄金对冲",
+            "role_en": "Gold & Commodity",
+            "target_weight": "15.00%",
+            "current_weight": "13.23%",
+            "nav": "$5.1323",
+            "return_1m": "-9.92%",
+            "contrib_1m": "-1.31%",
+            "active": True,
+            "market_noise": "8月暴涨+24%后短线投机盘获利了结回吐-9.92%，美元汇率短线技术性反抽。",
+            "market_noise_en": "Speculative profit-taking after August's +24% surge combined with short-term DXY technical bounce.",
+            "fundamental_support": "全球央行去美元化购金逻辑与长期地缘避险属性未变，前期大涨累积丰厚利润后正常整固，无需惊慌。",
+            "fundamental_support_en": "Central bank de-dollarization reserve purchases and structural geopolitical hedging remain intact; healthy profit consolidation.",
+            "advisory_recommendation": "持有"
+        },
+        {
+            "id": "fund-china",
+            "fund_name": "United China A Shares Innovation A Acc",
+            "role": "中国创新",
+            "role_en": "China Innovation",
+            "target_weight": "12.00%",
+            "current_weight": "12.24%",
+            "nav": "$0.8579",
+            "return_1m": "-3.87%",
+            "contrib_1m": "-0.47%",
+            "active": True,
+            "market_noise": "短期宏观经济修复斜率较缓，房地产市场仍处于筑底期。",
+            "market_noise_en": "Gradual economic recovery slope with property sector in prolonged base-building phase.",
+            "fundamental_support": "中国央行重磅金融支持与流动性释放，在岸创新龙头估值处于历史估值低分位，当前权重12.24%高于目标配比，无须减仓，坚守均值回归。",
+            "fundamental_support_en": "Decisive monetary stimulus and liquidity injection from PBOC; onshore innovation valuation sits at historical troughs; actual weight at 12.24% exceeds target, conviction firmly intact.",
+            "advisory_recommendation": "持有"
+        },
+        {
+            "id": "fund-fssa",
+            "fund_name": "FSSA Asian Growth Fund (Class A)",
+            "role": "亚洲主题",
+            "role_en": "Asia Focus",
+            "target_weight": "4.00%",
+            "current_weight": "4.00%",
+            "nav": "$3.9428",
+            "return_1m": "+1.12%",
+            "contrib_1m": "+0.04%",
+            "active": True,
+            "market_noise": "外围汇率预期交织，区域部分出口面临扰动。",
+            "market_noise_en": "Currency volatility and selective regional export softness.",
+            "fundamental_support": "聚焦印度消费蓝筹与泛亚高资本回报率龙头，在区域波动中稳健实现+1.12%正收益。",
+            "fundamental_support_en": "Concentrated in high-quality Indian consumer leaders and pan-Asia high-ROE compounders, generating steady +1.12% return.",
+            "advisory_recommendation": "持有"
+        },
+        {
+            "id": "fund-nikko",
+            "fund_name": "Nikko AM Japan Dividend",
+            "role": "日本高息",
+            "role_en": "Japan Dividend",
+            "target_weight": "4.00%",
+            "current_weight": "3.87%",
+            "nav": "$2.2261",
+            "return_1m": "-1.73%",
+            "contrib_1m": "-0.07%",
+            "active": True,
+            "market_noise": "日元汇率与央行利率政策预期交锋，东证指数短期高位整固。",
+            "market_noise_en": "Yen fluctuations and BOJ monetary policy debates led to short-term consolidation in TOPIX.",
+            "fundamental_support": "东京交易所市净率改革与企业股息回购持续推进，充沛现金流提供长期坚实托底。",
+            "fundamental_support_en": "TSE governance reforms, rising share buybacks and robust corporate cash flows provide reliable long-term support.",
+            "advisory_recommendation": "持有"
+        }
+    ]
+}
+
+def normalize_and_enrich_holdings(raw_holdings, report_month):
+    """
+    Ensures objective holdings data (fund_name, role, target_weight, current_weight, nav, return_1m, contrib_1m)
+    are ALWAYS populated immediately after selecting a report month in Section 1, even before Section 4 is edited
+    or if legacy field names ('name', 'weight', 'noise', 'support', 'action') were saved.
+    """
+    baseline_list = OBJECTIVE_HOLDINGS_BY_MONTH.get(report_month, OBJECTIVE_HOLDINGS_BY_MONTH["2026-09"])
+    if not raw_holdings:
+        return [dict(item) for item in baseline_list]
+
+    def match_baseline(fname_str):
+        u = str(fname_str).upper()
+        for b in baseline_list:
+            b_u = b["fund_name"].upper()
+            if ("FULLERTON" in u and "FULLERTON" in b_u) or \
+               ("EASTSPRING" in u and "EASTSPRING" in b_u) or \
+               ("JANUS" in u and "JANUS" in b_u) or \
+               ("GOLD" in u and "GOLD" in b_u) or \
+               ("CHINA" in u and "CHINA" in b_u) or \
+               ("FSSA" in u and "FSSA" in b_u) or \
+               ("NIKKO" in u and "NIKKO" in b_u):
+                return b
+        return None
+
+    def fmt_pct(val, signed=False):
+        if val is None or val == "":
+            return ""
+        s = str(val).strip()
+        if s.endswith("%"):
+            if signed and not s.startswith("+") and not s.startswith("-"):
+                try:
+                    num = float(s[:-1])
+                    return f"{'+' if num >= 0 else ''}{num:.2f}%"
+                except Exception:
+                    return s
+            return s
+        try:
+            num = float(s)
+            return f"{'+' if (signed and num >= 0) else ''}{num:.2f}%"
+        except Exception:
+            return s
+
+    enriched = []
+    for idx, h in enumerate(raw_holdings):
+        fname_raw = h.get("fund_name") or h.get("name") or ""
+        b = match_baseline(fname_raw) or (baseline_list[idx] if idx < len(baseline_list) else baseline_list[0])
+        fname = b["fund_name"] if b else fname_raw
+
+        tgt_wt = fmt_pct(h.get("target_weight") if h.get("target_weight") is not None else h.get("weight"), signed=False) or b.get("target_weight", "—")
+        cur_wt = fmt_pct(h.get("current_weight"), signed=False) or b.get("current_weight", tgt_wt)
+        ret_1m = fmt_pct(h.get("return_1m"), signed=True) or b.get("return_1m", "0.00%")
+        contrib_1m = fmt_pct(h.get("contrib_1m"), signed=True) or b.get("contrib_1m", "")
+        nav = h.get("nav") or b.get("nav", "—")
+
+        noise = h.get("market_noise") or h.get("noise") or b.get("market_noise", "")
+        noise_en = h.get("market_noise_en") or b.get("market_noise_en", noise)
+        fundam = h.get("fundamental_support") or h.get("support") or b.get("fundamental_support", "")
+        fundam_en = h.get("fundamental_support_en") or b.get("fundamental_support_en", fundam)
+        act = h.get("advisory_recommendation") or h.get("advisory_directive") or h.get("action") or b.get("advisory_recommendation", "持有")
+
+        enriched.append({
+            "id": h.get("id") or b.get("id", f"fund-{idx+1}"),
+            "fund_name": fname,
+            "role": h.get("role") or b.get("role", "核心优选"),
+            "role_en": h.get("role_en") or b.get("role_en", "Core Holding"),
+            "target_weight": tgt_wt,
+            "current_weight": cur_wt,
+            "nav": nav,
+            "return_1m": ret_1m,
+            "contrib_1m": contrib_1m,
+            "active": h.get("active", True),
+            "market_noise": noise,
+            "market_noise_en": noise_en,
+            "fundamental_support": fundam,
+            "fundamental_support_en": fundam_en,
+            "advisory_recommendation": act
+        })
+    return enriched
+
 def generate_report(month="2026-09"):
     print(f"🚀 Starting Unified Report Generator for month: {month}...")
 
@@ -334,7 +658,7 @@ def generate_report(month="2026-09"):
     p_stars = matched_sections.get("star_ratings_page", 7 if report_month == "2026-09" else 4)
     p_topic = matched_sections.get("topic_page", 12 if report_month == "2026-09" else 6)
 
-    # 3. Manager Input & Holdings Conviction
+    # 3. Manager Input & Holdings Conviction (Always enriched with objective month data)
     mgr_input = cfg.get("manager_input", {})
     qualitative_view = mgr_input.get("qualitative_view", "")
     rebalance_verdict = mgr_input.get("rebalance_verdict", "持有")
@@ -342,7 +666,7 @@ def generate_report(month="2026-09"):
     rebalance_note = mgr_input.get("rebalance_note", "")
     conflict_note = cfg.get("monthly_conflict_calibration", "")
 
-    all_holdings = mgr_input.get("holdings_conviction", [])
+    all_holdings = normalize_and_enrich_holdings(mgr_input.get("holdings_conviction", []), report_month)
     active_funds = [h for h in all_holdings if h.get("active") is not False]
     if not active_funds:
         active_funds = all_holdings
@@ -585,7 +909,7 @@ def generate_report(month="2026-09"):
         "EASTSPRING": ("科技成长", "15.00%", "f_role_2"),
         "JANUS": ("生命科学", "15.00%", "f_role_3"),
         "GOLD": ("黄金对冲", "15.00%", "f_role_4"),
-        "CHINA A": ("中国创新", "12.00%", "f_role_5"),
+        "CHINA": ("中国创新", "12.00%", "f_role_5"),
         "FSSA": ("亚洲主题", "4.00%", "f_role_6"),
         "NIKKO": ("日本高息", "4.00%", "f_role_7"),
     }
@@ -593,27 +917,30 @@ def generate_report(month="2026-09"):
     for h in active_funds:
         fname = h.get("fund_name", "")
         ret = h.get("return_1m", "0.00%")
-        role = "核心优选"
-        tgt_wt = "—"
+        role = h.get("role") or "核心优选"
+        tgt_wt = h.get("target_weight") or "—"
         role_i18n = ""
         for k, (r, w, i_key) in role_map.items():
             if k in fname.upper():
                 role = r
-                tgt_wt = w
+                if tgt_wt == "—":
+                    tgt_wt = w
                 role_i18n = i_key
                 break
 
         cur_wt = h.get("current_weight", tgt_wt)
-        
-        # Calculate monthly contribution
-        try:
-            r_num = float(re.sub(r'[^\d\.\-]', '', str(ret))) if re.search(r'\d', str(ret)) else 0.0
-            if '-' in str(ret): r_num = -abs(r_num)
-            w_num = float(re.sub(r'[^\d\.\-]', '', str(cur_wt))) if re.search(r'\d', str(cur_wt)) else 0.0
-            contrib_val = (r_num * w_num) / 100.0
-            contrib_str = f"{'+' if contrib_val>=0 else ''}{contrib_val:.2f}%"
-        except Exception:
-            contrib_str = "—"
+        nav_str = h.get("nav", "—")
+        contrib_str = h.get("contrib_1m", "")
+
+        if not contrib_str:
+            try:
+                r_num = float(re.sub(r'[^\d\.\-]', '', str(ret))) if re.search(r'\d', str(ret)) else 0.0
+                if '-' in str(ret): r_num = -abs(r_num)
+                w_num = float(re.sub(r'[^\d\.\-]', '', str(cur_wt))) if re.search(r'\d', str(cur_wt)) else 0.0
+                contrib_val = (r_num * w_num) / 100.0
+                contrib_str = f"{'+' if contrib_val>=0 else ''}{contrib_val:.2f}%"
+            except Exception:
+                contrib_str = "—"
 
         ret_color = "text-emerald-700 font-bold" if str(ret).startswith("+") else "text-rose-600 font-semibold"
         contrib_color = "text-emerald-800 font-bold" if contrib_str.startswith("+") else ("text-rose-700 font-bold" if contrib_str.startswith("-") else "text-slate-600")
@@ -625,7 +952,7 @@ def generate_report(month="2026-09"):
                             <td class="p-1.5 font-semibold text-slate-800 truncate max-w-[210px]">{fname}</td>
                             <td class="p-1.5 text-right font-semibold text-slate-600 mono-num">{tgt_wt}</td>
                             <td class="p-1.5 text-right font-bold text-[#0f2347] mono-num bg-amber-50/50 border-l border-r border-amber-100">{cur_wt}</td>
-                            <td class="p-1.5 text-right mono-num">—</td>
+                            <td class="p-1.5 text-right text-slate-700 mono-num">{nav_str}</td>
                             <td class="p-1.5 text-right {ret_color} mono-num">{ret}</td>
                             <td class="p-1.5 text-right pr-2 {contrib_color} mono-num">{contrib_str}</td>
                         </tr>"""

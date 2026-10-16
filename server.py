@@ -475,7 +475,8 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
                 if key in req_data:
                     cfg[key] = req_data[key]
 
-            # Update manager_input (Section 4 parameters)
+            # Update manager_input (Section 4 parameters) & ensure objective holdings data is always populated
+            from engine.report_generator import normalize_and_enrich_holdings, generate_report
             mgr = cfg.setdefault('manager_input', {})
             incoming_mgr = req_data.get('manager_input', {})
             for k in ['qualitative_view', 'qualitative_view_en', 'rebalance_verdict', 'rebalance_note', 'rebalance_note_en', 'holdings_conviction']:
@@ -484,13 +485,14 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
                 elif k in incoming_mgr:
                     mgr[k] = incoming_mgr[k]
 
+            mgr['holdings_conviction'] = normalize_and_enrich_holdings(mgr.get('holdings_conviction', []), month)
+
             with open(cfg_path, 'w', encoding='utf-8') as f:
                 json.dump(cfg, f, ensure_ascii=False, indent=2)
 
             # Immediately compile preview HTML based on Section 1 & 2 settings
             preview_file = ""
             try:
-                from engine.report_generator import generate_report
                 gen_res = generate_report(month=month)
                 preview_file = os.path.basename(gen_res.get("monthly_html", ""))
             except Exception as e:
@@ -513,8 +515,9 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
                 "page_topic": matched_pdf.get('topic_page', 5),
                 "slide3_topic_title_zh": matched_pdf.get('topic_title_zh', ''),
                 "slide3_topic_title_en": matched_pdf.get('topic_title_en', ''),
+                "holdings_conviction": mgr['holdings_conviction'],
                 "preview_file": preview_file,
-                "message": f"{month} {sec_name}已保存，并已从 Calculation_Engine A列匹配结算日 {resolved_settle} 及本地研报页码！"
+                "message": f"{month} {sec_name}已保存，并已从 Calculation_Engine A列匹配结算日 {resolved_settle}、底层 7 只基金客观回报比重及本地研报页码！"
             }, ensure_ascii=False).encode('utf-8'))
             return
 

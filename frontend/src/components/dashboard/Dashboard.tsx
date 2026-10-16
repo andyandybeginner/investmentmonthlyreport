@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { PortfolioState, FundHolding, RecommendationType, Language } from '../../types';
 import {
   sliceTimeSeriesByReportMonth,
@@ -15,7 +15,8 @@ import {
   FileCheck,
   RefreshCw,
   Sparkles,
-  ExternalLink
+  ExternalLink,
+  Calendar
 } from 'lucide-react';
 
 interface DashboardProps {
@@ -25,6 +26,7 @@ interface DashboardProps {
   onSave: () => void;
   onSync: () => void;
   isSyncing: boolean;
+  isSplitMode?: boolean;
 }
 
 export const Dashboard: React.FC<DashboardProps> = ({
@@ -32,12 +34,14 @@ export const Dashboard: React.FC<DashboardProps> = ({
   setPortfolio,
   onSave,
   onSync,
-  isSyncing
+  isSyncing,
+  isSplitMode = false
 }) => {
   const [sectionSaved, setSectionSaved] = useState<{ [key: string]: boolean }>({});
   const [subjectiveInput, setSubjectiveInput] = useState<string>('坚守三支柱战略配置，维持全员持有');
   const [isSynthesizing, setIsSynthesizing] = useState<boolean>(false);
   const [previewReadyMsg, setPreviewReadyMsg] = useState<string>('');
+  const monthInputRef = useRef<HTMLInputElement>(null);
 
   // Dynamic time series slice info calculated from selected report month and settle date
   const timeSliceInfo = sliceTimeSeriesByReportMonth(
@@ -46,26 +50,34 @@ export const Dashboard: React.FC<DashboardProps> = ({
     portfolio.time_series
   );
 
-  // Apply month resolution locally and optionally from backend Calculation_Engine Col A + preset folder PDF
-  const applyMonthResolution = (targetMonth: string) => {
-    const preset = MONTH_PRESETS[targetMonth];
+  // Apply month resolution locally and immediately populate all 7 funds' objective weights & returns
+  const applyMonthResolution = (targetMonth: string): FundHolding[] => {
+    const preset = MONTH_PRESETS[targetMonth] || MONTH_PRESETS['2026-09'];
     const calcLookup = resolveSettleDateFromCalcEngine(targetMonth);
-    const nextSettleDate = preset?.settle_date || calcLookup.settleDate;
+    const nextSettleDate = MONTH_PRESETS[targetMonth]?.settle_date || calcLookup.settleDate;
     const sliceInfo = sliceTimeSeriesByReportMonth(targetMonth, nextSettleDate, portfolio.time_series);
 
-    if (preset) {
-      const updatedHoldings = portfolio.holdings.map(h => {
-        const retInfo = preset.holdings_returns[h.id];
-        if (retInfo) {
-          return {
-            ...h,
-            return_1m: retInfo.return_1m,
-            contrib_1m: retInfo.contrib_1m
-          };
-        }
-        return h;
-      });
+    const updatedHoldings: FundHolding[] = portfolio.holdings.map(h => {
+      const retInfo = preset.holdings_returns[h.id];
+      if (retInfo) {
+        return {
+          ...h,
+          target_weight: retInfo.target_weight,
+          current_weight: retInfo.current_weight,
+          nav: retInfo.nav,
+          return_1m: retInfo.return_1m,
+          contrib_1m: retInfo.contrib_1m,
+          market_noise: retInfo.market_noise || h.market_noise,
+          market_noise_en: retInfo.market_noise_en || h.market_noise_en,
+          fundamental_support: retInfo.fundamental_support || h.fundamental_support,
+          fundamental_support_en: retInfo.fundamental_support_en || h.fundamental_support_en,
+          recommendation: retInfo.recommendation || h.recommendation
+        };
+      }
+      return h;
+    });
 
+    if (MONTH_PRESETS[targetMonth]) {
       setPortfolio(prev => ({
         ...prev,
         month: preset.month,
@@ -97,6 +109,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
         settle_date: calcLookup.settleDate,
         valuation_date_zh: calcLookup.valuationDateZh,
         valuation_date_en: calcLookup.valuationDateEn,
+        holdings: updatedHoldings,
         cum_current: sliceInfo.cumCurrent,
         cum_past: sliceInfo.cumPast,
         cum_sp500: sliceInfo.cumSp500,
@@ -105,6 +118,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
         monthly_return_1m: sliceInfo.monthlyReturn1m,
       }));
     }
+    return updatedHoldings;
   };
 
   // Handle report month manual input or quick select
@@ -116,12 +130,47 @@ export const Dashboard: React.FC<DashboardProps> = ({
     }
   };
 
+  // Trigger native browser month picker modal
+  const handleOpenMonthPicker = () => {
+    if (monthInputRef.current) {
+      try {
+        if (typeof (monthInputRef.current as any).showPicker === 'function') {
+          (monthInputRef.current as any).showPicker();
+        } else {
+          monthInputRef.current.focus();
+          monthInputRef.current.click();
+        }
+      } catch {
+        monthInputRef.current.focus();
+      }
+    }
+  };
+
   // Section 1 Save: Queries Calculation_Engine Col A for M+1 first valid price date,
   // scans preset local folder for matching iFAST Monthly Update PDF & page numbers,
-  // and generates previewable HTML report based on Section 1 & 2
+  // populates all 7 funds' objective returns & weights, and generates previewable HTML report
   const handleSaveSection1 = async () => {
     const cleanMonth = portfolio.month.trim();
-    applyMonthResolution(cleanMonth);
+    const resolvedHoldings = applyMonthResolution(cleanMonth);
+    const preset = MONTH_PRESETS[cleanMonth];
+
+    const serializedHoldings = resolvedHoldings.map(h => ({
+      id: h.id,
+      fund_name: h.fund_name,
+      role: h.role,
+      role_en: h.role_en,
+      target_weight: `${h.target_weight.toFixed(2)}%`,
+      current_weight: `${h.current_weight.toFixed(2)}%`,
+      nav: h.nav || '—',
+      return_1m: `${h.return_1m >= 0 ? '+' : ''}${h.return_1m.toFixed(2)}%`,
+      contrib_1m: `${h.contrib_1m >= 0 ? '+' : ''}${h.contrib_1m.toFixed(2)}%`,
+      active: h.active !== false,
+      market_noise: h.market_noise,
+      market_noise_en: h.market_noise_en,
+      fundamental_support: h.fundamental_support,
+      fundamental_support_en: h.fundamental_support_en,
+      advisory_recommendation: h.recommendation
+    }));
 
     try {
       const res = await fetch('/api/save_config', {
@@ -129,7 +178,15 @@ export const Dashboard: React.FC<DashboardProps> = ({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           report_month: cleanMonth,
-          section_name: '第1节（结算日回溯与研报页码适配）'
+          section_name: '第1节（结算日回溯与研报页码适配）',
+          manager_input: {
+            qualitative_view: preset?.qualitative_view || portfolio.qualitative_view,
+            qualitative_view_en: preset?.qualitative_view_en || portfolio.qualitative_view_en,
+            rebalance_verdict: preset?.rebalance_verdict || portfolio.rebalance_verdict,
+            rebalance_note: preset?.rebalance_note || portfolio.rebalance_note,
+            rebalance_note_en: preset?.rebalance_note_en || portfolio.rebalance_note_en,
+            holdings_conviction: serializedHoldings
+          }
         })
       });
       if (res.ok) {
@@ -145,19 +202,19 @@ export const Dashboard: React.FC<DashboardProps> = ({
             page_stars: data.page_stars || prev.page_stars,
             slide3_topic_title_zh: data.slide3_topic_title_zh || prev.slide3_topic_title_zh,
             slide3_topic_title_en: data.slide3_topic_title_en || prev.slide3_topic_title_en,
+            holdings: resolvedHoldings
           }));
           setPreviewReadyMsg(
-            `已从 Calculation_Engine A列自动回溯填入结算日 [${data.settle_date}]，匹配本地研报 [${data.ref_pdf_name}] (回报页 P.${data.page_returns} / 星级榜 P.${data.page_stars})，并已生成可预览 HTML！`
+            `已从 Calculation_Engine A列自动回溯填入结算日 [${data.settle_date}]，同步 7 只底层基金客观回报与权重，匹配本地研报 [${data.ref_pdf_name}] (回报页 P.${data.page_returns} / 星级榜 P.${data.page_stars})，并已生成可预览 HTML！`
           );
         }
       }
     } catch {
       setPreviewReadyMsg(
-        `已自动回溯填入结算日 [${portfolio.settle_date}] 并适配研报页码 (P.${portfolio.page_returns} / P.${portfolio.page_stars})！`
+        `已自动回溯填入结算日 [${portfolio.settle_date}]、同步 7 只底层基金客观回报与权重，并适配研报页码 (P.${portfolio.page_returns} / P.${portfolio.page_stars})！`
       );
     }
 
-    onSave();
     setSectionSaved(prev => ({ ...prev, sec1: true }));
     setTimeout(() => {
       setSectionSaved(prev => ({ ...prev, sec1: false }));
@@ -366,20 +423,33 @@ export const Dashboard: React.FC<DashboardProps> = ({
           </div>
         )}
 
-        <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {/* Target Month (Manual Input) */}
+        <div className={`p-6 grid grid-cols-1 md:grid-cols-2 ${isSplitMode ? '' : 'lg:grid-cols-4'} gap-6`}>
+          {/* Target Month (Manual Input + Standardized Month Picker Button) */}
           <div>
             <label className="block text-xs font-bold text-slate-700 mb-1.5">
               目标汇报月度 (唯一手动填入项)
             </label>
-            <input
-              type="text"
-              value={portfolio.month}
-              onChange={(e) => handleSelectMonth(e.target.value)}
-              className="w-full px-3 py-2 text-sm font-bold text-slate-950 bg-white rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="例如: 2026-09"
-            />
-            <div className="flex items-center gap-1.5 mt-2">
+            <div className="flex items-center gap-2">
+              <input
+                ref={monthInputRef}
+                type="month"
+                min="2023-07"
+                max="2027-12"
+                value={portfolio.month}
+                onChange={(e) => handleSelectMonth(e.target.value)}
+                className="flex-1 px-3 py-2 text-sm font-bold text-slate-950 bg-white rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 mono-num"
+              />
+              <button
+                type="button"
+                onClick={handleOpenMonthPicker}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white hover:bg-blue-50 text-slate-950 hover:text-blue-700 text-xs font-extrabold border border-slate-300 hover:border-blue-400 shadow-xs transition shrink-0 cursor-pointer"
+                title="点击打开标准年月规范选择器"
+              >
+                <Calendar className="w-3.5 h-3.5 text-blue-600" />
+                <span>日期规范选择</span>
+              </button>
+            </div>
+            <div className="flex flex-wrap items-center gap-1.5 mt-2">
               <span className="text-[11px] text-slate-500 font-medium">快速切换:</span>
               <button
                 type="button"
@@ -387,7 +457,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 className={`px-2 py-0.5 text-xs font-bold rounded border transition ${
                   portfolio.month === '2026-08'
                     ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
-                    : 'bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-300'
+                    : 'bg-white hover:bg-slate-100 text-slate-950 border-slate-300'
                 }`}
               >
                 2026-08 (8月 / 39期)
@@ -398,14 +468,14 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 className={`px-2 py-0.5 text-xs font-bold rounded border transition ${
                   portfolio.month === '2026-09'
                     ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
-                    : 'bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-300'
+                    : 'bg-white hover:bg-slate-100 text-slate-950 border-slate-300'
                 }`}
               >
                 2026-09 (9月 / 40期)
               </button>
             </div>
-            <span className="text-[11px] text-slate-500 mt-1 block">
-              填入 {portfolio.month} 后，系统自动锚定次月发布与结算周期
+            <span className="text-[11px] text-emerald-700 font-semibold mt-1 block">
+              ✓ 选定 {portfolio.month} 后，已自动同步 7 只基金客观比重与当月回报
             </span>
           </div>
 
@@ -418,7 +488,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
               type="date"
               value={portfolio.settle_date}
               onChange={(e) => handleMetaChange('settle_date', e.target.value)}
-              className="w-full px-3 py-2 text-sm font-bold text-slate-950 bg-white rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 text-sm font-bold text-slate-950 bg-white rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 mono-num"
             />
             <span className="text-[11px] text-emerald-700 font-semibold mt-1 block">
               ✓ 自动定位制作月次月首个有价格日期: {portfolio.settle_date}
@@ -426,7 +496,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
           </div>
 
           {/* PDF Reference Name (Auto-matched from preset local folder) */}
-          <div className="lg:col-span-2">
+          <div className={isSplitMode ? 'md:col-span-2' : 'lg:col-span-2'}>
             <label className="block text-xs font-bold text-slate-700 mb-1.5">
               iFAST Monthly Update 研报文件名 (预设本地文件夹自动匹配)
             </label>
@@ -444,7 +514,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
           </div>
 
           {/* Page Matching Matrix (Auto-returned from matched PDF) */}
-          <div className="md:col-span-2 lg:col-span-4 bg-slate-50 p-4 rounded-xl border border-slate-200 grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className={`md:col-span-2 ${isSplitMode ? '' : 'lg:col-span-4'} bg-slate-50 p-4 rounded-xl border border-slate-200 grid grid-cols-1 sm:grid-cols-3 gap-4`}>
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1">
                 📊 全球资产月度回报适配页码 (自动读取返还)
@@ -758,10 +828,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
           <div>
             <div className="flex justify-between items-center mb-2">
               <span className="text-xs font-bold uppercase tracking-wider text-slate-600">
-                底层基金清单与审查决策 ({portfolio.holdings.length} 只标的)
+                底层基金清单与审查决策 ({portfolio.holdings.length} 只标的 · 客观比重与当月回报已由第 1 节自动加载)
               </span>
-              <span className="text-xs text-slate-500 font-semibold">
-                目标权重合计: {portfolio.holdings.reduce((sum, h) => sum + h.target_weight, 0).toFixed(1)}%
+              <span className="text-xs text-slate-600 font-bold mono-num">
+                目标权重合计: {portfolio.holdings.reduce((sum, h) => sum + h.target_weight, 0).toFixed(1)}% · 当前权重合计: {portfolio.holdings.reduce((sum, h) => sum + h.current_weight, 0).toFixed(2)}%
               </span>
             </div>
 
@@ -771,11 +841,12 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   <thead>
                     <tr className="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
                       <th className="py-2.5 px-3 w-48">基金全称</th>
-                      <th className="py-2.5 px-2 w-32">配置定位</th>
+                      <th className="py-2.5 px-2 w-28">配置定位</th>
                       <th className="py-2.5 px-2 text-right w-20">目标权重</th>
+                      <th className="py-2.5 px-2 text-right w-20 bg-amber-50/70">当前权重</th>
                       <th className="py-2.5 px-2 text-right w-20">当月回报</th>
-                      <th className="py-2.5 px-3 min-w-[220px]">短期市场噪音与波动分歧</th>
-                      <th className="py-2.5 px-3 min-w-[220px]">中长期核心支撑逻辑</th>
+                      <th className="py-2.5 px-3 min-w-[200px]">短期市场噪音与波动分歧</th>
+                      <th className="py-2.5 px-3 min-w-[200px]">中长期核心支撑逻辑</th>
                       <th className="py-2.5 px-3 text-center w-28">顾问行动建议</th>
                       <th className="py-2.5 px-2 text-center w-12">操作</th>
                     </tr>
@@ -806,6 +877,18 @@ export const Dashboard: React.FC<DashboardProps> = ({
                               step="0.1"
                               value={h.target_weight}
                               onChange={(e) => handleFundChange(idx, 'target_weight', parseFloat(e.target.value) || 0)}
+                              className="w-14 px-1.5 py-1 text-xs font-bold text-right text-slate-950 bg-white rounded border border-slate-300 mono-num"
+                            />
+                            <span className="text-slate-600 text-xs font-bold">%</span>
+                          </div>
+                        </td>
+                        <td className="py-2 px-2 text-right bg-amber-50/30">
+                          <div className="flex items-center justify-end gap-1">
+                            <input
+                              type="number"
+                              step="0.01"
+                              value={h.current_weight}
+                              onChange={(e) => handleFundChange(idx, 'current_weight', parseFloat(e.target.value) || 0)}
                               className="w-14 px-1.5 py-1 text-xs font-bold text-right text-slate-950 bg-white rounded border border-slate-300 mono-num"
                             />
                             <span className="text-slate-600 text-xs font-bold">%</span>

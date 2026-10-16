@@ -15,6 +15,10 @@
   font-variant-numeric: tabular-nums;
 }
 
+.a4-scaled-slide-inner .landscape-slide {
+  margin: 0 !important;
+}
+
 @media print {
   @page {
     size: 297mm 210mm;
