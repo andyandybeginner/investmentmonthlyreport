@@ -9,10 +9,11 @@ interface FrontierChartProps {
 
 export const FrontierChart: React.FC<FrontierChartProps> = ({
   lang = 'zh',
-  width = 620,
-  height = 310,
+  width = 740,
+  height = 480,
 }) => {
-  const margin = { top: 25, right: 25, bottom: 35, left: 45 };
+  const isEn = lang === 'en';
+  const margin = { top: 32, right: 35, bottom: 42, left: 52 };
   const plotW = width - margin.left - margin.right;
   const plotH = height - margin.top - margin.bottom;
 
@@ -73,8 +74,8 @@ export const FrontierChart: React.FC<FrontierChartProps> = ({
   const yVals = [-4, 0, 4, 8, 12, 16];
   const xVals = [6, 8, 10, 12, 14, 16, 18, 20];
 
-  const xAxisLabel = lang === 'zh' ? '年化波动率 / 风险 (%)' : 'Annualized Volatility / Risk (%)';
-  const yAxisLabel = lang === 'zh' ? '年化回报率 (%)' : 'Annualized Return (%)';
+  const xAxisLabel = isEn ? 'Annualized Volatility / Risk (%)' : '年化波动率 / 风险 (%)';
+  const yAxisLabel = isEn ? 'Annualized Return (%)' : '年化回报率 (%)';
 
   return (
     <svg
@@ -94,16 +95,16 @@ export const FrontierChart: React.FC<FrontierChartProps> = ({
               x2={width - margin.right}
               y2={y}
               stroke={isZero ? '#94a3b8' : '#e2e8f0'}
-              strokeWidth={isZero ? 1.2 : 0.8}
+              strokeWidth={isZero ? 1.4 : 0.9}
               strokeDasharray={isZero ? undefined : '3,3'}
             />
             <text
-              x={margin.left - 6}
-              y={y + 3.5}
-              fontSize="9px"
-              fill="#64748b"
+              x={margin.left - 8}
+              y={y + 4}
+              fontSize="10.5px"
+              fill={isZero ? '#334155' : '#64748b'}
               textAnchor="end"
-              fontWeight="500"
+              fontWeight={isZero ? '700' : '500'}
               fontFamily="system-ui, sans-serif"
             >
               {yVal}%
@@ -123,13 +124,13 @@ export const FrontierChart: React.FC<FrontierChartProps> = ({
               x2={x}
               y2={margin.top + plotH}
               stroke="#e2e8f0"
-              strokeWidth={0.8}
+              strokeWidth={0.9}
               strokeDasharray="3,3"
             />
             <text
               x={x}
-              y={margin.top + plotH + 14}
-              fontSize="9px"
+              y={margin.top + plotH + 16}
+              fontSize="10.5px"
               fill="#64748b"
               textAnchor="middle"
               fontWeight="500"
@@ -144,9 +145,9 @@ export const FrontierChart: React.FC<FrontierChartProps> = ({
       {/* Axis Labels */}
       <text
         x={margin.left + plotW / 2}
-        y={height - 4}
-        fontSize="9.5px"
-        fill="#475569"
+        y={height - 6}
+        fontSize="11.5px"
+        fill="#334155"
         textAnchor="middle"
         fontWeight="bold"
         fontFamily="system-ui, sans-serif"
@@ -155,9 +156,9 @@ export const FrontierChart: React.FC<FrontierChartProps> = ({
       </text>
       <text
         x={margin.left + 8}
-        y={margin.top - 8}
-        fontSize="9.5px"
-        fill="#475569"
+        y={margin.top - 12}
+        fontSize="11.5px"
+        fill="#334155"
         textAnchor="start"
         fontWeight="bold"
         fontFamily="system-ui, sans-serif"
@@ -165,12 +166,63 @@ export const FrontierChart: React.FC<FrontierChartProps> = ({
         {yAxisLabel}
       </text>
 
+      {/* Explanatory Contrast Badges on Top Left of Chart */}
+      <g>
+        {/* 1986-2020 Annotation Box */}
+        <rect
+          x={margin.left + 10}
+          y={margin.top + 6}
+          width={isEn ? 320 : 275}
+          height={24}
+          rx={6}
+          fill="#eff6ff"
+          stroke="#bfdbfe"
+          strokeWidth={1}
+        />
+        <text
+          x={margin.left + 20}
+          y={margin.top + 22}
+          fontSize="9.5px"
+          fontWeight="bold"
+          fill="#1e3a8a"
+          fontFamily="system-ui, sans-serif"
+        >
+          {isEn
+            ? '● 1986-2020: Convex curve (bonds reduced risk, min at 25/75)'
+            : '● 1986-2020 凸前沿：加入债券有效减震（最低波动在25/75）'}
+        </text>
+
+        {/* 2021-2025 Annotation Box */}
+        <rect
+          x={margin.left + 10}
+          y={margin.top + 34}
+          width={isEn ? 320 : 275}
+          height={24}
+          rx={6}
+          fill="#fef2f2"
+          stroke="#fecaca"
+          strokeWidth={1}
+        />
+        <text
+          x={margin.left + 20}
+          y={margin.top + 50}
+          fontSize="9.5px"
+          fontWeight="bold"
+          fill="#991b1b"
+          fontFamily="system-ui, sans-serif"
+        >
+          {isEn
+            ? '● 2021-2025: Linear drag (bonds cut returns, not risk; pure bond negative)'
+            : '● 2021-2025 平直前沿：配置债券降收益未降风险（纯债回报为负）'}
+        </text>
+      </g>
+
       {/* 1986-2020 Curve (Blue solid) */}
       <path
         d={path2020}
         fill="none"
         stroke="#1e3a8a"
-        strokeWidth={2.5}
+        strokeWidth={3.2}
         strokeLinecap="round"
         strokeLinejoin="round"
       />
@@ -180,7 +232,7 @@ export const FrontierChart: React.FC<FrontierChartProps> = ({
         d={path2025}
         fill="none"
         stroke="#dc2626"
-        strokeWidth={2.5}
+        strokeWidth={3.2}
         strokeLinecap="round"
         strokeLinejoin="round"
       />
@@ -189,26 +241,38 @@ export const FrontierChart: React.FC<FrontierChartProps> = ({
       {d2020.map((p, idx) => {
         const px = getX(p.x);
         const py = getY(p.y);
-        const lbl = lang === 'zh' ? p.zh : p.label;
-        let tx = px + 6;
-        let ty = py - 4;
+        const lbl = isEn ? p.label : p.zh;
+        let tx = px + 8;
+        let ty = py - 7;
         let anchor: 'start' | 'end' | 'middle' = 'start';
         if (idx === 0) {
+          tx = px - 9;
+          ty = py - 3;
+          anchor = 'end';
+        } else if (idx === 1) {
           tx = px - 8;
-          ty = py - 2;
+          ty = py - 6;
           anchor = 'end';
+        } else if (idx === 2) {
+          tx = px - 4;
+          ty = py - 9;
+          anchor = 'end';
+        } else if (idx === 3) {
+          tx = px;
+          ty = py - 9;
+          anchor = 'middle';
         } else if (idx === d2020.length - 1) {
-          tx = px - 6;
+          tx = px + 8;
           ty = py - 8;
-          anchor = 'end';
+          anchor = 'start';
         }
         return (
           <g key={`2020-${idx}`}>
-            <circle cx={px} cy={py} r={4.5} fill="#1e3a8a" stroke="#ffffff" strokeWidth={1.5} />
+            <circle cx={px} cy={py} r={5} fill="#1e3a8a" stroke="#ffffff" strokeWidth={1.8} />
             <text
               x={tx}
               y={ty}
-              fontSize="8.5px"
+              fontSize="10px"
               fontWeight="bold"
               fill="#1e3a8a"
               textAnchor={anchor}
@@ -224,29 +288,29 @@ export const FrontierChart: React.FC<FrontierChartProps> = ({
       {d2025.map((p, idx) => {
         const px = getX(p.x);
         const py = getY(p.y);
-        const lbl = lang === 'zh' ? p.zh : p.label;
-        let tx = px + 7;
-        let ty = py + 3;
+        const lbl = isEn ? p.label : p.zh;
+        let tx = px + 9;
+        let ty = py + 4;
         let anchor: 'start' | 'end' | 'middle' = 'start';
         if (idx === 0) {
-          tx = px - 8;
-          ty = py + 8;
+          tx = px - 9;
+          ty = py + 4;
           anchor = 'end';
         } else if (idx === d2025.length - 1) {
-          tx = px + 8;
+          tx = px + 9;
           ty = py + 4;
         } else if (idx === 3) {
           // 60/40
-          tx = px + 8;
+          tx = px + 9;
           ty = py + 4;
         }
         return (
           <g key={`2025-${idx}`}>
-            <circle cx={px} cy={py} r={4.5} fill="#dc2626" stroke="#ffffff" strokeWidth={1.5} />
+            <circle cx={px} cy={py} r={5} fill="#dc2626" stroke="#ffffff" strokeWidth={1.8} />
             <text
               x={tx}
               y={ty}
-              fontSize="8.5px"
+              fontSize="10px"
               fontWeight="bold"
               fill="#dc2626"
               textAnchor={anchor}

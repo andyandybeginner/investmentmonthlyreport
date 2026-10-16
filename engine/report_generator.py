@@ -171,18 +171,19 @@ def generate_performance_svg(dates, cur, past, sp500, msci, events=None, width=5
     svg_parts.append('</svg>')
     return "\n".join(svg_parts)
 
-def generate_frontier_svg(lang="zh", width=580, height=280):
-    margin_l = 45
-    margin_r = 30
-    margin_t = 25
-    margin_b = 32
+def generate_frontier_svg(lang="zh", width=740, height=480):
+    is_en = (lang == "en")
+    margin_l = 52
+    margin_r = 35
+    margin_t = 32
+    margin_b = 42
 
     plot_w = width - margin_l - margin_r
     plot_h = height - margin_t - margin_b
 
-    x_min = 6.0
+    x_min = 5.0
     x_max = 21.0
-    y_min = -4.0
+    y_min = -5.0
     y_max = 18.0
 
     def get_x(v):
@@ -239,68 +240,74 @@ def generate_frontier_svg(lang="zh", width=580, height=280):
         y = get_y(y_val)
         is_zero = (y_val == 0)
         stroke = "#94a3b8" if is_zero else "#e2e8f0"
-        sw = "1.2" if is_zero else "0.8"
+        sw = "1.4" if is_zero else "0.9"
         dash = "" if is_zero else ' stroke-dasharray="3,3"'
         svg.append(f'<line x1="{margin_l}" y1="{y:.2f}" x2="{width - margin_r}" y2="{y:.2f}" stroke="{stroke}" stroke-width="{sw}"{dash}/>')
-        svg.append(f'<text x="{margin_l - 6}" y="{y + 3.5:.2f}" font-family="system-ui, -apple-system, sans-serif" font-size="9px" fill="#64748b" text-anchor="end" font-weight="500">{y_val}%</text>')
+        fill_col = "#334155" if is_zero else "#64748b"
+        f_wt = "700" if is_zero else "500"
+        svg.append(f'<text x="{margin_l - 8}" y="{y + 4:.2f}" font-family="system-ui, -apple-system, sans-serif" font-size="10.5px" fill="{fill_col}" text-anchor="end" font-weight="{f_wt}">{y_val}%</text>')
 
     # Grid X
-    for x_val in range(6, 22, 2):
+    for x_val in [6, 8, 10, 12, 14, 16, 18, 20]:
         x = get_x(x_val)
-        svg.append(f'<line x1="{x:.2f}" y1="{margin_t}" x2="{x:.2f}" y2="{margin_t + plot_h}" stroke="#e2e8f0" stroke-width="0.8" stroke-dasharray="3,3"/>')
-        svg.append(f'<text x="{x:.2f}" y="{margin_t + plot_h + 14}" font-family="system-ui, -apple-system, sans-serif" font-size="9px" fill="#64748b" text-anchor="middle" font-weight="500">{x_val}%</text>')
+        svg.append(f'<line x1="{x:.2f}" y1="{margin_t}" x2="{x:.2f}" y2="{margin_t + plot_h}" stroke="#e2e8f0" stroke-width="0.9" stroke-dasharray="3,3"/>')
+        svg.append(f'<text x="{x:.2f}" y="{margin_t + plot_h + 16}" font-family="system-ui, -apple-system, sans-serif" font-size="10.5px" fill="#64748b" text-anchor="middle" font-weight="500">{x_val}%</text>')
 
     # Axis Labels with bilingual attributes
     x_axis_label_zh = "年化波动率 / 风险 (%)"
     x_axis_label_en = "Annualized Volatility / Risk (%)"
     y_axis_label_zh = "年化回报率 (%)"
     y_axis_label_en = "Annualized Return (%)"
-    x_lbl = x_axis_label_zh if lang == "zh" else x_axis_label_en
-    y_lbl = y_axis_label_zh if lang == "zh" else y_axis_label_en
+    x_lbl = x_axis_label_en if is_en else x_axis_label_zh
+    y_lbl = y_axis_label_en if is_en else y_axis_label_zh
 
-    svg.append(f'<text x="{margin_l + plot_w / 2}" y="{height - 4}" font-family="system-ui, -apple-system, sans-serif" font-size="9.5px" fill="#475569" text-anchor="middle" font-weight="bold" data-zh="{x_axis_label_zh}" data-en="{x_axis_label_en}">{x_lbl}</text>')
-    svg.append(f'<text x="{margin_l + 8}" y="{margin_t - 8}" font-family="system-ui, -apple-system, sans-serif" font-size="9.5px" fill="#475569" text-anchor="start" font-weight="bold" data-zh="{y_axis_label_zh}" data-en="{y_axis_label_en}">{y_lbl}</text>')
+    svg.append(f'<text x="{margin_l + plot_w / 2}" y="{height - 6}" font-family="system-ui, -apple-system, sans-serif" font-size="11.5px" fill="#334155" text-anchor="middle" font-weight="bold" data-zh="{x_axis_label_zh}" data-en="{x_axis_label_en}">{x_lbl}</text>')
+    svg.append(f'<text x="{margin_l + 8}" y="{margin_t - 12}" font-family="system-ui, -apple-system, sans-serif" font-size="11.5px" fill="#334155" text-anchor="start" font-weight="bold" data-zh="{y_axis_label_zh}" data-en="{y_axis_label_en}">{y_lbl}</text>')
+
+    # Explanatory Contrast Badges on Top Left of Chart
+    box_w = 320 if is_en else 275
+    t1 = "● 1986-2020: Convex curve (bonds reduced risk, min at 25/75)" if is_en else "● 1986-2020 凸前沿：加入债券有效减震（最低波动在25/75）"
+    t2 = "● 2021-2025: Linear drag (bonds cut returns, not risk; pure bond negative)" if is_en else "● 2021-2025 平直前沿：配置债券降收益未降风险（纯债回报为负）"
+    svg.append(f'<rect x="{margin_l + 10}" y="{margin_t + 6}" width="{box_w}" height="24" rx="6" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>')
+    svg.append(f'<text x="{margin_l + 20}" y="{margin_t + 22}" font-family="system-ui, sans-serif" font-size="9.5px" font-weight="bold" fill="#1e3a8a">{t1}</text>')
+    svg.append(f'<rect x="{margin_l + 10}" y="{margin_t + 34}" width="{box_w}" height="24" rx="6" fill="#fef2f2" stroke="#fecaca" stroke-width="1"/>')
+    svg.append(f'<text x="{margin_l + 20}" y="{margin_t + 50}" font-family="system-ui, sans-serif" font-size="9.5px" font-weight="bold" fill="#991b1b">{t2}</text>')
 
     # 1986-2020 Curve (Blue)
-    svg.append(f'<path d="{path_2020}" fill="none" stroke="#1e3a8a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>')
+    svg.append(f'<path d="{path_2020}" fill="none" stroke="#1e3a8a" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>')
     for idx, p in enumerate(d_2020):
         px, py = get_x(p["x"]), get_y(p["y"])
-        svg.append(f'<circle cx="{px:.2f}" cy="{py:.2f}" r="4.5" fill="#1e3a8a" stroke="#ffffff" stroke-width="1.5"/>')
-        lbl = p["zh"] if lang == "zh" else p["label"]
+        svg.append(f'<circle cx="{px:.2f}" cy="{py:.2f}" r="5" fill="#1e3a8a" stroke="#ffffff" stroke-width="1.8"/>')
+        lbl = p["label"] if is_en else p["zh"]
         if idx == 0:
-            tx, ty, anchor = px - 8, py + 6, "end"
+            tx, ty, anchor = px - 9, py - 3, "end"
         elif idx == 1: # 25/75
             tx, ty, anchor = px - 8, py - 6, "end"
         elif idx == 2: # 50/50
-            tx, ty, anchor = px, py - 11, "middle"
+            tx, ty, anchor = px - 4, py - 9, "end"
         elif idx == 3: # 60/40
-            tx, ty, anchor = px + 6, py - 10, "start"
-        elif idx == 4: # 70/30
-            tx, ty, anchor = px, py - 11, "middle"
-        elif idx == 5: # 80/20
-            tx, ty, anchor = px, py - 11, "middle"
+            tx, ty, anchor = px, py - 9, "middle"
         elif idx == len(d_2020) - 1:
-            tx, ty, anchor = px + 8, py - 4, "start"
+            tx, ty, anchor = px + 8, py - 8, "start"
         else:
-            tx, ty, anchor = px + 6, py - 6, "start"
-        svg.append(f'<text x="{tx:.2f}" y="{ty:.2f}" font-family="system-ui, -apple-system, sans-serif" font-size="8.5px" font-weight="bold" fill="#1e3a8a" text-anchor="{anchor}" data-zh="{p["zh"]}" data-en="{p["label"]}">{lbl}</text>')
+            tx, ty, anchor = px + 8, py - 7, "start"
+        svg.append(f'<text x="{tx:.2f}" y="{ty:.2f}" font-family="system-ui, -apple-system, sans-serif" font-size="10px" font-weight="bold" fill="#1e3a8a" text-anchor="{anchor}" data-zh="{p["zh"]}" data-en="{p["label"]}">{lbl}</text>')
 
     # 2021-2025 Curve (Red)
-    svg.append(f'<path d="{path_2025}" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>')
+    svg.append(f'<path d="{path_2025}" fill="none" stroke="#dc2626" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>')
     for idx, p in enumerate(d_2025):
         px, py = get_x(p["x"]), get_y(p["y"])
-        svg.append(f'<circle cx="{px:.2f}" cy="{py:.2f}" r="4.5" fill="#dc2626" stroke="#ffffff" stroke-width="1.5"/>')
-        lbl = p["zh"] if lang == "zh" else p["label"]
+        svg.append(f'<circle cx="{px:.2f}" cy="{py:.2f}" r="5" fill="#dc2626" stroke="#ffffff" stroke-width="1.8"/>')
+        lbl = p["label"] if is_en else p["zh"]
         if idx == 0:
-            tx, ty, anchor = px - 8, py + 8, "end"
+            tx, ty, anchor = px - 9, py + 4, "end"
         elif idx == len(d_2025) - 1:
-            tx, ty, anchor = px + 8, py + 4, "start"
+            tx, ty, anchor = px + 9, py + 4, "start"
         elif idx == 3: # 60/40
-            tx, ty, anchor = px + 8, py + 4, "start"
+            tx, ty, anchor = px + 9, py + 4, "start"
         else:
-            tx, ty, anchor = px + 7, py + 3, "start"
-        svg.append(f'<text x="{tx:.2f}" y="{ty:.2f}" font-family="system-ui, -apple-system, sans-serif" font-size="8.5px" font-weight="bold" fill="#dc2626" text-anchor="{anchor}" data-zh="{p["zh"]}" data-en="{p["label"]}">{lbl}</text>')
-
+            tx, ty, anchor = px + 9, py + 4, "start"
+        svg.append(f'<text x="{tx:.2f}" y="{ty:.2f}" font-family="system-ui, -apple-system, sans-serif" font-size="10px" font-weight="bold" fill="#dc2626" text-anchor="{anchor}" data-zh="{p["zh"]}" data-en="{p["label"]}">{lbl}</text>')
 
     svg.append('</svg>')
     return "\n".join(svg)
