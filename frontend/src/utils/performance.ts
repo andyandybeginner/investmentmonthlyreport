@@ -1,4 +1,5 @@
-import { TimeSeriesPoint, PerformanceEvent } from '../types';
+import { TimeSeriesPoint, PerformanceEvent, FundHolding } from '../types';
+import { PORTFOLIO_HISTORY } from './portfolioHistory';
 
 // ==============================================================================
 // Complete Master Historical Time Series (Inception: 2023-07-05 to 2026-10-05)
@@ -593,4 +594,46 @@ export const MONTH_PRESETS: { [month: string]: MonthPreset } = {
     }
   }
 };
+
+/**
+ * Resolves the exact active N underlying funds for a given target month.
+ * Supports any dynamic number of funds (e.g. 5 funds in 2024-2025, 7 funds in 2026, or custom advisor adjustments).
+ */
+export function resolveHoldingsForMonth(targetMonth: string, currentHoldings: FundHolding[] = []): FundHolding[] {
+  // 1. If MONTH_PRESETS has calibrated objective returns & weights, use it
+  const preset = MONTH_PRESETS[targetMonth];
+  if (preset && preset.holdings_returns) {
+    const keys = Object.keys(preset.holdings_returns);
+    return keys.map((fundId) => {
+      const p = preset.holdings_returns[fundId];
+      const existing = currentHoldings.find(h => h.id === fundId);
+      const histFund = PORTFOLIO_HISTORY[targetMonth]?.funds.find(f => f.id === fundId);
+      return {
+        id: fundId,
+        fund_name: existing?.fund_name || histFund?.fund_name || fundId,
+        role: existing?.role || histFund?.role || '核心优选',
+        role_en: existing?.role_en || histFund?.role_en || 'Core Holding',
+        target_weight: p.target_weight,
+        current_weight: p.current_weight,
+        nav: p.nav || histFund?.nav || '—',
+        return_1m: p.return_1m,
+        contrib_1m: p.contrib_1m,
+        active: true,
+        market_noise: p.market_noise || existing?.market_noise || histFund?.market_noise || '',
+        market_noise_en: p.market_noise_en || existing?.market_noise_en || histFund?.market_noise_en || '',
+        fundamental_support: p.fundamental_support || existing?.fundamental_support || histFund?.fundamental_support || '',
+        fundamental_support_en: p.fundamental_support_en || existing?.fundamental_support_en || histFund?.fundamental_support_en || '',
+        recommendation: p.recommendation || existing?.recommendation || histFund?.recommendation || '持有'
+      };
+    });
+  }
+
+  // 2. If month exists in PORTFOLIO_HISTORY, return that month's exact funds snapshot (5, 7, etc.)
+  if (PORTFOLIO_HISTORY[targetMonth] && PORTFOLIO_HISTORY[targetMonth].funds.length > 0) {
+    return PORTFOLIO_HISTORY[targetMonth].funds.map(f => ({ ...f }));
+  }
+
+  // 3. Fallback: preserve current holdings if non-empty, else use latest known month
+  return currentHoldings.length > 0 ? currentHoldings.map(h => ({ ...h })) : (PORTFOLIO_HISTORY['2026-09']?.funds || []);
+}
 

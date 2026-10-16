@@ -4,7 +4,8 @@ import {
   sliceTimeSeriesByReportMonth,
   resolveSettleDateFromCalcEngine,
   synthesize7030AndTranslate,
-  MONTH_PRESETS
+  MONTH_PRESETS,
+  resolveHoldingsForMonth
 } from '../../utils/performance';
 import {
   FileText,
@@ -50,34 +51,17 @@ export const Dashboard: React.FC<DashboardProps> = ({
     portfolio.time_series
   );
 
-  // Apply month resolution locally and immediately populate all 7 funds' objective weights & returns
+  // Apply month resolution locally and immediately populate dynamic N funds' objective weights & returns
   const applyMonthResolution = (targetMonth: string): FundHolding[] => {
-    const preset = MONTH_PRESETS[targetMonth] || MONTH_PRESETS['2026-09'];
+    const preset = MONTH_PRESETS[targetMonth];
     const calcLookup = resolveSettleDateFromCalcEngine(targetMonth);
-    const nextSettleDate = MONTH_PRESETS[targetMonth]?.settle_date || calcLookup.settleDate;
+    const nextSettleDate = preset?.settle_date || calcLookup.settleDate;
     const sliceInfo = sliceTimeSeriesByReportMonth(targetMonth, nextSettleDate, portfolio.time_series);
 
-    const updatedHoldings: FundHolding[] = portfolio.holdings.map(h => {
-      const retInfo = preset.holdings_returns[h.id];
-      if (retInfo) {
-        return {
-          ...h,
-          target_weight: retInfo.target_weight,
-          current_weight: retInfo.current_weight,
-          nav: retInfo.nav,
-          return_1m: retInfo.return_1m,
-          contrib_1m: retInfo.contrib_1m,
-          market_noise: retInfo.market_noise || h.market_noise,
-          market_noise_en: retInfo.market_noise_en || h.market_noise_en,
-          fundamental_support: retInfo.fundamental_support || h.fundamental_support,
-          fundamental_support_en: retInfo.fundamental_support_en || h.fundamental_support_en,
-          recommendation: retInfo.recommendation || h.recommendation
-        };
-      }
-      return h;
-    });
+    // Dynamically resolve exact N holdings for target month
+    const updatedHoldings = resolveHoldingsForMonth(targetMonth, portfolio.holdings);
 
-    if (MONTH_PRESETS[targetMonth]) {
+    if (preset) {
       setPortfolio(prev => ({
         ...prev,
         month: preset.month,
@@ -106,7 +90,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
       setPortfolio(prev => ({
         ...prev,
         month: targetMonth,
-        settle_date: calcLookup.settleDate,
+        settle_date: nextSettleDate,
         valuation_date_zh: calcLookup.valuationDateZh,
         valuation_date_en: calcLookup.valuationDateEn,
         holdings: updatedHoldings,
@@ -205,13 +189,13 @@ export const Dashboard: React.FC<DashboardProps> = ({
             holdings: resolvedHoldings
           }));
           setPreviewReadyMsg(
-            `已从 Calculation_Engine A列自动回溯填入结算日 [${data.settle_date}]，同步 7 只底层基金客观回报与权重，匹配本地研报 [${data.ref_pdf_name}] (回报页 P.${data.page_returns} / 星级榜 P.${data.page_stars})，并已生成可预览 HTML！`
+            `已从 Calculation_Engine A列自动回溯填入结算日 [${data.settle_date}]，同步 ${resolvedHoldings.length} 只底层基金客观回报与权重，匹配本地研报 [${data.ref_pdf_name}] (回报页 P.${data.page_returns} / 星级榜 P.${data.page_stars})，并已生成可预览 HTML！`
           );
         }
       }
     } catch {
       setPreviewReadyMsg(
-        `已自动回溯填入结算日 [${portfolio.settle_date}]、同步 7 只底层基金客观回报与权重，并适配研报页码 (P.${portfolio.page_returns} / P.${portfolio.page_stars})！`
+        `已自动回溯填入结算日 [${portfolio.settle_date}]、同步 ${resolvedHoldings.length} 只底层基金客观回报与权重，并适配研报页码 (P.${portfolio.page_returns} / P.${portfolio.page_stars})！`
       );
     }
 
@@ -475,7 +459,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
               </button>
             </div>
             <span className="text-[11px] text-emerald-700 font-semibold mt-1 block">
-              ✓ 选定 {portfolio.month} 后，已自动同步 7 只基金客观比重与当月回报
+              ✓ 选定 {portfolio.month} 后，已自动同步底层基金客观比重与当月回报（共 {portfolio.holdings.length} 只标的）
             </span>
           </div>
 

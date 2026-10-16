@@ -32,7 +32,7 @@ const i18nDict = {
                 row_acwi: "明晟全球指数 (同成立日)",
                 row_sp: "标普 500 指数 (同成立日)",
                 row_alpha: "超额收益 (相对明晟全球指数)",
-                s1_holdings_title: "底层 7 只优选基金构成与月度行情穿透",
+                s1_holdings_title: "底层优选基金构成与月度行情穿透",
                 s1_total_weight: "权重加总: 100.0%",
                 th_role: "职能板块",
                 th_fund_name: "基金全称",

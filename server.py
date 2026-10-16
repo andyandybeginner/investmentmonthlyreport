@@ -228,6 +228,17 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
                     cfg_data['slide3_template'] = 'src/components/slide3.html'
                     cfg_data['slide3_topic_title'] = '月度专题深度：当债券不再扮演债券'
                 
+                # Try to load holdings for new month from engine/portfolio_history.json
+                hist_file = os.path.join(BASE_DIR, 'engine', 'portfolio_history.json')
+                if os.path.exists(hist_file):
+                    try:
+                        with open(hist_file, 'r', encoding='utf-8') as hf:
+                            hist_data = json.load(hf)
+                            if month in hist_data:
+                                cfg_data.setdefault('manager_input', {})['holdings_conviction'] = hist_data[month].get('funds', [])
+                    except Exception:
+                        pass
+
                 # Save the new month config
                 with open(cfg_file, 'w', encoding='utf-8') as f:
                     json.dump(cfg_data, f, ensure_ascii=False, indent=2)
@@ -252,6 +263,7 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
 
             from sync_googlesheet_to_report import resolve_settle_date_from_calc_engine
             from engine.pdf_section_matcher import find_pdf_for_report_month, match_monthly_update_sections
+            from engine.report_generator import normalize_and_enrich_holdings
 
             settle_date = resolve_settle_date_from_calc_engine(month, live_fetch=True)
             if pdf_name:
@@ -273,6 +285,30 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
                 val_zh = f"{settle_date} ({month}结算)"
                 val_en = f"{settle_date} ({month} Valuation)"
 
+            # Load active N holdings for this month from config or engine/portfolio_history.json
+            holdings_for_month = []
+            cfg_file = os.path.join(BASE_DIR, 'config', f'config_{month.replace("-", "_")}.json')
+            if os.path.exists(cfg_file):
+                try:
+                    with open(cfg_file, 'r', encoding='utf-8') as cf:
+                        cfg_obj = json.load(cf)
+                        holdings_for_month = cfg_obj.get('manager_input', {}).get('holdings_conviction', [])
+                except Exception:
+                    pass
+
+            if not holdings_for_month:
+                hist_file = os.path.join(BASE_DIR, 'engine', 'portfolio_history.json')
+                if os.path.exists(hist_file):
+                    try:
+                        with open(hist_file, 'r', encoding='utf-8') as hf:
+                            hist_data = json.load(hf)
+                            if month in hist_data:
+                                holdings_for_month = hist_data[month].get('funds', [])
+                    except Exception:
+                        pass
+
+            holdings_for_month = normalize_and_enrich_holdings(holdings_for_month, month)
+
             matched.update({
                 "status": "success",
                 "month": month,
@@ -284,7 +320,9 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
                 "page_stars": matched.get("star_ratings_page", 4),
                 "page_topic": matched.get("topic_page", 5),
                 "slide3_topic_title_zh": matched.get("topic_title_zh", "当债券不再扮演债券：60/40股债平衡组合是否已死？"),
-                "slide3_topic_title_en": matched.get("topic_title_en", "When Bonds Stop Behaving Like Bonds: Is 60/40 Dead?")
+                "slide3_topic_title_en": matched.get("topic_title_en", "When Bonds Stop Behaving Like Bonds: Is 60/40 Dead?"),
+                "holdings": holdings_for_month,
+                "fund_count": len(holdings_for_month)
             })
 
             self.send_response(200)
@@ -516,8 +554,9 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
                 "slide3_topic_title_zh": matched_pdf.get('topic_title_zh', ''),
                 "slide3_topic_title_en": matched_pdf.get('topic_title_en', ''),
                 "holdings_conviction": mgr['holdings_conviction'],
+                "fund_count": len(mgr['holdings_conviction']),
                 "preview_file": preview_file,
-                "message": f"{month} {sec_name}已保存，并已从 Calculation_Engine A列匹配结算日 {resolved_settle}、底层 7 只基金客观回报比重及本地研报页码！"
+                "message": f"{month} {sec_name}已保存，并已从 Calculation_Engine A列匹配结算日 {resolved_settle}、底层 {len(mgr['holdings_conviction'])} 只基金客观回报比重及本地研报页码！"
             }, ensure_ascii=False).encode('utf-8'))
             return
 

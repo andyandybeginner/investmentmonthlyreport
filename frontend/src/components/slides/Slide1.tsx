@@ -173,10 +173,14 @@ export const Slide1: React.FC<Slide1Props> = ({ state, lang }) => {
           <div className="bg-white border border-slate-200 rounded-xl p-3.5 shadow-xs flex-1 flex flex-col justify-between">
             <div className="flex justify-between items-center mb-2">
               <h3 className="text-sm font-extrabold uppercase tracking-tight text-[#0f2347]">
-                {t.s1_table2_title}
+                {isEn
+                  ? `${state.holdings.length} Underlying Core Funds: Monthly Performance & Alpha Contribution`
+                  : `底层 ${state.holdings.length} 只优选基金构成与月度行情穿透`}
               </h3>
               <span className="text-xs font-bold text-slate-700 bg-slate-100 px-2.5 py-0.5 rounded border border-slate-200">
-                {isEn ? 'Total Target Weight: 100.0%' : '权重加总: 100.0%'}
+                {isEn
+                  ? `Total Target Weight: ${state.holdings.reduce((sum, h) => sum + (h.target_weight || 0), 0).toFixed(1)}%`
+                  : `权重加总: ${state.holdings.reduce((sum, h) => sum + (h.target_weight || 0), 0).toFixed(1)}%`}
               </span>
             </div>
             <div className="overflow-hidden border border-slate-200 rounded-lg flex-1">

@@ -553,24 +553,40 @@ OBJECTIVE_HOLDINGS_BY_MONTH = {
 def normalize_and_enrich_holdings(raw_holdings, report_month):
     """
     Ensures objective holdings data (fund_name, role, target_weight, current_weight, nav, return_1m, contrib_1m)
-    are ALWAYS populated immediately after selecting a report month in Section 1, even before Section 4 is edited
-    or if legacy field names ('name', 'weight', 'noise', 'support', 'action') were saved.
+    are ALWAYS populated immediately after selecting a report month in Section 1, supporting dynamic N funds
+    (e.g., 5 funds in 2024-2025, 7 funds in 2026, or any N funds configured by manager/rebalance).
     """
-    baseline_list = OBJECTIVE_HOLDINGS_BY_MONTH.get(report_month, OBJECTIVE_HOLDINGS_BY_MONTH["2026-09"])
+    baseline_list = OBJECTIVE_HOLDINGS_BY_MONTH.get(report_month)
+    if not baseline_list:
+        hist_path = os.path.join(BASE_DIR, "engine", "portfolio_history.json")
+        if os.path.exists(hist_path):
+            try:
+                with open(hist_path, "r", encoding="utf-8") as f:
+                    hist_data = json.load(f)
+                    if report_month in hist_data:
+                        baseline_list = hist_data[report_month].get("funds", [])
+            except Exception:
+                pass
+    if not baseline_list:
+        baseline_list = OBJECTIVE_HOLDINGS_BY_MONTH.get("2026-09", [])
+
     if not raw_holdings:
         return [dict(item) for item in baseline_list]
 
     def match_baseline(fname_str):
         u = str(fname_str).upper()
         for b in baseline_list:
-            b_u = b["fund_name"].upper()
+            b_u = b.get("fund_name", "").upper()
             if ("FULLERTON" in u and "FULLERTON" in b_u) or \
                ("EASTSPRING" in u and "EASTSPRING" in b_u) or \
                ("JANUS" in u and "JANUS" in b_u) or \
                ("GOLD" in u and "GOLD" in b_u) or \
                ("CHINA" in u and "CHINA" in b_u) or \
                ("FSSA" in u and "FSSA" in b_u) or \
-               ("NIKKO" in u and "NIKKO" in b_u):
+               ("NIKKO" in u and "NIKKO" in b_u) or \
+               ("BLACKROCK" in u and "BLACKROCK" in b_u) or \
+               ("INFINITY" in u and "INFINITY" in b_u) or \
+               ("FIDELITY" in u and "FIDELITY" in b_u):
                 return b
         return None
 
@@ -595,8 +611,8 @@ def normalize_and_enrich_holdings(raw_holdings, report_month):
     enriched = []
     for idx, h in enumerate(raw_holdings):
         fname_raw = h.get("fund_name") or h.get("name") or ""
-        b = match_baseline(fname_raw) or (baseline_list[idx] if idx < len(baseline_list) else baseline_list[0])
-        fname = b["fund_name"] if b else fname_raw
+        b = match_baseline(fname_raw) or (baseline_list[idx] if idx < len(baseline_list) else {})
+        fname = h.get("fund_name") or (b.get("fund_name") if b else fname_raw) or f"Fund {idx+1}"
 
         tgt_wt = fmt_pct(h.get("target_weight") if h.get("target_weight") is not None else h.get("weight"), signed=False) or b.get("target_weight", "—")
         cur_wt = fmt_pct(h.get("current_weight"), signed=False) or b.get("current_weight", tgt_wt)
@@ -604,10 +620,10 @@ def normalize_and_enrich_holdings(raw_holdings, report_month):
         contrib_1m = fmt_pct(h.get("contrib_1m"), signed=True) or b.get("contrib_1m", "")
         nav = h.get("nav") or b.get("nav", "—")
 
-        noise = h.get("market_noise") or h.get("noise") or b.get("market_noise", "")
-        noise_en = h.get("market_noise_en") or b.get("market_noise_en", noise)
-        fundam = h.get("fundamental_support") or h.get("support") or b.get("fundamental_support", "")
-        fundam_en = h.get("fundamental_support_en") or b.get("fundamental_support_en", fundam)
+        noise = h.get("market_noise") or h.get("noise") or b.get("market_noise", "围绕宏观利率与行业周期短期预期博弈。")
+        noise_en = h.get("market_noise_en") or b.get("market_noise_en", "Near-term macroeconomic rates and cyclical debates.")
+        fundam = h.get("fundamental_support") or h.get("support") or b.get("fundamental_support", "底层企业基本面与长期复利逻辑坚实，提供配置韧性。")
+        fundam_en = h.get("fundamental_support_en") or b.get("fundamental_support_en", "Resilient fundamentals and long-term compounding thesis intact.")
         act = h.get("advisory_recommendation") or h.get("advisory_directive") or h.get("action") or b.get("advisory_recommendation", "持有")
 
         enriched.append({
@@ -903,7 +919,25 @@ def generate_report(month="2026-09"):
     elif '<svg id="lsSlide1RealLineChart"' in slide1_html:
         slide1_html = re.sub(r'<svg id="lsSlide1RealLineChart".*?</svg>', s1_chart_svg, slide1_html, flags=re.DOTALL)
 
-    # Dynamic Fund Table rows in Slide 1
+    # Dynamic Fund Table rows in Slide 1 (Supports any N active funds)
+    tot_target_w = 0.0
+    for h in active_funds:
+        tw_str = str(h.get("target_weight", "0")).replace("%", "").strip()
+        try:
+            tot_target_w += float(tw_str)
+        except Exception:
+            pass
+    if tot_target_w == 0.0:
+        tot_target_w = 100.0
+
+    slide1_html = re.sub(r'data-i18n="s1_holdings_title">[^<]+<', f'data-i18n="s1_holdings_title">底层 {len(active_funds)} 只优选基金构成与月度行情穿透<', slide1_html)
+    slide1_html = re.sub(r'data-i18n="s1_total_weight">[^<]+<', f'data-i18n="s1_total_weight">权重加总: {tot_target_w:.1f}%<', slide1_html)
+
+    dyn_i18n_zh["s1_holdings_title"] = f"底层 {len(active_funds)} 只优选基金构成与月度行情穿透"
+    dyn_i18n_en["s1_holdings_title"] = f"{len(active_funds)} Underlying Core Funds & Monthly Attribution"
+    dyn_i18n_zh["s1_total_weight"] = f"权重加总: {tot_target_w:.1f}%"
+    dyn_i18n_en["s1_total_weight"] = f"Total Target Weight: {tot_target_w:.1f}%"
+
     role_map = {
         "FULLERTON": ("全天候底仓", "35.00%", "f_role_1"),
         "EASTSPRING": ("科技成长", "15.00%", "f_role_2"),

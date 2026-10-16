@@ -107,18 +107,32 @@ Whenever referring to **Taiwan** or **Hong Kong** in ANY part of the report (inc
 - **绝对准则 (Single Source of Truth for Fund Returns):**
   在生成 Slide 1 底层 7 只优选基金穿透表的“当月回报”与 Slide 4 “信念审查决策矩阵”的月度回报时，**严禁直接使用专户总表 `HR_Model_Port_Current` 的月中结算行之间作简单相除**。
 - **强制取值路径 (Mandatory Individual Tabs):**
-  必须直接穿透读取 Google Sheet 云端主表中 7 只标的各自独立的专属价格列表工作表 (Working Sheets / Price Lists)：
-  1. `United China A Shares Innovation A Acc SGD` (Tab 12)
-  2. `FULLERTON LUX FUNDS - GLOBAL ABSOLUTE ALPHA A ACC SGD` (Tab 13)
-  3. `EASTSPRING INVESTMENTS UNIT TRUSTS - GLOBAL TECHNOLOGY SGD` (Tab 14)
-  4. `Janus Henderson Global Life Sciences` (Tab 15)
-  5. `FSSA Asian Growth Fund (Class A)` (Tab 16)
-  6. `United Gold and General A Acc SGD` (Tab 17)
-  7. `Nikko AM Japan Dividend` (Tab 18)
+  必须直接穿透读取 Google Sheet 云端主表中当期底层 N 只标的各自独立的专属价格列表工作表 (Working Sheets / Price Lists)：
+  - 例如 2026 年 7 只优选标的：
+    1. `United China A Shares Innovation A Acc SGD` (Tab 12)
+    2. `FULLERTON LUX FUNDS - GLOBAL ABSOLUTE ALPHA A ACC SGD` (Tab 13)
+    3. `EASTSPRING INVESTMENTS UNIT TRUSTS - GLOBAL TECHNOLOGY SGD` (Tab 14)
+    4. `Janus Henderson Global Life Sciences` (Tab 15)
+    5. `FSSA Asian Growth Fund (Class A)` (Tab 16)
+    6. `United Gold and General A Acc SGD` (Tab 17)
+    7. `Nikko AM Japan Dividend` (Tab 18)
+  - 历史阶段标的（如 2024–2025 年 5 只标的）：穿透各期对应的专属价格表。
 - **月度回报计算公式 (Month-End to Month-End Formula):**
   $$\text{当月回报率} = \frac{\text{报告月月末最后有效交易日价格 (Month-End Price)}}{\text{上月月末最后有效交易日价格 (Prior Month-End Price)}} - 1$$
 - **财务逻辑与避坑原理:**
   专户总表的月初结算日（如每月 5 日）主要用于核算客户专户整体资产规模（AUM）；而底层基金当月真实表现必须以完整的自然历月（如 7月31日 至 8月31日）为基准。若从总表切片计算，月初前几天的突发暴涨或回调会被错误隔断（如 8 月大华黄金自然历月实际大涨 +24%，若从 8月5日总表切片则会被低估为 15.38%）。因此，**必须从每个基金的专属 Price List 提取月末价格计算真实月度收益率**。
+
+### 2.7 底层基金动态 N 只标的架构 (Dynamic N-Fund Holdings Architecture)
+- **绝对准则 (No Hardcoded 7-Fund Assumption - 严禁硬编码固定 7 只):**
+  底层优选基金的标的数量**绝不固定为 7 只**，而是随不同历史阶段的重组 (Reconstitution) 与再平衡 (Rebalance) 动态演化：
+  1. **2023年7月–2025年6月结算期 (2023-06至2025-05汇报期)**：组合由 **5 只** 核心基金构成。
+  2. **2025年7月–2025年12月结算期 (2025-06至2025-11汇报期)**：组合重组后由 **5 只** 优选基金构成。
+  3. **2026年1月–2026年10月结算期 (2025-12至2026-09汇报期)**：组合由 **7 只** 优选基金构成。
+  4. **未来月份或顾问业务微调**：系统支持顾问在工作台中动态增删、启停标的，形成任意 $N$ 只标的组合。
+- **全系统动态感知与自适应要求:**
+  - **Slide 1 表头与统计**：必须动态渲染为 `底层 N 只优选基金构成与月度行情穿透`（英文：`N Underlying Core Funds: Monthly Performance & Alpha Contribution`），权重加总动态计算实际目标权重之和。
+  - **Slide 4 信念审查矩阵**：必须动态渲染所有 $N$ 只活跃标的，并根据 $N$ 自动适配行高间隙（如 $N \le 7$ 用舒适行距，$N > 7$ 自动切换紧凑行距，杜绝溢出）。
+  - **工作台与配置引擎**：选定月份或增删标的时，系统必须按当前月份实际的 $N$ 只标的完整加载客观回报、净值与权重，严禁截断或强制回滚为 7 只。
 
 ---
 
