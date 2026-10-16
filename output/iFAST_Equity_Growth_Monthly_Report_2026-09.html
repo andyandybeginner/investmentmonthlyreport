@@ -1183,7 +1183,7 @@
                         <td class="py-2 text-right font-mono text-rose-600 font-bold">-1.73%</td>
                         <td class="py-2 text-slate-600 text-[11px] leading-normal" data-i18n="c7_noise">日元汇率与央行利率政策预期交锋，东证指数短期高位整固。</td>
                         <td class="py-2 text-slate-800 font-medium text-[11px] leading-normal" data-i18n="c7_fundam">东京交易所市净率改革与企业股息回购持续推进，充沛现金流提供长期坚实托底。</td>
-                        <td class="py-2 text-center pr-3 whitespace-nowrap"><span class="inline-block px-2.5 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold text-[10px] whitespace-nowrap" data-i18n="c7_act">持有</span></td>
+                        <td class="py-2 text-center pr-3 whitespace-nowrap"><span class="inline-block px-2.5 py-0.5 rounded bg-rose-100 text-rose-800 border border-rose-300 font-bold text-[10px] whitespace-nowrap" data-i18n="c7_act">更换标的</span></td>
                     </tr>
                 </tbody>
             </table>
@@ -1191,9 +1191,13 @@
 
         <!-- 3. Monthly Rebalancing Decision Box -->
 
-        <div class="bg-blue-50 border border-blue-200 rounded-lg px-3.5 py-1.5 text-xs text-blue-950 flex justify-between items-center" data-i18n="s4_foot_box">
-            <span class="font-bold text-[#0f2347]">月度调仓结论：</span>
-            <span class="text-[11.5px] text-slate-700">全员保持持有，各支柱运作良好，无须被动调仓</span>
+        <div class="bg-blue-50/90 border border-blue-200 rounded-lg px-3.5 py-1.5 text-xs text-blue-950 flex flex-wrap justify-between items-center gap-2 mt-2 shrink-0" id="s4_rebalance_box">
+            <div class="flex items-center gap-2 flex-1 min-w-0">
+                <span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-amber-500 text-white shadow-xs shrink-0" data-i18n="s4_memo_badge">持仓变动执行</span>
+                <span class="font-bold text-[#0f2347] shrink-0" data-i18n="s4_verdict_label">月度调仓结论：</span>
+                <span class="text-[11.5px] text-slate-700 truncate" data-i18n="s4_verdict_note">全员保持持有，各支柱运作良好，无须被动调仓</span>
+            </div>
+            
         </div>
     
 
@@ -1392,11 +1396,15 @@
                 c7_name: "Nikko AM Japan Dividend",
                 c7_noise: "日元汇率与央行利率政策预期交锋，东证指数短期高位整固。",
                 c7_fundam: "东京交易所市净率改革与企业股息回购持续推进，充沛现金流提供长期坚实托底。",
-                c7_act: "持有",
+                c7_act: "更换标的",
                 s1_holdings_title: "底层 7 只优选基金构成与月度行情穿透",
                 s1_total_weight: "权重加总: 100.0%",
                 s1_card_desc: "当月的组合回报不及基准指数，主要是黄金基金在8月24%单月暴涨之后的收益落袋。云巨头八千亿美元资本开支与存储芯片产能售罄印证亚洲算力高景气，叠加国内超常规政策刺激及股债正相关下“纯权益增长+35%富敦市场中性底仓+10.5%穿透纯金对冲”三支柱稳健协同，底层安全边际厚实。虽美联储加息推升十年期美债收益率破5.2%及中东油价破百带来短期分母端扰动。",
                 s4_foot_box: "<strong>月度调仓结论：</strong>全员保持持有，各支柱运作良好，无须被动调仓",
+                s4_verdict_label: "月度调仓结论：",
+                s4_verdict_note: "全员保持持有，各支柱运作良好，无须被动调仓",
+                s4_memo_badge: "持仓变动执行",
+                s4_memo_link_btn: "查阅持仓变动详细说明备忘录 (Google Drive 附件) →",
                 nav_title: "HR 模板投资组合 · 16:9 机构横版备忘录",
                 nav_sub: "已规范合规称谓，支持中英文一键切换、5页超清长图与当前语言打印",
                 nav_s1: "第1页 备忘录",
@@ -1572,6 +1580,10 @@
                 tm_noise: "市场短期噪音",
                 tm_fundam: "底层基本面支撑",
                 tm_action: "顾问建议",
+                s4_verdict_label: "月度调仓结论：",
+                s4_verdict_note: "实际权重漂移均在安全阈值内，底层资产逻辑依然坚实，本月维持既有 7 只标的目标配比不变，不触发被动赎回。",
+                s4_memo_badge: "持仓变动执行",
+                s4_memo_link_btn: "查阅持仓变动详细说明备忘录 (Google Drive 附件) →",
                 s4_foot_box: "<strong>月度调仓结论：</strong>实际权重漂移均在安全阈值内，底层资产逻辑依然坚实，<strong>本月维持既有 7 只标的目标配比不变，不触发被动赎回</strong>。",
                 s4_foot_left: "底层资产信念与决策审查",
                 s4_foot_right: "第 4 页 · 组合配置逻辑与信念复盘",
@@ -1623,11 +1635,15 @@
                 c7_name: "Nikko AM Japan Dividend",
                 c7_noise: "Yen fluctuations and BOJ monetary policy debates led to short-term consolidation in TOPIX.",
                 c7_fundam: "TSE governance reforms, rising share buybacks and robust corporate cash flows provide reliable long-term support.",
-                c7_act: "Hold",
+                c7_act: "Switch / Replace",
                 s1_holdings_title: "7 Underlying Core Funds & Monthly Attribution",
                 s1_total_weight: "Total Target Weight: 100.0%",
                 s1_card_desc: "Monthly portfolio return trailed the benchmark index primarily due to profit-taking in the Gold fund following its 24% single-month surge in August. USD 800bn hyperscaler CapEx and sold-out memory chip capacity validate Asian compute momentum, reinforced by domestic stimulus and our three-pillar architecture (pure equity growth + 35% Fullerton market-neutral core + 10.5% look-through pure gold hedge) amid positive stock-bond correlations. Despite Fed rate hikes pushing 10Y Treasury yields above 5.2% and Middle East oil surpassing USD 100 causing short-term denominator headwinds, underlying safety margins remain solid.",
                 s4_foot_box: "<strong>Rebalancing Verdict:</strong> Core asset theses remain solid; weighting drifts sit comfortably within safety bands. Existing target allocations for all 7 funds remain unchanged for September.",
+                s4_verdict_label: "Monthly Rebalancing Verdict: ",
+                s4_verdict_note: "Core asset theses remain solid; weighting drifts sit comfortably within safety bands. Existing target allocations for all 7 funds remain unchanged for September.",
+                s4_memo_badge: "PORTFOLIO ALTERATION",
+                s4_memo_link_btn: "View Rebalancing & Alteration Memorandum (Google Drive Attachment) →",
                 nav_title: "HR Model Portfolio · 16:9 Monthly Advisory Memorandum",
                 nav_sub: "Fully Compliant Terminology | Pure English Mode | 5-Slide Long PNG & PDF Export Ready",
                 nav_s1: "Slide 1 Memorandum",
@@ -1804,6 +1820,10 @@
                 tm_noise: "Short-Term Market Noise",
                 tm_fundam: "Underlying Fundamentals",
                 tm_action: "Advisory Recommendation",
+                s4_verdict_label: "Monthly Rebalancing Verdict: ",
+                s4_verdict_note: "Actual drift remains within our ±1.5% target bands. Underlying thesis holds firm; no rebalancing liquidation is triggered this month.",
+                s4_memo_badge: "PORTFOLIO ALTERATION",
+                s4_memo_link_btn: "View Rebalancing & Alteration Memorandum (Google Drive Attachment) →",
                 s4_foot_box: "<strong>Rebalancing Decision:</strong> Actual drift remains within our ±1.5% target bands. Underlying thesis holds firm; <strong>no rebalancing liquidation is triggered this month</strong>.",
                 s4_foot_left: "Portfolio Attribution & Conviction Review",
                 s4_foot_right: "Slide 4 of 5 · Rationale & Conviction",

@@ -25,11 +25,13 @@
     "topic_page": 6
   },
   "manager_input": {
-    "qualitative_view": "【正向论据 70%】大华黄金单月大涨+24.00%（穿透纯金敞口10.46%），联手富敦绝对收益底仓（+0.36%）与泛亚高息标的，驱动组合全月逆势斩获+0.35%正回报，累计回报+83.38%，超额收益+14.66%。【反方审视 30%】虽美债长端利率攀升与日元平仓引发科技及A股短期回调，但智能硬件需求与国内政策托底坚实，权重漂移可控，维持全员持有。",
-    "qualitative_view_en": "[Supporting Evidence 70%] United Gold surged +24.00% in August (10.46% look-through pure gold), joining Fullerton Absolute Alpha (+0.36%) and Asian dividend compounders to drive a +0.35% monthly portfolio gain, +83.38% cumulative return, and +14.66% alpha. [Counter-Arguments 30%] While rising long-end yields and Yen carry unwinds triggered short-term pullbacks in global tech and China A-shares, AI hardware demand and domestic policy floors remain intact, justifying a firm HOLD verdict across all 7 funds.",
+    "qualitative_view": "【核心定见】维持全员持有，无须被动调仓。【正向支撑(70%)】大华黄金单月大涨24.00%贡献1.94%超额（穿透纯金敞口10.46%契合上限），协同富敦多空底仓、生命科学及日本高息充沛现金流，驱动组合逆势录得0.35%正回报并跑赢标普500。【逆风审视(30%)】虽30年期美债收益率升破5.3%引发芯片与A股短期估值整固，但算力资本开支坚挺，短期波动不改长期复利逻辑。",
+    "qualitative_view_en": "[Core Verdict] Maintain disciplined conviction and target allocations. [Supporting Evidence (70%)] United Gold surged +24.00% in August, contributing +1.94% alpha (10.46% look-through pure gold within the 10% guideline), while Fullerton market-neutral ballast, healthcare, and Japan dividend anchors drove a +0.35% gain outperforming the S&P 500. [Counter-Headwinds (30%)] Although 30Y US Treasury yields exceeding 5.3% triggered near-term tech consolidation (-5.64%), hyperscaler AI CapEx remains intact.",
     "rebalance_verdict": "持有",
     "rebalance_note": "实际权重漂移均在安全阈值内，大华黄金避险收益强劲平滑科技波动，8月维持既有 7 只标的目标配比不变，不触发被动赎回。",
-    "rebalance_note_en": "Actual weighting drifts sit comfortably within safety bands; United Gold's strong hedge return smoothed tech volatility, maintaining all 7 target allocations unchanged for August.",
+    "rebalance_note_en": "Weighting drifts remain safely bounded; United Gold gains offset tech drawdowns. Existing target allocations remain unchanged.",
+    "rebalance_memo_link": "",
+    "show_rebalance_memo": false,
     "holdings_conviction": [
       {
         "id": "fund-fullerton",
@@ -151,5 +153,9 @@
         "advisory_recommendation": "持有"
       }
     ]
-  }
+  },
+  "page_returns": 3,
+  "page_stars": 4,
+  "rebalance_memo_link": "",
+  "show_rebalance_memo": false
 }

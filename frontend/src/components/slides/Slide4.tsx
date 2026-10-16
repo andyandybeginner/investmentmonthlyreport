@@ -1,4 +1,5 @@
 import React from 'react';
+import { ExternalLink } from 'lucide-react';
 import { PortfolioState, Language } from '../../types';
 import { getDictionary } from '../../i18n';
 import { MONTH_PRESETS } from '../../utils/performance';
@@ -15,6 +16,18 @@ export const Slide4: React.FC<Slide4Props> = ({ state, lang }) => {
   const rebalanceNote = isEn ? state.rebalance_note_en : state.rebalance_note;
   const activeHoldings = state.holdings.filter((h) => h.active !== false);
   const presetHoldings = (MONTH_PRESETS[state.month] || MONTH_PRESETS['2026-09']).holdings_returns;
+
+  // Check if there is any modification in holdings / rebalance verdict (i.e. not pure hold)
+  const hasHoldingsModification =
+    (state.rebalance_verdict && !['持有', '坚持持有', 'Hold', 'HOLD'].includes(state.rebalance_verdict)) ||
+    activeHoldings.some(h => {
+      const act = h.recommendation || '';
+      return act === '调仓' || act === '更换标的' || act.toLowerCase().includes('rebalance') || act.toLowerCase().includes('replace');
+    }) ||
+    Boolean(state.show_rebalance_memo);
+
+  const memoLink = state.rebalance_memo_link?.trim();
+  const shouldShowMemoLink = (hasHoldingsModification || Boolean(state.show_rebalance_memo)) && Boolean(memoLink);
 
   const principles = isEn
     ? [
@@ -262,12 +275,32 @@ export const Slide4: React.FC<Slide4Props> = ({ state, lang }) => {
             </table>
           </div>
 
-          {/* Rebalance Verdict Box */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg px-3.5 py-1.5 text-xs text-blue-950 flex justify-between items-center mt-2 shrink-0">
-            <span className="font-bold text-[#0f2347]">
-              {isEn ? 'Monthly Rebalancing Verdict:' : '月度调仓结论：'}
-            </span>
-            <span className="text-[11.5px] text-slate-700">{rebalanceNote}</span>
+          {/* Rebalance Verdict Box & Optional Google Drive Attachment Memo Link */}
+          <div className="bg-blue-50/90 border border-blue-200 rounded-lg px-3.5 py-1.5 text-xs text-blue-950 flex flex-wrap justify-between items-center gap-2 mt-2 shrink-0">
+            <div className="flex items-center gap-2 flex-1 min-w-0">
+              {hasHoldingsModification && (
+                <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-amber-500 text-white shadow-xs shrink-0">
+                  {t.s4_memo_badge}
+                </span>
+              )}
+              <span className="font-bold text-[#0f2347] shrink-0">
+                {isEn ? 'Monthly Rebalancing Verdict:' : '月度调仓结论：'}
+              </span>
+              <span className="text-[11.5px] text-slate-700 truncate">{rebalanceNote}</span>
+            </div>
+
+            {shouldShowMemoLink && (
+              <a
+                href={memoLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 px-3 py-1 bg-blue-700 hover:bg-blue-800 text-white text-[11px] font-bold rounded-md shadow-xs transition hover:scale-[1.02] shrink-0"
+                title={isEn ? 'Open Rebalancing Memorandum on Google Drive' : '在 Google Drive 中查阅持仓变动详细说明备忘录附件'}
+              >
+                <ExternalLink className="w-3.5 h-3.5 text-amber-300" />
+                <span>{t.s4_memo_link_btn}</span>
+              </a>
+            )}
           </div>
         </div>
       </div>

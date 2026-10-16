@@ -243,9 +243,7 @@
                     <!-- 7 Funds Holdings Table (目标权重 + 计算当前权重 K/S) -->
                     <div>
                         <div class="flex justify-between items-center h-7 mb-2">
-                            <h4 class="text-sm font-extrabold uppercase tracking-tight text-[#0f2347]" data-i18n="s1_holdings_title">
-                                底层 7 只优选基金构成与月度行情穿透
-                            </h4>
+                            <h4 class="text-sm font-extrabold uppercase tracking-tight text-[#0f2347]" data-i18n="s1_holdings_title">底层 7 只优选基金构成与月度行情穿透</h4>
                             <span class="text-xs font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded border border-slate-200 shadow-xs" data-i18n="s1_total_weight">权重加总: 100.0%</span>
                         </div>
                         <table class="w-full text-left text-xs border border-slate-200 rounded-lg overflow-hidden border-collapse shadow-sm">
@@ -1247,9 +1245,13 @@
 
         <!-- 3. Monthly Rebalancing Decision Box -->
 
-        <div class="bg-blue-50 border border-blue-200 rounded-lg px-3.5 py-1.5 text-xs text-blue-950 flex justify-between items-center" data-i18n="s4_foot_box">
-            <span class="font-bold text-[#0f2347]">月度调仓结论：</span>
-            <span class="text-[11.5px] text-slate-700">实际权重漂移均在安全阈值内，大华黄金避险收益强劲平滑科技波动，8月维持既有 7 只标的目标配比不变，不触发被动赎回。</span>
+        <div class="bg-blue-50/90 border border-blue-200 rounded-lg px-3.5 py-1.5 text-xs text-blue-950 flex flex-wrap justify-between items-center gap-2 mt-2 shrink-0" id="s4_rebalance_box">
+            <div class="flex items-center gap-2 flex-1 min-w-0">
+                
+                <span class="font-bold text-[#0f2347] shrink-0" data-i18n="s4_verdict_label">月度调仓结论：</span>
+                <span class="text-[11.5px] text-slate-700 truncate" data-i18n="s4_verdict_note">实际权重漂移均在安全阈值内，大华黄金避险收益强劲平滑科技波动，8月维持既有 7 只标的目标配比不变，不触发被动赎回。</span>
+            </div>
+            
         </div>
     
 
@@ -1449,8 +1451,14 @@
                 c7_noise: "日本央行加息25个基点，日元套息交易平仓引发东证指数间歇性震荡。",
                 c7_fundam: "东京证交所市净率改善改革持续深化，企业回购与股息分红创新高，日经反弹中现金流防御优异。",
                 c7_act: "持有",
-                s1_card_desc: "【正向论据 70%】大华黄金单月大涨+24.00%（穿透纯金敞口10.46%），联手富敦绝对收益底仓（+0.36%）与泛亚高息标的，驱动组合全月逆势斩获+0.35%正回报，累计回报+83.38%，超额收益+14.66%。【反方审视 30%】虽美债长端利率攀升与日元平仓引发科技及A股短期回调，但智能硬件需求与国内政策托底坚实，权重漂移可控，维持全员持有。",
+                s1_holdings_title: "底层 7 只优选基金构成与月度行情穿透",
+                s1_total_weight: "权重加总: 100.0%",
+                s1_card_desc: "【核心定见】维持全员持有，无须被动调仓。【正向支撑(70%)】大华黄金单月大涨24.00%贡献1.94%超额（穿透纯金敞口10.46%契合上限），协同富敦多空底仓、生命科学及日本高息充沛现金流，驱动组合逆势录得0.35%正回报并跑赢标普500。【逆风审视(30%)】虽30年期美债收益率升破5.3%引发芯片与A股短期估值整固，但算力资本开支坚挺，短期波动不改长期复利逻辑。",
                 s4_foot_box: "<strong>月度调仓结论：</strong>实际权重漂移均在安全阈值内，大华黄金避险收益强劲平滑科技波动，8月维持既有 7 只标的目标配比不变，不触发被动赎回。",
+                s4_verdict_label: "月度调仓结论：",
+                s4_verdict_note: "实际权重漂移均在安全阈值内，大华黄金避险收益强劲平滑科技波动，8月维持既有 7 只标的目标配比不变，不触发被动赎回。",
+                s4_memo_badge: "持仓变动执行",
+                s4_memo_link_btn: "查阅持仓变动详细说明备忘录 (Google Drive 附件) →",
                 nav_title: "HR 模板投资组合 · 16:9 机构横版备忘录",
                 nav_sub: "已规范合规称谓，支持中英文一键切换、5页超清长图与当前语言打印",
                 nav_s1: "第1页 备忘录",
@@ -1483,7 +1491,7 @@
                 row_acwi: "明晟全球指数 (同成立日)",
                 row_sp: "标普 500 指数 (同成立日)",
                 row_alpha: "超额收益 (相对明晟全球指数)",
-                s1_holdings_title: "底层 7 只优选基金构成与月度行情穿透",
+                s1_holdings_title: "底层优选基金构成与月度行情穿透",
                 s1_total_weight: "权重加总: 100.0%",
                 th_role: "职能板块",
                 th_fund_name: "基金全称",
@@ -1626,6 +1634,10 @@
                 tm_noise: "市场短期噪音",
                 tm_fundam: "底层基本面支撑",
                 tm_action: "顾问建议",
+                s4_verdict_label: "月度调仓结论：",
+                s4_verdict_note: "实际权重漂移均在安全阈值内，底层资产逻辑依然坚实，本月维持既有 7 只标的目标配比不变，不触发被动赎回。",
+                s4_memo_badge: "持仓变动执行",
+                s4_memo_link_btn: "查阅持仓变动详细说明备忘录 (Google Drive 附件) →",
                 s4_foot_box: "<strong>月度调仓结论：</strong>实际权重漂移均在安全阈值内，底层资产逻辑依然坚实，<strong>本月维持既有 7 只标的目标配比不变，不触发被动赎回</strong>。",
                 s4_foot_left: "底层资产信念与决策审查",
                 s4_foot_right: "第 4 页 · 组合配置逻辑与信念复盘",
@@ -1678,8 +1690,14 @@
                 c7_noise: "BOJ 25 bps rate hike and Yen carry trade unwinds triggered intermittent TOPIX volatility.",
                 c7_fundam: "Deepening TSE P/B reforms, record share buybacks, and rising dividends provide strong cash flow defense.",
                 c7_act: "Hold",
-                s1_card_desc: "[Supporting Evidence 70%] United Gold surged +24.00% in August (10.46% look-through pure gold), joining Fullerton Absolute Alpha (+0.36%) and Asian dividend compounders to drive a +0.35% monthly portfolio gain, +83.38% cumulative return, and +14.66% alpha. [Counter-Arguments 30%] While rising long-end yields and Yen carry unwinds triggered short-term pullbacks in global tech and China A-shares, AI hardware demand and domestic policy floors remain intact, justifying a firm HOLD verdict across all 7 funds.",
-                s4_foot_box: "<strong>Rebalancing Verdict:</strong> Actual weighting drifts sit comfortably within safety bands; United Gold's strong hedge return smoothed tech volatility, maintaining all 7 target allocations unchanged for August.",
+                s1_holdings_title: "7 Underlying Core Funds & Monthly Attribution",
+                s1_total_weight: "Total Target Weight: 100.0%",
+                s1_card_desc: "[Core Verdict] Maintain disciplined conviction and target allocations. [Supporting Evidence (70%)] United Gold surged +24.00% in August, contributing +1.94% alpha (10.46% look-through pure gold within the 10% guideline), while Fullerton market-neutral ballast, healthcare, and Japan dividend anchors drove a +0.35% gain outperforming the S&P 500. [Counter-Headwinds (30%)] Although 30Y US Treasury yields exceeding 5.3% triggered near-term tech consolidation (-5.64%), hyperscaler AI CapEx remains intact.",
+                s4_foot_box: "<strong>Rebalancing Verdict:</strong> Weighting drifts remain safely bounded; United Gold gains offset tech drawdowns. Existing target allocations remain unchanged.",
+                s4_verdict_label: "Monthly Rebalancing Verdict: ",
+                s4_verdict_note: "Weighting drifts remain safely bounded; United Gold gains offset tech drawdowns. Existing target allocations remain unchanged.",
+                s4_memo_badge: "PORTFOLIO ALTERATION",
+                s4_memo_link_btn: "View Rebalancing & Alteration Memorandum (Google Drive Attachment) →",
                 nav_title: "HR Model Portfolio · 16:9 Monthly Advisory Memorandum",
                 nav_sub: "Fully Compliant Terminology | Pure English Mode | 5-Slide Long PNG & PDF Export Ready",
                 nav_s1: "Slide 1 Memorandum",
@@ -1856,6 +1874,10 @@
                 tm_noise: "Short-Term Market Noise",
                 tm_fundam: "Underlying Fundamentals",
                 tm_action: "Advisory Recommendation",
+                s4_verdict_label: "Monthly Rebalancing Verdict: ",
+                s4_verdict_note: "Actual drift remains within our ±1.5% target bands. Underlying thesis holds firm; no rebalancing liquidation is triggered this month.",
+                s4_memo_badge: "PORTFOLIO ALTERATION",
+                s4_memo_link_btn: "View Rebalancing & Alteration Memorandum (Google Drive Attachment) →",
                 s4_foot_box: "<strong>Rebalancing Decision:</strong> Actual drift remains within our ±1.5% target bands. Underlying thesis holds firm; <strong>no rebalancing liquidation is triggered this month</strong>.",
                 s4_foot_left: "Portfolio Attribution & Conviction Review",
                 s4_foot_right: "Slide 4 of 5 · Rationale & Conviction",

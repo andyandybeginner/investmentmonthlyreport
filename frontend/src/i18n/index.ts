@@ -133,6 +133,8 @@ export interface I18nDictionary {
   s4_p2_desc: string;
   s4_p3_title: string;
   s4_p3_desc: string;
+  s4_memo_badge: string;
+  s4_memo_link_btn: string;
   s4_foot_left: string;
   s4_foot_right: string;
 
@@ -317,6 +319,8 @@ export const zhDict: I18nDictionary = {
   s4_p2_desc: "超配富敦绝对阿尔法（35%），恪守严格的市场中性多空选股原则。不依赖单边牛市，通过高质量分子端阿尔法实现平滑震荡、控制最大回撤。",
   s4_p3_title: "支柱三 · 逆周期战略资产，防御通胀与地缘裂痕",
   s4_p3_desc: "战略布局大华黄金与综合资源，穿透真实黄金敞口 10.46%，严格契合研报上限。对冲去美元化与地缘滞胀风险，与科技成长形成强反脆弱哑铃架构。",
+  s4_memo_badge: "持仓变动执行",
+  s4_memo_link_btn: "查阅持仓变动详细说明备忘录 (Google Drive 附件) →",
   s4_foot_left: "投资哲学、信念审查与顾问建议",
   s4_foot_right: "第 4 页 · 坚守定见",
 
@@ -501,6 +505,8 @@ export const enDict: I18nDictionary = {
   s4_p2_desc: "Overweight Fullerton Absolute Alpha (35%), adhering strictly to market-neutral pair trading. Does not rely on directional bull markets, delivering smooth alpha and drawdown dampening.",
   s4_p3_title: "Pillar 3 · Counter-Cyclical Strategic Hedges",
   s4_p3_desc: "15% strategic allocation to United Gold & General, delivering ~10.5% look-through pure gold. Offsets de-dollarization and geopolitical stagflation risks, forming an anti-fragile barbell with tech growth.",
+  s4_memo_badge: "PORTFOLIO ALTERATION",
+  s4_memo_link_btn: "View Rebalancing & Alteration Memorandum (Google Drive Attachment) →",
   s4_foot_left: "Investment Philosophy & Advisory Recommendations",
   s4_foot_right: "Slide 4 · Conviction Review",
 

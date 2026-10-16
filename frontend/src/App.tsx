@@ -87,6 +87,8 @@ const INITIAL_PORTFOLIO_STATE: PortfolioState = {
   rebalance_verdict: "持有",
   rebalance_note: "全员保持持有，各支柱运作良好，无须被动调仓",
   rebalance_note_en: "Core asset theses remain solid; weighting drifts sit comfortably within safety bands. Existing target allocations for all 7 funds remain unchanged for September.",
+  rebalance_memo_link: "",
+  show_rebalance_memo: false,
   conflict_note: "大华黄金穿透后纯黄金敞口 10.46%，严格契合研报 10% 避险上限。",
   conflict_note_en: "United Gold look-through pure gold exposure is 10.46%, strictly complying with the research report's 10% ceiling.",
 
@@ -323,6 +325,8 @@ export const App: React.FC = () => {
             qualitative_view_en: data.manager_input.qualitative_view_en || prev.qualitative_view_en,
             rebalance_verdict: data.manager_input.rebalance_verdict || prev.rebalance_verdict,
             rebalance_note: data.manager_input.rebalance_note || prev.rebalance_note,
+            rebalance_memo_link: data.rebalance_memo_link || data.manager_input.rebalance_memo_link || prev.rebalance_memo_link || "",
+            show_rebalance_memo: data.show_rebalance_memo !== undefined ? data.show_rebalance_memo : (data.manager_input.show_rebalance_memo !== undefined ? data.manager_input.show_rebalance_memo : prev.show_rebalance_memo),
             ref_pdf_name: data.reference_monthly_update || prev.ref_pdf_name,
             page_returns: data.pdf_pages?.returns_page || prev.page_returns,
             page_stars: data.pdf_pages?.star_ratings_page || prev.page_stars
@@ -340,12 +344,16 @@ export const App: React.FC = () => {
         report_month: portfolio.month,
         settle_date: portfolio.settle_date,
         reference_monthly_update: portfolio.ref_pdf_name,
+        rebalance_memo_link: portfolio.rebalance_memo_link || "",
+        show_rebalance_memo: !!portfolio.show_rebalance_memo,
         manager_input: {
           qualitative_view: portfolio.qualitative_view,
           qualitative_view_en: portfolio.qualitative_view_en,
           rebalance_verdict: portfolio.rebalance_verdict,
           rebalance_note: portfolio.rebalance_note,
           rebalance_note_en: portfolio.rebalance_note_en,
+          rebalance_memo_link: portfolio.rebalance_memo_link || "",
+          show_rebalance_memo: !!portfolio.show_rebalance_memo,
           holdings_conviction: portfolio.holdings.map(h => ({
             id: h.id,
             fund_name: h.fund_name,

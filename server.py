@@ -312,6 +312,8 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
             saved_page_returns = None
             saved_page_stars = None
             saved_topic_zh = None
+            saved_memo_link = None
+            saved_show_memo = None
             if os.path.exists(cfg_file):
                 try:
                     with open(cfg_file, 'r', encoding='utf-8') as cf:
@@ -319,6 +321,8 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
                         saved_page_returns = cfg_obj.get('page_returns')
                         saved_page_stars = cfg_obj.get('page_stars')
                         saved_topic_zh = cfg_obj.get('slide3_topic_title')
+                        saved_memo_link = cfg_obj.get('rebalance_memo_link') or cfg_obj.get('manager_input', {}).get('rebalance_memo_link', '')
+                        saved_show_memo = cfg_obj.get('show_rebalance_memo') if cfg_obj.get('show_rebalance_memo') is not None else cfg_obj.get('manager_input', {}).get('show_rebalance_memo', False)
                 except Exception:
                     pass
 
@@ -334,6 +338,8 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
                 "page_topic": matched.get("topic_page", 5),
                 "slide3_topic_title_zh": saved_topic_zh or matched.get("topic_title_zh", "当债券不再扮演债券：60/40股债平衡组合是否已死？"),
                 "slide3_topic_title_en": matched.get("topic_title_en", "When Bonds Stop Behaving Like Bonds: Is 60/40 Dead?"),
+                "rebalance_memo_link": saved_memo_link or "",
+                "show_rebalance_memo": bool(saved_show_memo),
                 "holdings": holdings_for_month,
                 "fund_count": len(holdings_for_month)
             })
@@ -537,7 +543,8 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
                 'google_drive_root', 'reference_factsheets_dir', 
                 'monthly_conflict_calibration', 'target_output_dir', 'export_options',
                 'dynamic_sequence_months', 'benchmark', 'google_sheet_id',
-                'calc_engine_tab', 'tab_strategy', 'price_rules', 'perf_rules'
+                'calc_engine_tab', 'tab_strategy', 'price_rules', 'perf_rules',
+                'rebalance_memo_link', 'show_rebalance_memo'
             ]
             for key in supported_keys:
                 if key in req_data:
@@ -547,11 +554,26 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
             from engine.report_generator import normalize_and_enrich_holdings, generate_report
             mgr = cfg.setdefault('manager_input', {})
             incoming_mgr = req_data.get('manager_input', {})
-            for k in ['qualitative_view', 'qualitative_view_en', 'rebalance_verdict', 'rebalance_note', 'rebalance_note_en', 'holdings_conviction']:
+            for k in ['qualitative_view', 'qualitative_view_en', 'rebalance_verdict', 'rebalance_note', 'rebalance_note_en', 'holdings_conviction', 'rebalance_memo_link', 'show_rebalance_memo']:
                 if k in req_data:
                     mgr[k] = req_data[k]
                 elif k in incoming_mgr:
                     mgr[k] = incoming_mgr[k]
+
+            # Keep top-level and manager_input rebalance memo configs synchronized
+            if 'rebalance_memo_link' in req_data:
+                cfg['rebalance_memo_link'] = req_data['rebalance_memo_link']
+                mgr['rebalance_memo_link'] = req_data['rebalance_memo_link']
+            elif 'rebalance_memo_link' in incoming_mgr:
+                cfg['rebalance_memo_link'] = incoming_mgr['rebalance_memo_link']
+                mgr['rebalance_memo_link'] = incoming_mgr['rebalance_memo_link']
+
+            if 'show_rebalance_memo' in req_data:
+                cfg['show_rebalance_memo'] = bool(req_data['show_rebalance_memo'])
+                mgr['show_rebalance_memo'] = bool(req_data['show_rebalance_memo'])
+            elif 'show_rebalance_memo' in incoming_mgr:
+                cfg['show_rebalance_memo'] = bool(incoming_mgr['show_rebalance_memo'])
+                mgr['show_rebalance_memo'] = bool(incoming_mgr['show_rebalance_memo'])
 
             mgr['holdings_conviction'] = normalize_and_enrich_holdings(mgr.get('holdings_conviction', []), month)
 
@@ -583,6 +605,8 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
                 "page_topic": matched_pdf.get('topic_page', 5),
                 "slide3_topic_title_zh": cfg.get('slide3_topic_title', matched_pdf.get('topic_title_zh', '')),
                 "slide3_topic_title_en": matched_pdf.get('topic_title_en', ''),
+                "rebalance_memo_link": cfg.get('rebalance_memo_link', ''),
+                "show_rebalance_memo": bool(cfg.get('show_rebalance_memo', False)),
                 "holdings_conviction": mgr['holdings_conviction'],
                 "fund_count": len(mgr['holdings_conviction']),
                 "preview_file": preview_file,

@@ -234,6 +234,51 @@ export const Dashboard: React.FC<DashboardProps> = ({
     notifySectionSaved('sec2');
   };
 
+  // Section 4: Save manager verdict, 70:30 review, conviction matrix & Google Drive alteration memo link
+  const handleSaveSection4 = async () => {
+    try {
+      await fetch('/api/save_config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          report_month: portfolio.month,
+          section_name: '第4节（定见、调仓决议与附件备忘录）',
+          rebalance_memo_link: portfolio.rebalance_memo_link,
+          show_rebalance_memo: portfolio.show_rebalance_memo,
+          manager_input: {
+            qualitative_view: portfolio.qualitative_view,
+            qualitative_view_en: portfolio.qualitative_view_en,
+            rebalance_verdict: portfolio.rebalance_verdict,
+            rebalance_note: portfolio.rebalance_note,
+            rebalance_note_en: portfolio.rebalance_note_en,
+            rebalance_memo_link: portfolio.rebalance_memo_link,
+            show_rebalance_memo: portfolio.show_rebalance_memo,
+            holdings_conviction: portfolio.holdings.map(h => ({
+              id: h.id,
+              fund_name: h.fund_name,
+              role: h.role,
+              role_en: h.role_en,
+              target_weight: `${h.target_weight.toFixed(2)}%`,
+              current_weight: `${h.current_weight.toFixed(2)}%`,
+              nav: h.nav || '—',
+              return_1m: `${h.return_1m >= 0 ? '+' : ''}${h.return_1m.toFixed(2)}%`,
+              contrib_1m: `${h.contrib_1m >= 0 ? '+' : ''}${h.contrib_1m.toFixed(2)}%`,
+              active: h.active !== false,
+              market_noise: h.market_noise,
+              market_noise_en: h.market_noise_en,
+              fundamental_support: h.fundamental_support,
+              fundamental_support_en: h.fundamental_support_en,
+              advisory_recommendation: h.recommendation
+            }))
+          }
+        })
+      });
+    } catch {
+      // Local state is preserved
+    }
+    notifySectionSaved('sec4');
+  };
+
   // Section 1: Update individual metadata field
   const handleMetaChange = (field: keyof PortfolioState, value: any) => {
     setPortfolio(prev => {
@@ -333,6 +378,15 @@ export const Dashboard: React.FC<DashboardProps> = ({
       holdings: prev.holdings.filter((_, i) => i !== index)
     }));
   };
+
+  // Determine whether any portfolio modification is present (or forced)
+  const hasModification =
+    (portfolio.rebalance_verdict && !['持有', '坚持持有', 'Hold', 'HOLD'].includes(portfolio.rebalance_verdict)) ||
+    portfolio.holdings.some(h => {
+      const act = h.recommendation || '';
+      return act === '调仓' || act === '更换标的' || act.includes('调仓') || act.includes('更换');
+    }) ||
+    Boolean(portfolio.show_rebalance_memo);
 
   return (
     <div className="max-w-[1500px] mx-auto px-4 py-8 space-y-8">
@@ -781,7 +835,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
               <span>新增底层标的</span>
             </button>
             <button
-              onClick={() => notifySectionSaved('sec4')}
+              onClick={handleSaveSection4}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition ${
                 sectionSaved['sec4']
                   ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
@@ -789,7 +843,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
               }`}
             >
               {sectionSaved['sec4'] ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> : <Save className="w-3.5 h-3.5 text-slate-950" />}
-              <span>{sectionSaved['sec4'] ? '已保存定见' : '保存信念矩阵'}</span>
+              <span>{sectionSaved['sec4'] ? '已保存定见与附件' : '保存信念矩阵与附件'}</span>
             </button>
           </div>
         </div>
@@ -862,6 +916,121 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 <p className="text-xs text-slate-800 leading-relaxed font-medium">
                   {portfolio.qualitative_view_en}
                 </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Rebalancing Execution Verdict & Google Drive Alteration Memo Attachment */}
+          <div className="bg-slate-50 rounded-xl p-5 border border-slate-200 space-y-4">
+            <div className="flex flex-wrap justify-between items-center gap-2">
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-blue-600"></span>
+                <h3 className="text-sm font-extrabold text-slate-900">
+                  月度调仓决议与变动备忘录公开附件 (适用于持仓发生修改)
+                </h3>
+              </div>
+              {hasModification ? (
+                <span className="text-xs font-extrabold px-2.5 py-1 rounded-md bg-amber-100 text-amber-800 border border-amber-300">
+                  ⚠️ 已检测到持仓变动（非全员持有）
+                </span>
+              ) : (
+                <span className="text-xs font-bold px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  ✓ 当前为全员持有状态
+                </span>
+              )}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Verdict Selector */}
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                  全组合调仓执行决议
+                </label>
+                <select
+                  value={portfolio.rebalance_verdict || '持有'}
+                  onChange={(e) => handleMetaChange('rebalance_verdict', e.target.value)}
+                  className="w-full px-3 py-2 text-xs font-bold text-slate-950 bg-white rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="持有">持有（维持既有资产配置不触发被动赎回）</option>
+                  <option value="调仓">调仓（触发部分标的或权重微调再平衡）</option>
+                  <option value="更换标的">更换标的（触发底层标的替换或组合重组）</option>
+                </select>
+              </div>
+
+              {/* Rebalance Note */}
+              <div className="md:col-span-2">
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                  调仓决议结论简述 (Slide 4 底部决议条)
+                </label>
+                <input
+                  type="text"
+                  value={portfolio.rebalance_note}
+                  onChange={(e) => handleMetaChange('rebalance_note', e.target.value)}
+                  placeholder="例如：全员保持持有，各支柱运作良好，无须被动调仓"
+                  className="w-full px-3 py-2 text-xs font-semibold text-slate-950 bg-white rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+
+            {/* Google Drive Public Link Input */}
+            <div className="bg-white p-4 rounded-lg border border-slate-200 space-y-2">
+              <div className="flex flex-wrap justify-between items-center gap-2">
+                <label className="block text-xs font-bold text-slate-800">
+                  📎 调仓与持仓变动备忘录公开附件链接 (Google Drive 公开链接)
+                </label>
+                <div className="flex items-center gap-2">
+                  <label className="flex items-center gap-1.5 cursor-pointer text-xs font-semibold text-slate-700">
+                    <input
+                      type="checkbox"
+                      checked={portfolio.show_rebalance_memo ?? false}
+                      onChange={(e) => handleMetaChange('show_rebalance_memo', e.target.checked)}
+                      className="rounded text-blue-600 focus:ring-blue-500 w-3.5 h-3.5"
+                    />
+                    <span>在 Slide 4 底部强制展示附件按钮</span>
+                  </label>
+                </div>
+              </div>
+
+              <div className="flex gap-2">
+                <input
+                  type="url"
+                  value={portfolio.rebalance_memo_link || ''}
+                  onChange={(e) => handleMetaChange('rebalance_memo_link', e.target.value)}
+                  placeholder="粘贴 Google Drive 公开附件链接，例如: https://drive.google.com/file/d/1BxiMVs.../view?usp=sharing"
+                  className="flex-1 px-3 py-2 text-xs font-mono font-bold text-slate-950 bg-white rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                {portfolio.rebalance_memo_link && (
+                  <a
+                    href={portfolio.rebalance_memo_link}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-1 px-3 py-2 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-bold transition shrink-0"
+                    title="在浏览器中测试打开此 Google Drive 链接"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    <span>测试打开</span>
+                  </a>
+                )}
+              </div>
+
+              <div className="flex items-center justify-between text-[11px] text-slate-500 pt-1">
+                <span>
+                  {hasModification || portfolio.show_rebalance_memo ? (
+                    portfolio.rebalance_memo_link ? (
+                      <span className="text-emerald-700 font-bold">
+                        ✓ 联动生效：检测到持仓变动或已启用展示，该 Google Drive 链接已插入至 Slide 4 底部！
+                      </span>
+                    ) : (
+                      <span className="text-amber-700 font-semibold">
+                        ⚠️ 提示：检测到持仓变动（或启用了展示），请输入有效的 Google Drive 链接以在 Slide 4 底部渲染附件按钮。
+                      </span>
+                    )
+                  ) : (
+                    <span>
+                      ℹ️ 说明：当下方底层标的选择非“持有”（如调仓或更换标的）或决议为非“持有”时，系统将自动激活该链接并呈现在 Slide 4 底部。
+                    </span>
+                  )}
+                </span>
               </div>
             </div>
           </div>

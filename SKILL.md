@@ -132,7 +132,17 @@ Whenever referring to **Taiwan** or **Hong Kong** in ANY part of the report (inc
 - **全系统动态感知与自适应要求:**
   - **Slide 1 表头与统计**：必须动态渲染为 `底层 N 只优选基金构成与月度行情穿透`（英文：`N Underlying Core Funds: Monthly Performance & Alpha Contribution`），权重加总动态计算实际目标权重之和。
   - **Slide 4 信念审查矩阵**：必须动态渲染所有 $N$ 只活跃标的，并根据 $N$ 自动适配行高间隙（如 $N \le 7$ 用舒适行距，$N > 7$ 自动切换紧凑行距，杜绝溢出）。
-  - **工作台与配置引擎**：选定月份或增删标的时，系统必须按当前月份实际的 $N$ 只标的完整加载客观回报、净值与权重，严禁截断或强制回滚为 7 只。
+### 2.8 持仓变动与调仓备忘录公开附件规范 (Holdings Alteration & Rebalance Memo Attachment Link)
+- **业务触发场景 (Conditional Activation - 仅在持仓发生修改时触发):**
+  - 当顾问在持仓复盘中发生任何修改或调整（如未选择“坚持持有”/“持有”，而是触发“调仓”、“更换标的”等变动决策时，或任何标的建议不为“持有”），或者顾问在工作台手动勾选强制附带变动备忘录时激活。
+  - 若组合处于全员“持有”状态且未勾选强制显示，Slide 4 底部保持纯净，不展现任何多余链接按钮。
+- **Google Drive 公开附件交互规范:**
+  - 顾问在工作台第 4 节填入公开附件链接（如 Google Drive 共享链接 `rebalance_memo_link`）。
+  - **Slide 4 底部右下角动态渲染醒目的机构级操作按钮**：
+    - 中文模式：`查阅持仓变动详细说明备忘录 (Google Drive 附件) →`（左侧伴随琥珀色 `持仓变动执行` 徽章）
+    - 英文模式：`View Rebalancing & Alteration Memorandum (Google Drive Attachment) →`（左侧伴随琥珀色 `PORTFOLIO ALTERATION` 徽章）
+  - 点击按钮以新窗口打开 (`target="_blank" rel="noopener noreferrer"`)。
+  - React 前端与导出生成引擎 `engine/report_generator.py` 同步原生支持该条件渲染与数据持久化，全文严守中英文纯洁性。
 
 ---
 
@@ -143,7 +153,7 @@ Whenever referring to **Taiwan** or **Hong Kong** in ANY part of the report (inc
 | **Slide 1** | **月度投资建议备忘录 (Monthly Advisory Memorandum)** | Valuation date, multi-period performance vs MSCI ACWI & S&P 500, Alpha excess return, 7 underlying holdings table, dynamically sliced verified NAV chart with Restructure (🟡) & Rebalance (🟢) timeline markers, monthly attribution & rebalancing notes. |
 | **Slide 2** | **全球宏观脉搏与行业星级评定榜 (Macro Outlook & Sector Star Ratings)** | Top strategy callout, 9 equity & bond performance diverging bar charts (with pixel-perfect 0% ruler alignment), un-truncated US/Japan/China regional reviews, Q4 structural themes & risks (with Gold look-through calibration), and verbatim 19-sector single-column Star Ratings table. |
 | **Slide 3** | **月度专题深度 (Feature Insight / Ideas of the Month)** | 每期备忘录的第 3 页专题必须严格提取对应参考研报（iFAST Monthly Investment Update）中的“月度精选专题 / 优选标的深度解析 (Ideas of the Month / Feature Insight)”。例如：8月备忘录（10月前发布于9月，参考9月月报）对应《超越银行主导核心——主动布局“新新加坡”高成长机遇》；9月备忘录（发布于10月，参考10月月报）对应《当债券不再扮演债券》。全文必须遵循语言零混杂铁律。 |
-| **Slide 4** | **核心投资哲学与“坚守信念”复盘 (Our Philosophy & Conviction Review)** | 3 core investment pillars (Absolute Return 35%, High Growth 30%, Counter-Cyclical & Yield 35%), conviction review matrix (reviewed assets, monthly returns, short-term noise, fundamental support, advisory directive), and monthly rebalancing decision box. |
+| **Slide 4** | **核心投资哲学与“坚守信念”复盘 (Our Philosophy & Conviction Review)** | 3 core investment pillars (Absolute Return 35%, High Growth 30%, Counter-Cyclical & Yield 35%), conviction review matrix (reviewed assets, monthly returns, short-term noise, fundamental support, advisory directive), monthly rebalancing decision box, and conditional Google Drive Alteration Memo attachment button (activated when holdings are modified/rebalanced). |
 | **Slide 5** | **重要法律声明与风险提示 (DISCLAIMER & RISK DISCLOSURE)** | Institutional legal disclaimers under the Singapore Financial Advisers Act (FAA): general info & advisory nature only, non-discretionary advisory scope (explicit client instructions required), capital & market risks, accuracy of info & limitation of liability, and prominent MAS statutory notice. |
 
 ---

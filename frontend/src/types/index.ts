@@ -107,6 +107,10 @@ export interface PortfolioState {
   conflict_note: string;
   conflict_note_en: string;
 
+  // Rebalance Memo Attachment (Google Drive Public Link)
+  rebalance_memo_link?: string;
+  show_rebalance_memo?: boolean;
+
   // Topic Slide 3
   slide3_topic_title_zh: string;
   slide3_topic_title_en: string;

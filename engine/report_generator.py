@@ -700,10 +700,34 @@ def generate_report(month="2026-09"):
         txt_class = "text-[11px] leading-normal"
 
     conviction_rows = ""
+    rebalance_memo_link = (cfg.get("rebalance_memo_link") or mgr_input.get("rebalance_memo_link") or "").strip()
+    show_rebalance_memo = bool(cfg.get("show_rebalance_memo") or mgr_input.get("show_rebalance_memo", False))
+
+    has_modification = (
+        rebalance_verdict not in ["持有", "坚持持有", "Hold", ""] or
+        any(h.get("advisory_recommendation") not in ["持有", "坚持持有", "Hold", ""] for h in active_funds) or
+        show_rebalance_memo
+    )
+
+    memo_btn_html = ""
+    if (has_modification or show_rebalance_memo) and rebalance_memo_link:
+        memo_btn_html = f"""
+            <a href="{rebalance_memo_link}" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 px-3 py-1 bg-blue-700 hover:bg-blue-800 text-white text-[11px] font-bold rounded-md shadow-xs transition hover:scale-[1.02] shrink-0" data-i18n="s4_memo_link_btn">
+                <svg class="w-3.5 h-3.5 text-amber-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                <span>查阅持仓变动详细说明备忘录 (Google Drive 附件) →</span>
+            </a>
+        """
+
+    alt_badge_html = '<span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-amber-500 text-white shadow-xs shrink-0" data-i18n="s4_memo_badge">持仓变动执行</span>' if has_modification else ''
+
     rebalance_box_html = f"""
-        <div class="bg-blue-50 border border-blue-200 rounded-lg px-3.5 py-1.5 text-xs text-blue-950 flex justify-between items-center" data-i18n="s4_foot_box">
-            <span class="font-bold text-[#0f2347]">月度调仓结论：</span>
-            <span class="text-[11.5px] text-slate-700">{rebalance_note}</span>
+        <div class="bg-blue-50/90 border border-blue-200 rounded-lg px-3.5 py-1.5 text-xs text-blue-950 flex flex-wrap justify-between items-center gap-2 mt-2 shrink-0" id="s4_rebalance_box">
+            <div class="flex items-center gap-2 flex-1 min-w-0">
+                {alt_badge_html}
+                <span class="font-bold text-[#0f2347] shrink-0" data-i18n="s4_verdict_label">月度调仓结论：</span>
+                <span class="text-[11.5px] text-slate-700 truncate" data-i18n="s4_verdict_note">{rebalance_note}</span>
+            </div>
+            {memo_btn_html}
         </div>
     """
 
@@ -1042,6 +1066,14 @@ def generate_report(month="2026-09"):
 
     dyn_i18n_zh["s4_foot_box"] = f"<strong>月度调仓结论：</strong>{rebalance_note}"
     dyn_i18n_en["s4_foot_box"] = f"<strong>Rebalancing Verdict:</strong> {rebalance_note_en}"
+    dyn_i18n_zh["s4_verdict_label"] = "月度调仓结论："
+    dyn_i18n_en["s4_verdict_label"] = "Monthly Rebalancing Verdict: "
+    dyn_i18n_zh["s4_verdict_note"] = rebalance_note
+    dyn_i18n_en["s4_verdict_note"] = rebalance_note_en
+    dyn_i18n_zh["s4_memo_badge"] = "持仓变动执行"
+    dyn_i18n_en["s4_memo_badge"] = "PORTFOLIO ALTERATION"
+    dyn_i18n_zh["s4_memo_link_btn"] = "查阅持仓变动详细说明备忘录 (Google Drive 附件) →"
+    dyn_i18n_en["s4_memo_link_btn"] = "View Rebalancing & Alteration Memorandum (Google Drive Attachment) →"
 
     # Inject dynamic keys into i18n_code
     zh_injection = "".join([f"\n                {k}: {json.dumps(v, ensure_ascii=False)}," for k, v in dyn_i18n_zh.items()])
