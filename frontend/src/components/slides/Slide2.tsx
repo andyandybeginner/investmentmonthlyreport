@@ -97,16 +97,17 @@ export const Slide2: React.FC<Slide2Props> = ({ state, lang }) => {
       {/* Main 3-Column Layout */}
       <div className="p-6 flex-1 grid grid-cols-12 gap-4 items-stretch overflow-hidden">
         {/* Column 1 (4 Cols): Asset Snapshot & Region Outlook */}
-        <div className="col-span-4 bg-white border border-slate-200 rounded-xl p-3 shadow-xs flex flex-col justify-between overflow-hidden">
-          <div className="flex justify-between items-center mb-1.5 border-b border-slate-100 pb-1">
+        <div className="col-span-4 bg-white border border-slate-200 rounded-xl p-3 shadow-xs flex flex-col justify-start gap-2.5 overflow-hidden">
+          <div className="flex justify-between items-center mb-1 border-b border-slate-100 pb-1.5 shrink-0">
             <h3 className="text-xs font-bold text-[#0f2347]">{t.s2_mkt_header}</h3>
             <span className="text-[9px] text-slate-400 font-medium">
               {isEn ? `P.${state.page_returns}` : `彭博与投研综合数据 (第${state.page_returns}页)`}
             </span>
           </div>
 
-          {/* Diverging Bar Chart 1: Equity Indices */}
-          <div className="space-y-1 bg-slate-50 border border-slate-200 rounded-lg p-2 text-[9.5px]">
+          {/* Diverging Bar Chart 1: Equity & Bond Indices */}
+          <div className="space-y-1.5 bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-[9.5px] shrink-0">
+            {/* Header + Ruler for Equity */}
             <div className="flex justify-between text-[9px] text-slate-500 font-semibold">
               <span>{t.s2_chart1_title}</span>
               <span className="font-mono text-[8px] text-slate-400">{t.s2_mkt_1m_tag}</span>
@@ -154,61 +155,96 @@ export const Slide2: React.FC<Slide2Props> = ({ state, lang }) => {
                 </span>
               </div>
             ))}
+
+            {/* Bond Indices */}
+            <div className="pt-1.5 border-t border-slate-200/70 space-y-1">
+              <div className="flex justify-between text-[9px] text-slate-500 font-semibold">
+                <span>{isEn ? 'Bond Indices (USD)' : '债券指数 (美元计价)'}</span>
+                <span className="font-mono text-[8px] text-slate-400">{t.s2_mkt_1m_tag}</span>
+              </div>
+              <div className="flex items-center text-[7.5px] font-mono text-slate-400 px-0.5">
+                <span className="w-16"></span>
+                <div className="flex-1 relative mx-1 h-2 flex items-center">
+                  <span className="absolute left-0">-3.5%</span>
+                  <span className="absolute right-0 text-slate-700 font-bold">0%</span>
+                </div>
+                <span className="w-10"></span>
+              </div>
+              {[
+                { name: isEn ? 'Asia HY' : '亚洲高收益', ret: '-1.23%', width: '35.1%' },
+                { name: isEn ? 'Asia IG' : '亚洲投资级', ret: '-2.05%', width: '58.5%' },
+                { name: isEn ? 'Global Agg' : '全球综合债', ret: '-2.48%', width: '70.8%' },
+              ].map((bar, i) => (
+                <div key={i} className="flex items-center py-0.5">
+                  <span className="w-16 text-slate-700 font-medium truncate">{bar.name}</span>
+                  <div className="flex-1 flex items-center h-2 bg-slate-200/60 rounded relative mx-1">
+                    <div className="absolute top-0 bottom-0 right-0 w-[1px] bg-slate-400 z-10"></div>
+                    <div
+                      className="absolute top-0 bottom-0 right-0 bg-rose-400 rounded-l"
+                      style={{ width: bar.width }}
+                    ></div>
+                  </div>
+                  <span className="w-10 text-right font-mono font-bold text-[9px] text-rose-600">
+                    {bar.ret}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Regional Review Cards: US, Japan, China */}
-          <div className="space-y-1.5 overflow-hidden">
+          <div className="space-y-2 flex flex-col justify-start">
             {[
-              { name: t.us_name, rating: t.us_rating, desc: t.us_desc, badge: 'bg-rose-50 text-rose-700' },
-              { name: t.jp_name, rating: t.jp_rating, desc: t.jp_desc, badge: 'bg-slate-100 text-slate-700' },
-              { name: t.cn_name, rating: t.cn_rating, desc: t.cn_desc, badge: 'bg-emerald-50 text-emerald-700' },
+              { name: t.us_name, rating: t.us_rating, desc: t.us_desc, badge: 'bg-rose-50 text-rose-700 border border-rose-200' },
+              { name: t.jp_name, rating: t.jp_rating, desc: t.jp_desc, badge: 'bg-amber-50 text-amber-700 border border-amber-200' },
+              { name: t.cn_name, rating: t.cn_rating, desc: t.cn_desc, badge: 'bg-emerald-50 text-emerald-700 border border-emerald-200' },
             ].map((reg, i) => (
-              <div key={i} className="p-1.5 bg-slate-50/70 border border-slate-200/80 rounded-lg">
+              <div key={i} className="p-2 bg-slate-50/80 border border-slate-200/80 rounded-lg space-y-0.5">
                 <div className="flex justify-between items-center mb-0.5">
                   <span className="font-bold text-[10px] text-slate-800">{reg.name}</span>
                   <span className={`text-[8.5px] px-1.5 py-0.2 rounded font-semibold ${reg.badge}`}>
                     {reg.rating}
                   </span>
                 </div>
-                <p className="text-[9px] text-slate-600 leading-tight line-clamp-2">{reg.desc}</p>
+                <p className="text-[9px] text-slate-600 leading-snug">{reg.desc}</p>
               </div>
             ))}
           </div>
         </div>
 
         {/* Column 2 (4 Cols): Q4 Structural Logic & Systemic Risks */}
-        <div className="col-span-4 bg-white border border-slate-200 rounded-xl p-3 shadow-xs flex flex-col justify-between overflow-hidden">
-          <div className="flex justify-between items-center mb-1.5 border-b border-slate-100 pb-1">
+        <div className="col-span-4 bg-white border border-slate-200 rounded-xl p-3.5 shadow-xs flex flex-col justify-start gap-3 overflow-hidden">
+          <div className="flex justify-between items-center pb-1.5 border-b border-slate-100 shrink-0">
             <h3 className="text-xs font-bold text-[#0f2347]">{t.s2_thematic_header}</h3>
             <span className="text-[9px] text-slate-400 font-medium">
-              {isEn ? 'iFAST Strategy' : '奕丰投研策略'}
+              {isEn ? 'iFAST Strategy · Q4 Focus' : '奕丰投研策略 · Q4 Focus'}
             </span>
           </div>
 
-          <div className="space-y-2 flex-1 flex flex-col justify-around">
+          <div className="space-y-2.5 flex flex-col justify-start">
             {/* Driver 1: AI Hardware */}
-            <div className="p-2 rounded-lg bg-blue-50/50 border border-blue-100">
-              <h4 className="text-[10.5px] font-bold text-blue-950 flex items-center gap-1 mb-1">
+            <div className="p-3 rounded-lg bg-blue-50/60 border border-blue-200/80 space-y-1 shadow-xs">
+              <h4 className="text-[11px] font-bold text-blue-950 flex items-center gap-1.5">
                 <span>{t.drv_ai_title}</span>
               </h4>
-              <p className="text-[9.5px] text-slate-600 leading-relaxed">{t.drv_ai_desc}</p>
+              <p className="text-[10px] text-slate-600 leading-relaxed">{t.drv_ai_desc}</p>
             </div>
 
             {/* Driver 2: Middle East Oil */}
-            <div className="p-2 rounded-lg bg-amber-50/50 border border-amber-100">
-              <h4 className="text-[10.5px] font-bold text-amber-950 flex items-center gap-1 mb-1">
+            <div className="p-3 rounded-lg bg-amber-50/60 border border-amber-200/80 space-y-1 shadow-xs">
+              <h4 className="text-[11px] font-bold text-amber-950 flex items-center gap-1.5">
                 <span>{t.drv_oil_title}</span>
               </h4>
-              <p className="text-[9.5px] text-slate-600 leading-relaxed">{t.drv_oil_desc}</p>
+              <p className="text-[10px] text-slate-600 leading-relaxed">{t.drv_oil_desc}</p>
             </div>
 
             {/* Driver 3: Caution Areas & Gold Look-through Calibration */}
-            <div className="p-2 rounded-lg bg-rose-50/50 border border-rose-100">
-              <h4 className="text-[10.5px] font-bold text-rose-950 flex items-center gap-1 mb-1">
+            <div className="p-3 rounded-lg bg-rose-50/60 border border-rose-200/80 space-y-1 shadow-xs">
+              <h4 className="text-[11px] font-bold text-rose-950 flex items-center gap-1.5">
                 <span>{t.drv_cautious_title}</span>
               </h4>
               <p
-                className="text-[9.5px] text-slate-600 leading-relaxed"
+                className="text-[10px] text-slate-600 leading-relaxed"
                 dangerouslySetInnerHTML={{ __html: t.drv_cautious_desc }}
               ></p>
             </div>
@@ -216,32 +252,35 @@ export const Slide2: React.FC<Slide2Props> = ({ state, lang }) => {
         </div>
 
         {/* Column 3 (4 Cols): Official 19 Sector Star Ratings */}
-        <div className="col-span-4 bg-white border border-slate-200 rounded-xl p-3 shadow-xs flex flex-col justify-between overflow-hidden">
-          <div className="flex justify-between items-center mb-1.5 border-b border-slate-100 pb-1">
+        <div className="col-span-4 bg-white border border-slate-200 rounded-xl p-3.5 shadow-xs flex flex-col justify-start gap-3 overflow-hidden">
+          <div className="flex justify-between items-center pb-1.5 border-b border-slate-100 shrink-0">
             <h3 className="text-xs font-bold text-[#0f2347]">{t.s2_star_header}</h3>
             <span className="text-[9px] text-slate-400 font-medium">
-              {isEn ? `P.${state.page_stars}` : `官方榜单 (第${state.page_stars}页)`}
+              {isEn ? `Official Rankings (P.${state.page_stars})` : `官方榜单 (第${state.page_stars}页)`}
             </span>
           </div>
 
-          <div className="space-y-1.5 text-[9.5px] overflow-hidden flex-1 flex flex-col justify-between">
+          <div className="space-y-2.5 text-[9.5px] flex flex-col justify-start">
             {starTiers.map((tier, idx) => (
-              <div key={idx} className="space-y-0.5">
+              <div key={idx} className="space-y-1">
                 <div
-                  className={`text-[8px] font-extrabold uppercase px-1.5 py-0.5 rounded tracking-wider ${tier.badgeColor}`}
+                  className={`text-[8.5px] font-extrabold uppercase px-2 py-0.5 rounded tracking-wider flex justify-between items-center ${tier.badgeColor}`}
                 >
-                  {tier.tierTitle}
+                  <span>{tier.tierTitle}</span>
+                  <span className="text-amber-200 font-mono text-[8px] font-bold">
+                    {idx === 0 ? '★★★★½ ~ ★★★★' : idx === 1 ? '★★★½ ~ ★★★' : idx === 2 ? '★★½' : '★★'}
+                  </span>
                 </div>
-                <div className="grid grid-cols-2 gap-x-2 gap-y-0.5 pt-0.5">
+                <div className="grid grid-cols-2 gap-x-2 gap-y-1 pt-0.5">
                   {tier.items.map((it, itemIdx) => (
                     <div
                       key={itemIdx}
-                      className="flex justify-between items-center px-1 py-0.5 bg-slate-50 rounded border border-slate-100"
+                      className="flex justify-between items-center px-2 py-1 bg-slate-50 hover:bg-slate-100 rounded border border-slate-100"
                     >
-                      <span className="font-semibold text-slate-700 truncate max-w-[90px]">
+                      <span className="font-semibold text-slate-700 truncate max-w-[95px] text-[9.5px]">
                         {it.name}
                       </span>
-                      <span className="text-amber-500 font-mono text-[8px] font-bold">
+                      <span className="text-amber-500 font-mono text-[8.5px] font-bold">
                         {it.stars}
                       </span>
                     </div>
