@@ -57,6 +57,9 @@ const i18nDict = {
                 lg_rebal: "绿色圆圈: 季度再平衡",
                 s1_card_title: "月度归因与调仓定见",
                 s1_card_desc: "【正向论据 70%】美联储降息50基点叠加国内刺激，流动性拐点确立；股债正相关常态下，组合坚守纯股票成长、富敦绝对收益底仓与大华黄金三支柱，成立以来累计回报+81.16%，超额收益+12.49%。【反方审视 30%】尽管长端美债收益率反弹与地缘摩擦令当月净值微调1.21%，但回撤主要源于科技与A股短期估值消化，核心盈利逻辑稳固，维持全员持有定力。",
+                s1_verdict_badge: "持有",
+                s1_exec_directive_label: "月度执行指令：",
+                s1_exec_directive: "无需再平衡，全组合 7 只成分基金维持既定目标配比不变。",
                 s1_foot_left: "财富管理与投资咨询备忘",
 
                 s1_foot_right: "第 1 页 · 月度备忘录",
@@ -260,6 +263,9 @@ const i18nDict = {
                 lg_rebal: "Green Circle: Rebalance Event",
                 s1_card_title: "Monthly Attribution & Rebalancing Notes",
                 s1_card_desc: "In September, US 10-year Treasury yields surged past 5.2% alongside a rebound in the US Dollar, triggering short-term profit-taking in United Gold (-6.30%) and China equities (-5.40%), which led to a mild monthly pullback of -1.21%. <strong>Critical Holdings Insight: The actual weighting of China Innovation stands at 12.36%—still well above its 12.00% target allocation. This confirms that the recent consolidation is purely healthy profit give-back following prior cumulative outperformance</strong>, backed by robust policy support and valuation margins of safety. On the offensive front, EASTSPRING Global Technology (+3.80%) captured the secular surge in AI hardware capex, contributing a strong +0.57% in positive alpha. On the defensive sleeve, FULLERTON Absolute Alpha (+0.45%) dutifully fulfilled its mandate as a low-beta pair-trading ballast. <strong>Rebalancing Verdict: Portfolio drift remains safely within risk tolerance bands; no forced liquidation is triggered, and all 7 target allocations remain unchanged for the month.</strong>",
+                s1_verdict_badge: "HOLD",
+                s1_exec_directive_label: "Monthly Execution Directive: ",
+                s1_exec_directive: "Core asset theses remain solid; all 7 fund allocations remain unchanged.",
                 s1_foot_left: "Private Wealth Advisory Memorandum",
                 s1_foot_right: "Slide 1 of 5 · Monthly Advisory Memorandum",
 

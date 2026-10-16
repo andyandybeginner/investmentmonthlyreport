@@ -1064,6 +1064,15 @@ def generate_report(month="2026-09"):
     dyn_i18n_zh["s1_card_desc"] = qualitative_view.replace("\n", "<br>")
     dyn_i18n_en["s1_card_desc"] = qualitative_view_en.replace("\n", "<br>")
 
+    verdict_zh = rebalance_verdict
+    verdict_en = "HOLD" if rebalance_verdict in ["持有", "坚持持有"] else ("REBALANCE" if rebalance_verdict in ["调仓", "主动调仓"] else "REPLACE")
+    dyn_i18n_zh["s1_verdict_badge"] = verdict_zh
+    dyn_i18n_en["s1_verdict_badge"] = verdict_en
+    dyn_i18n_zh["s1_exec_directive_label"] = "月度执行指令："
+    dyn_i18n_en["s1_exec_directive_label"] = "Monthly Execution Directive: "
+    dyn_i18n_zh["s1_exec_directive"] = rebalance_note
+    dyn_i18n_en["s1_exec_directive"] = rebalance_note_en
+
     dyn_i18n_zh["s4_foot_box"] = f"<strong>月度调仓结论：</strong>{rebalance_note}"
     dyn_i18n_en["s4_foot_box"] = f"<strong>Rebalancing Verdict:</strong> {rebalance_note_en}"
     dyn_i18n_zh["s4_verdict_label"] = "月度调仓结论："

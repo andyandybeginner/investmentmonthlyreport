@@ -71,11 +71,11 @@ export const Slide1: React.FC<Slide1Props> = ({ state, lang }) => {
       </div>
 
       {/* Main Content Body: Left 7 Cols (Multi-Period Matrix + 7 Underlying Funds) | Right 5 Cols (Vector Chart + Verdict Card) */}
-      <div className="px-7 py-5 grid grid-cols-12 gap-5 flex-1 items-stretch overflow-hidden">
+      <div className="px-7 py-4.5 grid grid-cols-12 gap-5 flex-1 items-stretch overflow-hidden min-h-0">
         {/* Left Column (7 Cols): Drawer 1 (Multi-Period Matrix) + Drawer 2 (7 Underlying Funds Table) */}
-        <div className="col-span-7 flex flex-col justify-between gap-4 overflow-hidden">
+        <div className="col-span-7 h-full flex flex-col gap-4 overflow-hidden min-h-0">
           {/* Drawer 1: Multi-Period Return Matrix */}
-          <div className="bg-white border border-slate-200 rounded-xl p-3.5 shadow-xs">
+          <div className="bg-white border border-slate-200 rounded-xl p-3.5 shadow-xs shrink-0">
             <div className="flex justify-between items-center mb-2">
               <h3 className="text-sm font-extrabold uppercase tracking-tight text-[#0f2347]">
                 {t.s1_table_title}
@@ -86,81 +86,81 @@ export const Slide1: React.FC<Slide1Props> = ({ state, lang }) => {
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
                   <tr className="bg-[#0f2347] text-white text-[11px] font-bold">
-                    <th className="p-2">{t.s1_col_strategy}</th>
-                    <th className="p-2 text-right">{monthInfo.colHeader1m}</th>
-                    <th className="p-2 text-right">{t.s1_col_3m}</th>
-                    <th className="p-2 text-right">{t.s1_col_1y}</th>
-                    <th className="p-2 text-right">{t.s1_col_3y}</th>
-                    <th className="p-2 text-right pr-3 font-extrabold bg-[#091528]">{t.s1_col_cum}</th>
+                    <th className="py-2.5 px-2">{t.s1_col_strategy}</th>
+                    <th className="py-2.5 px-2 text-right">{monthInfo.colHeader1m}</th>
+                    <th className="py-2.5 px-2 text-right">{t.s1_col_3m}</th>
+                    <th className="py-2.5 px-2 text-right">{t.s1_col_1y}</th>
+                    <th className="py-2.5 px-2 text-right">{t.s1_col_3y}</th>
+                    <th className="py-2.5 px-2 text-right pr-3 font-extrabold bg-[#091528]">{t.s1_col_cum}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200 bg-white text-[12px]">
                   {/* Row 1: Current Portfolio */}
                   <tr className="bg-amber-50/70 font-bold">
-                    <td className="p-2 text-slate-900 flex items-center gap-1.5">
+                    <td className="py-2 px-2 text-slate-900 flex items-center gap-1.5">
                       <span className="w-2.5 h-2.5 rounded-full bg-rose-500 shadow-sm"></span>
                       <span>{t.s1_row_current}</span>
                     </td>
-                    <td className="p-2 text-right">{formatCell(matrix.current.r1m)}</td>
-                    <td className="p-2 text-right">{formatCell(matrix.current.r3m)}</td>
-                    <td className="p-2 text-right">{formatCell(matrix.current.r1y)}</td>
-                    <td className="p-2 text-right">{formatCell(matrix.current.r3y)}</td>
-                    <td className="p-2 text-right pr-3 text-[#0f2347] bg-amber-100/80 font-extrabold mono-num">
+                    <td className="py-2 px-2 text-right">{formatCell(matrix.current.r1m)}</td>
+                    <td className="py-2 px-2 text-right">{formatCell(matrix.current.r3m)}</td>
+                    <td className="py-2 px-2 text-right">{formatCell(matrix.current.r1y)}</td>
+                    <td className="py-2 px-2 text-right">{formatCell(matrix.current.r3y)}</td>
+                    <td className="py-2 px-2 text-right pr-3 text-[#0f2347] bg-amber-100/80 font-extrabold mono-num">
                       +{cumCurrent.toFixed(2)}%
                     </td>
                   </tr>
                   {/* Row 2: Past Portfolio */}
                   <tr className="hover:bg-slate-50 transition text-slate-700">
-                    <td className="p-2 font-semibold flex items-center gap-1.5">
+                    <td className="py-2 px-2 font-semibold flex items-center gap-1.5">
                       <span className="w-2.5 h-2.5 rounded bg-blue-600"></span>
                       <span>{t.s1_row_past}</span>
                     </td>
-                    <td className="p-2 text-right">{formatCell(matrix.past.r1m)}</td>
-                    <td className="p-2 text-right">{formatCell(matrix.past.r3m)}</td>
-                    <td className="p-2 text-right">{formatCell(matrix.past.r1y)}</td>
-                    <td className="p-2 text-right">{formatCell(matrix.past.r3y)}</td>
-                    <td className="p-2 text-right pr-3 text-slate-700 bg-slate-50 font-bold mono-num">
+                    <td className="py-2 px-2 text-right">{formatCell(matrix.past.r1m)}</td>
+                    <td className="py-2 px-2 text-right">{formatCell(matrix.past.r3m)}</td>
+                    <td className="py-2 px-2 text-right">{formatCell(matrix.past.r1y)}</td>
+                    <td className="py-2 px-2 text-right">{formatCell(matrix.past.r3y)}</td>
+                    <td className="py-2 px-2 text-right pr-3 text-slate-700 bg-slate-50 font-bold mono-num">
                       +{cumPast.toFixed(2)}%
                     </td>
                   </tr>
                   {/* Row 3: S&P 500 */}
                   <tr className="text-slate-600 hover:bg-slate-50 transition">
-                    <td className="p-2 flex items-center gap-1.5">
+                    <td className="py-2 px-2 flex items-center gap-1.5">
                       <span className="w-2 h-2 rounded-full bg-slate-900"></span>
                       <span>{t.s1_row_sp500}</span>
                     </td>
-                    <td className="p-2 text-right">{formatCell(matrix.sp500.r1m)}</td>
-                    <td className="p-2 text-right">{formatCell(matrix.sp500.r3m)}</td>
-                    <td className="p-2 text-right">{formatCell(matrix.sp500.r1y)}</td>
-                    <td className="p-2 text-right">{formatCell(matrix.sp500.r3y)}</td>
-                    <td className="p-2 text-right pr-3 font-semibold bg-slate-50 mono-num">
+                    <td className="py-2 px-2 text-right">{formatCell(matrix.sp500.r1m)}</td>
+                    <td className="py-2 px-2 text-right">{formatCell(matrix.sp500.r3m)}</td>
+                    <td className="py-2 px-2 text-right">{formatCell(matrix.sp500.r1y)}</td>
+                    <td className="py-2 px-2 text-right">{formatCell(matrix.sp500.r3y)}</td>
+                    <td className="py-2 px-2 text-right pr-3 font-semibold bg-slate-50 mono-num">
                       +{cumSp500.toFixed(2)}%
                     </td>
                   </tr>
                   {/* Row 4: MSCI ACWI */}
                   <tr className="text-slate-600 hover:bg-slate-50 transition">
-                    <td className="p-2 flex items-center gap-1.5">
+                    <td className="py-2 px-2 flex items-center gap-1.5">
                       <span className="w-2 h-2 rounded-full bg-slate-400"></span>
                       <span>{t.s1_row_acwi}</span>
                     </td>
-                    <td className="p-2 text-right">{formatCell(matrix.msci.r1m)}</td>
-                    <td className="p-2 text-right">{formatCell(matrix.msci.r3m)}</td>
-                    <td className="p-2 text-right">{formatCell(matrix.msci.r1y)}</td>
-                    <td className="p-2 text-right">{formatCell(matrix.msci.r3y)}</td>
-                    <td className="p-2 text-right pr-3 font-semibold bg-slate-50 mono-num">
+                    <td className="py-2 px-2 text-right">{formatCell(matrix.msci.r1m)}</td>
+                    <td className="py-2 px-2 text-right">{formatCell(matrix.msci.r3m)}</td>
+                    <td className="py-2 px-2 text-right">{formatCell(matrix.msci.r1y)}</td>
+                    <td className="py-2 px-2 text-right">{formatCell(matrix.msci.r3y)}</td>
+                    <td className="py-2 px-2 text-right pr-3 font-semibold bg-slate-50 mono-num">
                       +{cumMsci.toFixed(2)}%
                     </td>
                   </tr>
                   {/* Row 5: Alpha vs MSCI ACWI */}
                   <tr className="bg-emerald-50/80 font-bold border-t-2 border-emerald-200 text-emerald-900">
-                    <td className="p-1.5 pl-2 flex items-center gap-1.5">
+                    <td className="py-2 px-2 pl-2 flex items-center gap-1.5">
                       <span>{t.s1_row_alpha_acwi}</span>
                     </td>
-                    <td className="p-1.5 text-right">{formatCell(matrix.alpha_acwi.r1m, true)}</td>
-                    <td className="p-1.5 text-right">{formatCell(matrix.alpha_acwi.r3m, true)}</td>
-                    <td className="p-1.5 text-right">{formatCell(matrix.alpha_acwi.r1y, true)}</td>
-                    <td className="p-1.5 text-right">{formatCell(matrix.alpha_acwi.r3y, true)}</td>
-                    <td className="p-1.5 text-right pr-3 font-extrabold bg-emerald-100/90 mono-num text-emerald-950">
+                    <td className="py-2 px-2 text-right">{formatCell(matrix.alpha_acwi.r1m, true)}</td>
+                    <td className="py-2 px-2 text-right">{formatCell(matrix.alpha_acwi.r3m, true)}</td>
+                    <td className="py-2 px-2 text-right">{formatCell(matrix.alpha_acwi.r1y, true)}</td>
+                    <td className="py-2 px-2 text-right">{formatCell(matrix.alpha_acwi.r3y, true)}</td>
+                    <td className="py-2 px-2 text-right pr-3 font-extrabold bg-emerald-100/90 mono-num text-emerald-950">
                       +{matrix.alpha_acwi.cum.toFixed(2)}%
                     </td>
                   </tr>
@@ -170,8 +170,8 @@ export const Slide1: React.FC<Slide1Props> = ({ state, lang }) => {
           </div>
 
           {/* Drawer 2: 7 Underlying Funds Table (Objective Weights, NAV, 1M Return & Contribution) */}
-          <div className="bg-white border border-slate-200 rounded-xl p-3.5 shadow-xs flex-1 flex flex-col justify-between">
-            <div className="flex justify-between items-center mb-2">
+          <div className="bg-white border border-slate-200 rounded-xl p-3.5 shadow-xs flex-1 min-h-0 flex flex-col justify-between">
+            <div className="flex justify-between items-center mb-2 shrink-0">
               <h3 className="text-sm font-extrabold uppercase tracking-tight text-[#0f2347]">
                 {isEn
                   ? `${state.holdings.length} Underlying Core Funds: Monthly Performance & Alpha Contribution`
@@ -183,22 +183,22 @@ export const Slide1: React.FC<Slide1Props> = ({ state, lang }) => {
                   : `权重加总: ${state.holdings.reduce((sum, h) => sum + (h.target_weight || 0), 0).toFixed(1)}%`}
               </span>
             </div>
-            <div className="overflow-hidden border border-slate-200 rounded-lg flex-1">
-              <table className="w-full text-left text-xs border-collapse">
-                <thead>
-                  <tr className="bg-slate-100 text-slate-700 text-[11px] uppercase font-bold border-b border-slate-200">
-                    <th className="p-2 pl-2.5">{t.s1_th_role}</th>
-                    <th className="p-2">{t.s1_th_fund}</th>
-                    <th className="p-2 text-right font-bold text-slate-600">{t.s1_th_target_w}</th>
-                    <th className="p-2 text-right font-extrabold text-[#0f2347] bg-amber-100/60 border-l border-r border-amber-200">
+            <div className="overflow-hidden border border-slate-200 rounded-lg flex-1 min-h-0 flex flex-col">
+              <table className="w-full h-full text-left text-xs border-collapse">
+                <thead className="bg-slate-100 text-slate-700 text-[11px] uppercase font-bold border-b border-slate-200 shrink-0">
+                  <tr>
+                    <th className="py-2.5 px-2 pl-2.5">{t.s1_th_role}</th>
+                    <th className="py-2.5 px-2">{t.s1_th_fund}</th>
+                    <th className="py-2.5 px-2 text-right font-bold text-slate-600">{t.s1_th_target_w}</th>
+                    <th className="py-2.5 px-2 text-right font-extrabold text-[#0f2347] bg-amber-100/60 border-l border-r border-amber-200">
                       {t.s1_th_actual_w}
                     </th>
-                    <th className="p-2 text-right">{isEn ? 'Latest NAV' : '最新净值'}</th>
-                    <th className="p-2 text-right">{t.s1_th_ret_1m}</th>
-                    <th className="p-2 text-right pr-2.5">{t.s1_th_contrib}</th>
+                    <th className="py-2.5 px-2 text-right">{isEn ? 'Latest NAV' : '最新净值'}</th>
+                    <th className="py-2.5 px-2 text-right">{t.s1_th_ret_1m}</th>
+                    <th className="py-2.5 px-2 text-right pr-2.5">{t.s1_th_contrib}</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-200 bg-white text-[11.5px]">
+                <tbody className="divide-y divide-slate-100 bg-white text-[11.5px]">
                   {state.holdings.map((h) => {
                     const fallback = presetHoldings[h.id];
                     const tgtW = h.target_weight ?? fallback?.target_weight ?? 0;
@@ -213,24 +213,24 @@ export const Slide1: React.FC<Slide1Props> = ({ state, lang }) => {
                       contrib1m >= 0 ? 'text-emerald-800 font-bold' : 'text-rose-700 font-bold';
 
                     return (
-                      <tr key={h.id} className="hover:bg-slate-50 transition">
-                        <td className="p-2 pl-2.5 font-bold text-slate-800 whitespace-nowrap">
+                      <tr key={h.id} className="hover:bg-slate-50 transition border-b border-slate-100 last:border-0">
+                        <td className="px-2 py-2 pl-2.5 font-bold text-slate-800 whitespace-nowrap align-middle">
                           {isEn ? h.role_en : h.role}
                         </td>
-                        <td className="p-2 font-semibold text-slate-800 truncate max-w-[205px]">
+                        <td className="px-2 py-2 font-semibold text-slate-800 truncate max-w-[205px] align-middle">
                           {h.fund_name}
                         </td>
-                        <td className="p-2 text-right font-semibold text-slate-600 mono-num">
+                        <td className="px-2 py-2 text-right font-semibold text-slate-600 mono-num align-middle">
                           {tgtW.toFixed(2)}%
                         </td>
-                        <td className="p-2 text-right font-bold text-[#0f2347] mono-num bg-amber-50/50 border-l border-r border-amber-100">
+                        <td className="px-2 py-2 text-right font-bold text-[#0f2347] mono-num bg-amber-50/50 border-l border-r border-amber-100 align-middle">
                           {curW.toFixed(2)}%
                         </td>
-                        <td className="p-2 text-right text-slate-700 mono-num">{navVal}</td>
-                        <td className={`p-2 text-right mono-num ${retColor}`}>
+                        <td className="px-2 py-2 text-right text-slate-700 mono-num align-middle">{navVal}</td>
+                        <td className={`px-2 py-2 text-right mono-num align-middle ${retColor}`}>
                           {ret1m >= 0 ? `+${ret1m.toFixed(2)}%` : `${ret1m.toFixed(2)}%`}
                         </td>
-                        <td className={`p-2 text-right pr-2.5 mono-num ${contribColor}`}>
+                        <td className={`px-2 py-2 pr-2.5 text-right mono-num align-middle ${contribColor}`}>
                           {contrib1m >= 0 ? `+${contrib1m.toFixed(2)}%` : `${contrib1m.toFixed(2)}%`}
                         </td>
                       </tr>
@@ -243,9 +243,9 @@ export const Slide1: React.FC<Slide1Props> = ({ state, lang }) => {
         </div>
 
         {/* Right Column (5 Cols): Drawer 3 (Real NAV Vector Chart) + Drawer 4 (Monthly Verdict & Qualitative View) */}
-        <div className="col-span-5 flex flex-col justify-between gap-4 overflow-hidden">
+        <div className="col-span-5 h-full flex flex-col gap-4 overflow-hidden min-h-0">
           {/* Drawer 3: Real Performance Vector SVG Chart */}
-          <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 shadow-xs flex flex-col justify-between">
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 shadow-xs shrink-0 flex flex-col justify-between">
             <div className="flex justify-between items-center mb-2">
               <h3 className="text-sm font-extrabold uppercase tracking-tight text-[#0f2347]">
                 {monthInfo.chartTitle(periodsCount, startDate, endDate)}
@@ -256,7 +256,7 @@ export const Slide1: React.FC<Slide1Props> = ({ state, lang }) => {
             </div>
 
             {/* Pure Vector SVG Chart (Sliced to selected month) */}
-            <div className="w-full flex items-center justify-center h-[210px] bg-white rounded-lg border border-slate-200/80 p-1.5 my-1">
+            <div className="w-full flex items-center justify-center h-[260px] bg-white rounded-lg border border-slate-200/80 p-1.5 my-1">
               <PerformanceChart data={sliced} events={state.events} lang={lang} />
             </div>
 
@@ -306,7 +306,7 @@ export const Slide1: React.FC<Slide1Props> = ({ state, lang }) => {
           </div>
 
           {/* Drawer 4: Qualitative Commentary & Monthly Rebalancing Verdict Card */}
-          <div className="bg-gradient-to-br from-[#0f2347] via-[#132c57] to-[#1a3a6e] text-white rounded-xl p-4 shadow-md flex flex-col justify-between flex-1 border border-blue-900">
+          <div className="bg-gradient-to-br from-[#0f2347] via-[#132c57] to-[#1a3a6e] text-white rounded-xl p-4 shadow-md flex-1 min-h-0 flex flex-col justify-between border border-blue-900">
             <div>
               <div className="flex justify-between items-center mb-2.5 pb-2 border-b border-white/15">
                 <span className="text-xs font-extrabold text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
