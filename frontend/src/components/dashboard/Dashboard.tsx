@@ -132,7 +132,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
   // Section 1 Save: Queries Calculation_Engine Col A for M+1 first valid price date,
   // scans preset local folder for matching iFAST Monthly Update PDF & page numbers,
-  // populates all 7 funds' objective returns & weights, and generates previewable HTML report
+  // populates all dynamic N funds' objective returns & weights, and generates previewable HTML report
   const handleSaveSection1 = async () => {
     const cleanMonth = portfolio.month.trim();
     const resolvedHoldings = applyMonthResolution(cleanMonth);
@@ -211,6 +211,27 @@ export const Dashboard: React.FC<DashboardProps> = ({
     setTimeout(() => {
       setSectionSaved(prev => ({ ...prev, [sec]: false }));
     }, 2500);
+  };
+
+  // Section 2: Save custom page numbers and topic title tweaks
+  const handleSaveSection2 = async () => {
+    try {
+      await fetch('/api/save_config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          report_month: portfolio.month,
+          section_name: '第2节（研报动态页码与专题微调）',
+          page_returns: portfolio.page_returns,
+          page_stars: portfolio.page_stars,
+          slide3_topic_title: portfolio.slide3_topic_title_zh,
+          slide3_topic_title_zh: portfolio.slide3_topic_title_zh
+        })
+      });
+    } catch {
+      // Local state is already held in portfolio
+    }
+    notifySectionSaved('sec2');
   };
 
   // Section 1: Update individual metadata field
@@ -362,10 +383,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
             </div>
             <div>
               <h2 className="text-base font-extrabold text-slate-900">
-                报告目标月份与月度研报动态页码匹配
+                报告目标月份与研报文件检索 (唯一手动输入项)
               </h2>
               <p className="text-xs text-slate-500">
-                手动填入汇报月份并点击“保存本节设定”，系统自动从 Calculation_Engine A列写入次月首个有价格的结算日，并读取本地 iFAST 研报返还适配页码
+                手动填入汇报月份并点击“保存本节设定”，系统自动从 Calculation_Engine A列拉取结算日并在本地文件夹检索研报，适配页码将自动返还至第 2 节
               </p>
             </div>
           </div>
@@ -407,7 +428,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
           </div>
         )}
 
-        <div className={`p-6 grid grid-cols-1 md:grid-cols-2 ${isSplitMode ? '' : 'lg:grid-cols-4'} gap-6`}>
+        <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Target Month (Manual Input + Standardized Month Picker Button) */}
           <div>
             <label className="block text-xs font-bold text-slate-700 mb-1.5">
@@ -480,7 +501,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
           </div>
 
           {/* PDF Reference Name (Auto-matched from preset local folder) */}
-          <div className={isSplitMode ? 'md:col-span-2' : 'lg:col-span-2'}>
+          <div>
             <label className="block text-xs font-bold text-slate-700 mb-1.5">
               iFAST Monthly Update 研报文件名 (预设本地文件夹自动匹配)
             </label>
@@ -493,88 +514,125 @@ export const Dashboard: React.FC<DashboardProps> = ({
               />
             </div>
             <span className="text-[11px] text-emerald-700 font-semibold mt-1 block">
-              ✓ 已匹配本地文件夹: ...\3. Monthly Report\1. iFast Monthly update\{portfolio.ref_pdf_name}
+              ✓ 已匹配本地文件夹: ...\1. iFast Monthly update\{portfolio.ref_pdf_name}
             </span>
-          </div>
-
-          {/* Page Matching Matrix (Auto-returned from matched PDF) */}
-          <div className={`md:col-span-2 ${isSplitMode ? '' : 'lg:col-span-4'} bg-slate-50 p-4 rounded-xl border border-slate-200 grid grid-cols-1 sm:grid-cols-3 gap-4`}>
-            <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">
-                📊 全球资产月度回报适配页码 (自动读取返还)
-              </label>
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-slate-600">第</span>
-                <input
-                  type="number"
-                  min="1"
-                  max="50"
-                  value={portfolio.page_returns || 6}
-                  onChange={(e) => handleMetaChange('page_returns', parseInt(e.target.value) || 6)}
-                  className="w-20 px-3 py-1.5 text-sm font-bold text-center text-slate-950 bg-white rounded-lg border border-slate-300"
-                />
-                <span className="text-xs text-slate-600">页 (研报实测适配)</span>
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">
-                ⭐ 行业星级榜适配页码 (自动读取返还)
-              </label>
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-slate-600">第</span>
-                <input
-                  type="number"
-                  min="1"
-                  max="50"
-                  value={portfolio.page_stars || 7}
-                  onChange={(e) => handleMetaChange('page_stars', parseInt(e.target.value) || 7)}
-                  className="w-20 px-3 py-1.5 text-sm font-bold text-center text-slate-950 bg-white rounded-lg border border-slate-300"
-                />
-                <span className="text-xs text-slate-600">页 (研报实测适配)</span>
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">
-                📑 月度深度专题适配题目 (Slide 3 专题)
-              </label>
-              <input
-                type="text"
-                value={portfolio.slide3_topic_title_zh || '当债券不再扮演债券：60/40股债平衡组合是否已死？'}
-                onChange={(e) => handleMetaChange('slide3_topic_title_zh', e.target.value)}
-                className="w-full px-3 py-1.5 text-xs font-bold text-slate-950 bg-white rounded-lg border border-slate-300"
-              />
-            </div>
           </div>
         </div>
       </div>
 
       {/* ========================================================================= */}
-      {/* SECTION 2: INPUT MAPPING & FINANCIAL TIME-SERIES (2 Cards Only)           */}
+      {/* SECTION 2: ADAPTIVE PAGE NUMBERS & FINANCIAL TIME-SERIES                  */}
       {/* ========================================================================= */}
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="bg-slate-50/80 px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+        <div className="bg-slate-50/80 px-6 py-4 border-b border-slate-200 flex flex-wrap justify-between items-center gap-4">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-sm">
               2
             </div>
             <div>
               <h2 className="text-base font-extrabold text-slate-900">
-                时间序列自动抓取与 Google Sheet 映射标准
+                研报章节动态页码返还与时间序列数据
               </h2>
               <p className="text-xs text-slate-500">
-                系统底层已实现全自动期数检测与时间序列清洗，根据第 1 节与第 2 节实时生成可预览 HTML
+                保存第 1 节后系统自动读取本地研报返还以下适配页码与专题；同时从 Calculation_Engine A列动态截取时序
               </p>
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <button
+              onClick={handleSaveSection2}
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition ${
+                sectionSaved['sec2']
+                  ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                  : 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs'
+              }`}
+            >
+              {sectionSaved['sec2'] ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> : <Save className="w-3.5 h-3.5 text-white" />}
+              <span>{sectionSaved['sec2'] ? '已保存页码微调' : '保存页码微调'}</span>
+            </button>
             <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold px-2.5 py-1 rounded-md">
-              ✓ 自动化锁定 (已生效)
+              ✓ 研报解析与时序联动
             </span>
           </div>
         </div>
 
+        {/* Dynamic Matched Pages & Topic Title Card (Moved from Section 1) */}
+        <div className="p-6 border-b border-slate-200 bg-slate-50/40">
+          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
+            <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <h3 className="text-xs font-black tracking-wider text-slate-900 uppercase">
+                  研报解析动态返还结果（支持顾问人工微调并保存）
+                </h3>
+              </div>
+              <span className="text-xs text-slate-600 font-medium">
+                研报来源: <code className="text-blue-700 font-bold bg-blue-50 px-2 py-0.5 rounded border border-blue-200">{portfolio.ref_pdf_name || '待第 1 节保存后读取'}</code>
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                  📊 全球资产月度回报适配页码 (自动读取返还)
+                </label>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-slate-600">第</span>
+                  <input
+                    type="number"
+                    min="1"
+                    max="50"
+                    value={portfolio.page_returns || 6}
+                    onChange={(e) => handleMetaChange('page_returns', parseInt(e.target.value) || 6)}
+                    className="w-20 px-3 py-1.5 text-sm font-bold text-center text-slate-950 bg-white rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <span className="text-xs text-slate-600">页 (研报实测适配)</span>
+                </div>
+                <span className="text-[11px] text-emerald-700 font-semibold mt-1.5 block">
+                  ✓ 对应 Slide 2 全球大类资产月度表现穿透
+                </span>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                  ⭐ 行业星级榜适配页码 (自动读取返还)
+                </label>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-slate-600">第</span>
+                  <input
+                    type="number"
+                    min="1"
+                    max="50"
+                    value={portfolio.page_stars || 7}
+                    onChange={(e) => handleMetaChange('page_stars', parseInt(e.target.value) || 7)}
+                    className="w-20 px-3 py-1.5 text-sm font-bold text-center text-slate-950 bg-white rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <span className="text-xs text-slate-600">页 (研报实测适配)</span>
+                </div>
+                <span className="text-[11px] text-emerald-700 font-semibold mt-1.5 block">
+                  ✓ 对应 Slide 2 行业星级与估值评级穿透
+                </span>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                  📑 月度深度专题适配题目 (Slide 3 专题)
+                </label>
+                <input
+                  type="text"
+                  value={portfolio.slide3_topic_title_zh || '当债券不再扮演债券：60/40股债平衡组合是否已死？'}
+                  onChange={(e) => handleMetaChange('slide3_topic_title_zh', e.target.value)}
+                  className="w-full px-3 py-1.5 text-xs font-bold text-slate-950 bg-white rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <span className="text-[11px] text-emerald-700 font-semibold mt-1.5 block">
+                  ✓ 对应 Slide 3 研报深度专题解析题目
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Dynamic Time-Series Info & Sheet Mapping */}
         <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
             <span className="text-xs font-bold text-slate-500 block mb-1">动态时间序列期数</span>

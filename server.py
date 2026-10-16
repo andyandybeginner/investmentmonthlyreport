@@ -309,6 +309,19 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
 
             holdings_for_month = normalize_and_enrich_holdings(holdings_for_month, month)
 
+            saved_page_returns = None
+            saved_page_stars = None
+            saved_topic_zh = None
+            if os.path.exists(cfg_file):
+                try:
+                    with open(cfg_file, 'r', encoding='utf-8') as cf:
+                        cfg_obj = json.load(cf)
+                        saved_page_returns = cfg_obj.get('page_returns')
+                        saved_page_stars = cfg_obj.get('page_stars')
+                        saved_topic_zh = cfg_obj.get('slide3_topic_title')
+                except Exception:
+                    pass
+
             matched.update({
                 "status": "success",
                 "month": month,
@@ -316,10 +329,10 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
                 "valuation_date_zh": val_zh,
                 "valuation_date_en": val_en,
                 "ref_pdf_name": matched.get("filename") or pdf_name,
-                "page_returns": matched.get("returns_page", 3),
-                "page_stars": matched.get("star_ratings_page", 4),
+                "page_returns": saved_page_returns if saved_page_returns is not None else matched.get("returns_page", 3),
+                "page_stars": saved_page_stars if saved_page_stars is not None else matched.get("star_ratings_page", 4),
                 "page_topic": matched.get("topic_page", 5),
-                "slide3_topic_title_zh": matched.get("topic_title_zh", "当债券不再扮演债券：60/40股债平衡组合是否已死？"),
+                "slide3_topic_title_zh": saved_topic_zh or matched.get("topic_title_zh", "当债券不再扮演债券：60/40股债平衡组合是否已死？"),
                 "slide3_topic_title_en": matched.get("topic_title_en", "When Bonds Stop Behaving Like Bonds: Is 60/40 Dead?"),
                 "holdings": holdings_for_month,
                 "fund_count": len(holdings_for_month)
@@ -496,11 +509,28 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
                 val_en = f"{resolved_settle} ({month} Valuation)"
 
             cfg['report_month'] = month
-            cfg['settle_date'] = resolved_settle
+            cfg['settle_date'] = req_data.get('settle_date') or resolved_settle
             cfg['valuation_date_zh'] = val_zh
             cfg['valuation_date_en'] = val_en
-            cfg['reference_monthly_update'] = matched_pdf.get('filename') or found_pdf_name
-            cfg['slide3_topic_title'] = matched_pdf.get('topic_title_zh', cfg.get('slide3_topic_title', ''))
+            cfg['reference_monthly_update'] = req_data.get('ref_pdf_name') or cfg.get('reference_monthly_update') or matched_pdf.get('filename') or found_pdf_name
+            
+            # Persist custom or matched page returns, star ratings, and slide3 topic title
+            if 'page_returns' in req_data:
+                cfg['page_returns'] = int(req_data['page_returns'])
+            elif 'page_returns' not in cfg:
+                cfg['page_returns'] = matched_pdf.get('returns_page', 3)
+
+            if 'page_stars' in req_data:
+                cfg['page_stars'] = int(req_data['page_stars'])
+            elif 'page_stars' not in cfg:
+                cfg['page_stars'] = matched_pdf.get('star_ratings_page', 4)
+
+            if 'slide3_topic_title' in req_data:
+                cfg['slide3_topic_title'] = req_data['slide3_topic_title']
+            elif 'slide3_topic_title_zh' in req_data:
+                cfg['slide3_topic_title'] = req_data['slide3_topic_title_zh']
+            elif not cfg.get('slide3_topic_title'):
+                cfg['slide3_topic_title'] = matched_pdf.get('topic_title_zh', '当债券不再扮演债券：60/40股债平衡组合是否已死？')
 
             # Update paths and settings
             supported_keys = [
@@ -543,20 +573,20 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
             self.wfile.write(json.dumps({
                 "status": "success",
                 "month": month,
-                "settle_date": resolved_settle,
+                "settle_date": cfg['settle_date'],
                 "valuation_date_zh": val_zh,
                 "valuation_date_en": val_en,
                 "ref_pdf_name": cfg['reference_monthly_update'],
                 "ref_pdf_exists": matched_pdf.get('exists', False),
-                "page_returns": matched_pdf.get('returns_page', 3),
-                "page_stars": matched_pdf.get('star_ratings_page', 4),
+                "page_returns": cfg.get('page_returns', matched_pdf.get('returns_page', 3)),
+                "page_stars": cfg.get('page_stars', matched_pdf.get('star_ratings_page', 4)),
                 "page_topic": matched_pdf.get('topic_page', 5),
-                "slide3_topic_title_zh": matched_pdf.get('topic_title_zh', ''),
+                "slide3_topic_title_zh": cfg.get('slide3_topic_title', matched_pdf.get('topic_title_zh', '')),
                 "slide3_topic_title_en": matched_pdf.get('topic_title_en', ''),
                 "holdings_conviction": mgr['holdings_conviction'],
                 "fund_count": len(mgr['holdings_conviction']),
                 "preview_file": preview_file,
-                "message": f"{month} {sec_name}已保存，并已从 Calculation_Engine A列匹配结算日 {resolved_settle}、底层 {len(mgr['holdings_conviction'])} 只基金客观回报比重及本地研报页码！"
+                "message": f"{month} {sec_name}已保存，并已从 Calculation_Engine A列匹配结算日 {cfg['settle_date']}、底层 {len(mgr['holdings_conviction'])} 只基金客观回报比重及本地研报页码！"
             }, ensure_ascii=False).encode('utf-8'))
             return
 

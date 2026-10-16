@@ -164,5 +164,7 @@
     "export_factsheet_zh": true,
     "export_factsheet_en": true,
     "target_dir": "G:\\我的云端硬盘\\0. 工作\\2. 投资分析计划 01102026\\3. Monthly Report"
-  }
+  },
+  "page_returns": 6,
+  "page_stars": 7
 }

@@ -83,7 +83,7 @@ Whenever referring to **Taiwan** or **Hong Kong** in ANY part of the report (inc
 
 ### 2.4 月度归因严谨性、70:30 论据生成与自动翻译规范 (Monthly Attribution, 70:30 Argumentation & Auto-Translation)
 - **两步式预览与定见工作流 (Two-Stage Preview & Verdict Workflow):**
-  1. 系统首先根据 **第 1 节（目标月份与研报页码匹配）** 与 **第 2 节（Calculation Engine 时间序列自动抓取）** 自动生成可实时预览的 HTML 报告。
+  1. 系统首先根据 **第 1 节（报告目标月份与研报文件检索）** 与 **第 2 节（研报章节动态页码返还与时间序列数据）** 自动生成可实时预览的 HTML 报告。
   2. 随后，顾问在 **第 4 节“月度调仓结论总评”** 的单一合并输入框中写入中文核心结论与主观意见（中英文合并为同一模块，无需顾问重复填写两次）。
   3. **Agent 70:30 论据寻找与反驳机制（字数严控 $\le 200$ 字）**：
      - Agent 根据顾问输入的主观意见，自动结合当月持仓表现与研报宏观脉络寻找论据：
@@ -164,19 +164,20 @@ Whenever referring to **Taiwan** or **Hong Kong** in ANY part of the report (inc
   - `Columns K - R` & `AC - AJ`: 7 只底层基金当前市值、实际权重与目标权重。
 
 ### 4.2 估值结算日期与参考研报全自动回溯匹配逻辑 (Automated Settle Date & Reference PDF Resolution)
-1. **顾问唯一手动输入项 (Single Manual Trigger):**
+1. **顾问唯一手动输入项 (Single Manual Trigger - 第 1 节):**
    - 顾问在工作台第 1 节仅需填入**目标汇报月度** $M$（如制作 9 月份备忘录，填入 `2026-09`）并点击“保存本节设定”。
 2. **跨月发布与参考时间锚点 (Publication & Reference Month $M+1$ Anchor):**
    - 制作 $M$ 月的备忘录（如 `2026-09` 9月备忘录），实际发布与估值结算发生于次月 $M+1$（即 `2026-10` 10月），所引用的研报为次月发布的 `iFAST Monthly Investment Update October 2026.pdf`。
    - 制作 `2026-08` 8月备忘录，发布与估值结算发生于 `2026-09` 9月，所引用的研报为 `iFAST Monthly Investment Update Sep 2026.pdf`。
-3. **自动从 `Calculation_Engine` A列拉取估值结算日:**
-   - 系统收到汇报月份 $M$（如 `2026-09`）后，自动查询 Google Sheet `Calculation_Engine` 的 **A 列 (`Column A`)**，定位到制作月份下一个月 $M+1$（如 `2026-10`）中**第一个有净值价格的日期**（即 `2026-10-05`；若制作 `2026-08` 则在 A 列定位 `2026-09` 第一个有价格的日期 `2026-09-03`），并自动写入 `估值结算日期 (settle_date)`。
-4. **自动扫描预设本地文件夹匹配 iFAST 研报与动态页码:**
-   - 系统自动在预设本地文件夹 `G:\我的云端硬盘\0. 工作\2. 投资分析计划 01102026\3. Monthly Report\1. iFast Monthly update\` 中检索匹配 $M+1$ 月份的研报 PDF 文件。
-   - 读取并解析该 PDF 后，自动返还该期研报中各板块的实际适配页码：
-     - 全球资产月度回报页码 (`returns_page`，如 9月刊为 P.3，10月刊为 P.6)
-     - 行业星级榜页码 (`star_ratings_page`，如 9月刊为 P.4，10月刊为 P.7)
-     - 月度深度专题页码与题目 (`topic_page` & `topic_title`，如 9月刊为 P.6《超越银行主导核心——主动布局“新新加坡”高成长机遇》，10月刊为 P.12《当债券不再扮演债券》)
+3. **自动从 `Calculation_Engine` A列拉取估值结算日 (第 1 节自动回溯填入):**
+   - 系统收到汇报月份 $M$（如 `2026-09`）后，自动查询 Google Sheet `Calculation_Engine` 的 **A 列 (`Column A`)**，定位到制作月份下一个月 $M+1$（如 `2026-10`）中**第一个有净值价格的日期**（即 `2026-10-05`；若制作 `2026-08` 则在 A 列定位 `2026-09` 第一个有价格的日期 `2026-09-03`），并自动写入第 1 节的 `估值结算日期 (settle_date)`。
+4. **研报章节动态页码与专题返还至第 2 节 (第 2 节呈现与微调):**
+   - 保存第 1 节后，系统自动在预设本地文件夹 `G:\我的云端硬盘\0. 工作\2. 投资分析计划 01102026\3. Monthly Report\1. iFast Monthly update\` 中检索匹配 $M+1$ 月份的研报 PDF 文件。
+   - 读取并解析该 PDF 后，自动返还以下适配页码并呈现在**工作台第 2 节**中，支持顾问在此人工微调并保存：
+     - 全球资产月度回报适配页码 (`returns_page`，如 9月刊为 P.3，10月刊为 P.6)
+     - 行业星级榜适配页码 (`star_ratings_page`，如 9月刊为 P.4，10月刊为 P.7)
+     - 月度深度专题适配题目 (`topic_page` & `topic_title`，如 9月刊为 P.6《超越银行主导核心——主动布局“新新加坡”高成长机遇》，10月刊为 P.12《当债券不再扮演债券》)
+   - 同时，第 2 节根据选定汇报月度与结算日动态截取并展示当前时间序列的实际期数（如 8月为 39 期，9月为 40 期，完全由汇报日期决定，非固定写死）。
 
 ### 4.3 Chart Reconstitution & Rebalance Markers
 - 净值走势图根据时间序列自动标注历史调仓节点：
