@@ -28,9 +28,9 @@ const INITIAL_PORTFOLIO_STATE: PortfolioState = {
   monthly_return_1m: -1.21,
   monthly_alpha_1m: -1.18,
 
-  // Manager Views
-  qualitative_view: "9月美联储开启超预期50基点降息，中国央行推出强力刺激组合拳，全球流动性与风险偏好急剧抬升。在股债正相关新常态下，组合坚守‘纯股票成长引擎+富敦绝对收益对冲底仓+大华黄金逆周期防守’三支柱架构，底层基本面支撑扎实，建议保持全员持有定力。",
-  qualitative_view_en: "In September, aggressive central bank policy easing sparked a global liquidity inflection. Amid persistent positive stock-bond correlations, the portfolio adheres to its three pillars: all-equity growth engine + Fullerton market-neutral core + United Gold counter-cyclical hedge. Solid underlying fundamentals justify an unwavering HOLD verdict across all 7 funds.",
+  // Manager Views (70% Supporting + 30% Counter-Argument, <= 200 chars)
+  qualitative_view: "【正向论据 70%】美联储降息50基点叠加国内刺激，流动性拐点确立；股债正相关常态下，组合坚守纯股票成长、富敦绝对收益底仓与大华黄金三支柱，成立以来累计回报+81.16%，超额收益+12.49%。【反方审视 30%】尽管长端美债收益率反弹与地缘摩擦令当月净值微调1.21%，但回撤主要源于科技与A股短期估值消化，核心盈利逻辑稳固，维持全员持有定力。",
+  qualitative_view_en: "[Supporting Evidence 70%] Following the 50 bps rate cut and domestic stimulus, a global liquidity inflection is firmly established; amid persistent positive stock-bond correlations, the portfolio adheres to its three-pillar all-equity growth, Fullerton market-neutral core, and United Gold hedge architecture, delivering +81.16% cumulative return and +12.49% alpha since inception. [Counter-Arguments 30%] Although rebounding long-end Treasury yields and geopolitical friction caused a minor 1.21% monthly pullback, the dip reflects temporary valuation digestion rather than fundamental decay, warranting a firm HOLD verdict across all 7 funds.",
   rebalance_verdict: "持有",
   rebalance_note: "全员保持持有，各支柱运作良好，无须被动调仓",
   rebalance_note_en: "Maintain all holdings; pillars operate smoothly with no forced rebalancing required.",
@@ -42,9 +42,9 @@ const INITIAL_PORTFOLIO_STATE: PortfolioState = {
   slide3_topic_title_en: "When Bonds Stop Behaving Like Bonds: Is 60/40 Dead?",
 
   // Matched Reference Update Pages
-  ref_pdf_name: "20261005 iFAST Monthly Investment Update.pdf",
-  page_returns: 3,
-  page_stars: 4,
+  ref_pdf_name: "iFAST Monthly Investment Update October 2026.pdf",
+  page_returns: 6,
+  page_stars: 7,
 
   // 7 Underlying Funds
   holdings: [
@@ -65,7 +65,7 @@ const INITIAL_PORTFOLIO_STATE: PortfolioState = {
       recommendation: "持有",
       sharpe_3y: "0.62*",
       vol_3y: "13.80%",
-      role_desc_zh: "全天候核心底仓，Sortino 0.93，多空市场中性对冲 (*成立以来)",
+      role_desc_zh: "全天候核心底仓，索提诺比率 0.93，多空市场中性对冲 (*成立以来)",
       role_desc_en: "All-weather core ballast, Sortino 0.93, long/short market-neutral overlay (*since inc.)"
     },
     {
@@ -80,7 +80,7 @@ const INITIAL_PORTFOLIO_STATE: PortfolioState = {
       active: true,
       market_noise: "长端美债收益率反弹压制高估值芯片",
       market_noise_en: "Elevated yields weighing on high-multiple tech",
-      fundamental_support: "AI算力与先进制程硬件超级周期确定性",
+      fundamental_support: "人工智能算力与先进制程硬件超级周期确定性",
       fundamental_support_en: "Secular AI compute & packaging demand (NVDA/TSMC)",
       recommendation: "持有",
       sharpe_3y: "1.10",
@@ -98,9 +98,9 @@ const INITIAL_PORTFOLIO_STATE: PortfolioState = {
       return_1m: -0.42,
       contrib_1m: -0.06,
       active: true,
-      market_noise: "部分非GLP-1传统生物科技管线估值调整",
+      market_noise: "部分传统生物科技管线估值调整",
       market_noise_en: "Broader biotech pipeline re-pricing",
-      fundamental_support: "重磅减重药放量与医疗健康刚性现金流",
+      fundamental_support: "重磅减重创新药放量与医疗健康刚性现金流",
       fundamental_support_en: "GLP-1 blockbuster ramp & robust clinical cash flows (LLY/JNJ)",
       recommendation: "持有",
       sharpe_3y: "0.43",
@@ -145,7 +145,7 @@ const INITIAL_PORTFOLIO_STATE: PortfolioState = {
       recommendation: "持有",
       sharpe_3y: "0.75^",
       vol_3y: "22.00%",
-      role_desc_zh: "3年年化+18.4%，聚焦国产AI算力底座，享有极高不对称安全边际",
+      role_desc_zh: "3年年化+18.4%，聚焦国产智能算力底座，享有极高不对称安全边际",
       role_desc_en: "3Y ann. +18.4%, domestic AI hardware compute infrastructure, asymmetric valuation margin"
     },
     {
@@ -185,7 +185,7 @@ const INITIAL_PORTFOLIO_STATE: PortfolioState = {
       recommendation: "持有",
       sharpe_3y: "1.01",
       vol_3y: "12.42%",
-      role_desc_zh: "新币对冲B类，3年波动仅12.4%，受益日央行货币正常化与东证改革",
+      role_desc_zh: "新币对冲份额，3年波动仅12.4%，受益日央行货币正常化与东证改革",
       role_desc_en: "SGD Hedged Class B, 3Y vol 12.4%, benefiting from BOJ policy normalization & TSE reforms"
     }
   ],
@@ -259,8 +259,8 @@ const INITIAL_PORTFOLIO_STATE: PortfolioState = {
       { name: "韩国及其他新兴市场", name_en: "South Korea & EM", weight: 2.20, flag: "🇰🇷" }
     ],
     sectors: [
-      { name: "信息技术 (IT & AI)", name_en: "Information Technology (IT)", weight: 31.66, sub: "AI 算力、先进制程晶圆代工与云巨头资本开支", sub_en: "AI Compute, Advanced Packaging & Cloud CapEx" },
-      { name: "医疗健康与生命科学", name_en: "Health Care & Life Sciences", weight: 16.96, sub: "GLP-1 减重药、肿瘤靶向药与诊断设备", sub_en: "GLP-1 Weight Loss, Oncology & Diagnostics" },
+      { name: "信息技术与人工智能", name_en: "Information Technology (IT)", weight: 31.66, sub: "人工智能算力、先进制程晶圆代工与云巨头资本开支", sub_en: "AI Compute, Advanced Packaging & Cloud CapEx" },
+      { name: "医疗健康与生命科学", name_en: "Health Care & Life Sciences", weight: 16.96, sub: "重磅减重创新药、肿瘤靶向药与诊断设备", sub_en: "GLP-1 Weight Loss, Oncology & Diagnostics" },
       { name: "原材料与黄金采掘", name_en: "Materials & Gold Mining", weight: 14.54, sub: "包含 10.46% 纯黄金底层穿透对冲压舱石", sub_en: "Includes 10.46% pure gold look-through ballast" },
       { name: "金融服务与财富枢纽", name_en: "Financials & Wealth Hubs", weight: 11.36, sub: "新加坡与日本优质高息商业银行龙头", sub_en: "Singapore & Japan commercial banking leaders" },
       { name: "工业制造与自动化", name_en: "Industrials & Automation", weight: 9.29, sub: "精密制造、工业物流与防务科技", sub_en: "Automation, precision tooling & defense tech" },
@@ -269,15 +269,15 @@ const INITIAL_PORTFOLIO_STATE: PortfolioState = {
       { name: "消费与其他行业", name_en: "Consumer & Others", weight: 5.88, sub: "优质特许消费与新兴增长标的", sub_en: "High-quality franchise consumer names" }
     ],
     top_holdings: [
-      { rank: 1, name: "谷歌母公司 Alphabet Inc (GOOGL)", name_en: "Alphabet Inc. (GOOGL)", weight: 3.45, country: "美国", country_en: "United States", sector: "通信/AI", sector_en: "Communication/AI", sources: ["Fullerton(7.9%)", "Eastspring(3.9%)"] },
+      { rank: 1, name: "谷歌母公司 Alphabet Inc (GOOGL)", name_en: "Alphabet Inc. (GOOGL)", weight: 3.45, country: "美国", country_en: "United States", sector: "通信与智能云", sector_en: "Communication/AI", sources: ["Fullerton(7.9%)", "Eastspring(3.9%)"] },
       { rank: 2, name: "台积电 TSMC (2330.TW)", name_en: "TSMC (Taiwan, China)", weight: 2.73, country: "中国台湾", country_en: "Taiwan (China)", sector: "晶圆代工龙头", sector_en: "Foundry Leader", sources: ["Eastspring(7.8%)", "Fullerton(2.8%)", "FSSA(9.7%)"] },
-      { rank: 3, name: "微软 Microsoft Corp (MSFT)", name_en: "Microsoft Corp. (MSFT)", weight: 2.03, country: "美国", country_en: "United States", sector: "云软件/AI", sector_en: "Cloud/AI", sources: ["Eastspring(5.6%)", "Fullerton(3.0%)"] },
+      { rank: 3, name: "微软 Microsoft Corp (MSFT)", name_en: "Microsoft Corp. (MSFT)", weight: 2.03, country: "美国", country_en: "United States", sector: "云软件与智能算力", sector_en: "Cloud/AI", sources: ["Eastspring(5.6%)", "Fullerton(3.0%)"] },
       { rank: 4, name: "赛默飞世尔 Thermo Fisher (TMO)", name_en: "Thermo Fisher Scientific (TMO)", weight: 1.78, country: "美国", country_en: "United States", sector: "生命科学仪器", sector_en: "Life Sciences", sources: ["Fullerton(3.9%)", "Janus(2.9%)"] },
-      { rank: 5, name: "英伟达 NVIDIA Corp (NVDA)", name_en: "NVIDIA Corp. (NVDA)", weight: 1.55, country: "美国", country_en: "United States", sector: "半导体/算力", sector_en: "AI Semiconductors", sources: ["Eastspring(8.9%)"] },
+      { rank: 5, name: "英伟达 NVIDIA Corp (NVDA)", name_en: "NVIDIA Corp. (NVDA)", weight: 1.55, country: "美国", country_en: "United States", sector: "半导体与算力芯片", sector_en: "AI Semiconductors", sources: ["Eastspring(8.9%)"] },
       { rank: 6, name: "鸿海精密 Hon Hai Precision (2317)", name_en: "Hon Hai Precision (Taiwan, China)", weight: 1.51, country: "中国台湾", country_en: "Taiwan (China)", sector: "科技制造", sector_en: "Tech Manufacturing", sources: ["Fullerton Alpha(4.3%)"] },
       { rank: 7, name: "3M Company (MMM)", name_en: "3M Company (MMM)", weight: 1.47, country: "美国", country_en: "United States", sector: "工业多元", sector_en: "Industrial Conglomerate", sources: ["Fullerton Alpha(4.2%)"] },
-      { rank: 8, name: "礼来制药 Eli Lilly & Co (LLY)", name_en: "Eli Lilly & Co. (LLY)", weight: 1.30, country: "美国", country_en: "United States", sector: "创新药/GLP-1", sector_en: "Biopharma GLP-1", sources: ["Janus Life(9.2%)"] },
-      { rank: 9, name: "华侨银行 OCBC Bank (O39.SI)", name_en: "OCBC Bank (Singapore)", weight: 1.28, country: "新加坡", country_en: "Singapore", sector: "财富管理/信贷", sector_en: "Wealth Management", sources: ["Fullerton(3.3%)", "FSSA(3.0%)"] },
+      { rank: 8, name: "礼来制药 Eli Lilly & Co (LLY)", name_en: "Eli Lilly & Co. (LLY)", weight: 1.30, country: "美国", country_en: "United States", sector: "减重创新药", sector_en: "Biopharma GLP-1", sources: ["Janus Life(9.2%)"] },
+      { rank: 9, name: "华侨银行 OCBC Bank (O39.SI)", name_en: "OCBC Bank (Singapore)", weight: 1.28, country: "新加坡", country_en: "Singapore", sector: "财富管理与信贷", sector_en: "Wealth Management", sources: ["Fullerton(3.3%)", "FSSA(3.0%)"] },
       { rank: 10, name: "CSX Corp (CSX)", name_en: "CSX Corporation (CSX)", weight: 1.26, country: "美国", country_en: "United States", sector: "工业物流", sector_en: "Rail Logistics", sources: ["Fullerton Alpha(3.6%)"] }
     ]
   }
@@ -299,10 +299,14 @@ export const App: React.FC = () => {
         if (data && data.manager_input) {
           setPortfolio(prev => ({
             ...prev,
+            settle_date: data.settle_date || prev.settle_date,
             qualitative_view: data.manager_input.qualitative_view || prev.qualitative_view,
+            qualitative_view_en: data.manager_input.qualitative_view_en || prev.qualitative_view_en,
             rebalance_verdict: data.manager_input.rebalance_verdict || prev.rebalance_verdict,
             rebalance_note: data.manager_input.rebalance_note || prev.rebalance_note,
-            ref_pdf_name: data.reference_monthly_update || prev.ref_pdf_name
+            ref_pdf_name: data.reference_monthly_update || prev.ref_pdf_name,
+            page_returns: data.pdf_pages?.returns_page || prev.page_returns,
+            page_stars: data.pdf_pages?.star_ratings_page || prev.page_stars
           }));
         }
       })
@@ -432,8 +436,14 @@ export const App: React.FC = () => {
             {/* Right 7 Cols: Live Slides Scaled */}
             <div className="col-span-12 lg:col-span-7 h-[calc(100vh-80px)] overflow-y-auto pl-2 custom-scrollbar space-y-8 bg-slate-900/60 p-4 rounded-2xl border border-slate-800">
               <div className="text-xs font-bold text-amber-400 bg-slate-950/80 px-3 py-1.5 rounded-lg border border-slate-800 flex justify-between items-center sticky top-0 z-30">
-                <span>⚡ Live Reactive Presentation Preview (Hot Reload)</span>
-                <span className="text-slate-400 font-mono text-[10px]">Changes above reflect here immediately</span>
+                <span>
+                  {lang === 'en'
+                    ? '⚡ Live Reactive Presentation Preview (Hot Reload)'
+                    : '⚡ 实时联动报告画板预览 (毫秒级热更新)'}
+                </span>
+                <span className="text-slate-400 font-mono text-[10px]">
+                  {lang === 'en' ? 'Changes reflect here immediately' : '左侧修改将在此处实时同步渲染'}
+                </span>
               </div>
               <div className="space-y-8">
                 <Slide1 state={portfolio} lang={lang} />

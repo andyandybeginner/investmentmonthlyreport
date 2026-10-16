@@ -81,23 +81,31 @@ Whenever referring to **Taiwan** or **Hong Kong** in ANY part of the report (inc
    - If AI detects any discrepancy between macro commentary, sector star ratings, and model portfolio targets/holdings, **AI MUST NOT make unilateral assumptions**.
    - AI must clearly document the discrepancy, calculate the look-through impact, and present the proposed narrative to the manager for explicit approval.
 
-### 2.4 月度归因严谨性与授权确认 (Monthly Attribution Rigor & Authorization)
-- **Truthful Financial Representation:** Never exaggerate minor positive returns as "strong buffers" (e.g., `Fullerton Absolute Alpha (+0.45%)` is a low-beta pair-trading ballast for capital preservation, not a high-beta driver).
-- **Fundamental Cause vs Price Movement:** Price pullbacks in core strategic positions must be contextualized using actual portfolio weights (e.g., `United China A` falling -5.40% represents healthy profit-taking / profit give-back following massive prior gains, evidenced by its actual weight of 12.36% remaining comfortably above its 12.00% target allocation).
-- **Mandatory Confirmation Rule:** Any modification or newly generated attribution text must be presented to the user for explicit confirmation before final deployment.
+### 2.4 月度归因严谨性、70:30 论据生成与自动翻译规范 (Monthly Attribution, 70:30 Argumentation & Auto-Translation)
+- **两步式预览与定见工作流 (Two-Stage Preview & Verdict Workflow):**
+  1. 系统首先根据 **第 1 节（目标月份与研报页码匹配）** 与 **第 2 节（Calculation Engine 时间序列自动抓取）** 自动生成可实时预览的 HTML 报告。
+  2. 随后，顾问在 **第 4 节“月度调仓结论总评”** 的单一合并输入框中写入中文核心结论与主观意见（中英文合并为同一模块，无需顾问重复填写两次）。
+  3. **Agent 70:30 论据寻找与反驳机制（字数严控 $\le 200$ 字）**：
+     - Agent 根据顾问输入的主观意见，自动结合当月持仓表现与研报宏观脉络寻找论据：
+       - **70% 正向核心支撑论据**：提取支持顾问结论的核心定量与定性证据（如核心底仓超额表现、实际权重与目标权重安全边界、AI 算力资本开支或黄金去美元化避险逻辑等）。
+       - **30% 反驳观点 / 短期逆风审视**：客观呈现短期市场逆风或分歧观点（如长端美债收益率反弹、局部板块获利回吐或估值消化压力），并阐明为何短期噪音不改变战略定力。
+     - **字数硬性红线**：生成的中文月度调仓结论总评**严格不超过 200 字（$\le 200$ 字）**。
+     - **英文版全自动翻译**：系统自动将中文总评精准翻译为纯正机构英文（`qualitative_view_en`），实时同步至英文版报告与 PDF 导出。
 
-### 2.5 新加坡法规合规与语言纯洁性 (SFA 289 Regulatory Compliance & Language Purity)
+### 2.5 新加坡法规合规与语言纯洁性 (SFA 289 Regulatory Compliance & Strict Language Purity)
 - **Governing Law:** Singapore Securities and Futures Act 2001 (SFA, Cap. 289).
 - **Discretionary Managed Account (MA) Status:** The portfolio is an individualized discretionary managed account service, NOT a collective investment scheme (CIS) or standalone unit trust fund.
-- **Language Purity:**
-  - In Chinese mode, zero English terminology is permitted in headings, labels, or explanatory paragraphs.
+- **绝对语言纯洁性红线 (Zero Mixed-Language Rule — 基础铁律):**
+  - **除非标的名称、专有名词、人名，其余所有内容必须 100% 使用当前对应语言，严禁中英混杂！**
+  - **中文模式 (ZH Mode):** 标题、表头、图例、坐标轴、脚注、状态徽章及正文说明严禁夹杂任何英文普通词汇或缩写（严禁出现 `VS`、`1M`、`Unit: %`、`Inception`、`Restructure`、`Rebalance`、`bps`、`Sortino`、`Top 10`、`Factsheet`、`Research Focus`、`Legal & Compliance` 等英文词；必须全部使用纯正中文，如 `对比`、`单月`、`单位：%`、`成立基期`、`组合重组`、`季度再平衡`、`个基点`、`索提诺比率`、`前十大`、`底层穿透单页`）。
+  - **英文模式 (EN Mode):** 全文（含 Slide 1–5 及独立穿透 Factsheet）必须为 100% 纯正英文，严禁残留任何中文字符。
   - Strictly use statutory Singapore terminology: `月度建议备忘录` (Advisory Memorandum), `全权委托投资专户` (Discretionary Managed Account), `财务顾问代表` (FA Reps), `专户投资经理代表` (FM Reps).
 - **Statutory MAS Disclaimer:** Every release must carry:  
-  *“本材料或广告未经新加坡金融管理局 (Monetary Authority of Singapore, MAS) 审阅。”* / *“This advertisement or material has not been reviewed by the Monetary Authority of Singapore.”*
+  *“本材料或广告未经新加坡金融管理局 (Monetary Authority of Singapore) 审阅。”* / *“This advertisement or material has not been reviewed by the Monetary Authority of Singapore.”*
 
 ### 2.6 底层基金当月回报率取值规范：专属价格列表穿透 (Individual Fund Price List Look-Up Rule)
 - **绝对准则 (Single Source of Truth for Fund Returns):**
-  在生成 Slide 1 底层 7 只优选基金穿透表的“当月回报 (1M)”与 Slide 4 “信念审查决策矩阵”的月度回报时，**严禁直接使用专户总表 `HR_Model_Port_Current` 的月中结算行之间作简单相除**。
+  在生成 Slide 1 底层 7 只优选基金穿透表的“当月回报”与 Slide 4 “信念审查决策矩阵”的月度回报时，**严禁直接使用专户总表 `HR_Model_Port_Current` 的月中结算行之间作简单相除**。
 - **强制取值路径 (Mandatory Individual Tabs):**
   必须直接穿透读取 Google Sheet 云端主表中 7 只标的各自独立的专属价格列表工作表 (Working Sheets / Price Lists)：
   1. `United China A Shares Innovation A Acc SGD` (Tab 12)
@@ -108,7 +116,7 @@ Whenever referring to **Taiwan** or **Hong Kong** in ANY part of the report (inc
   6. `United Gold and General A Acc SGD` (Tab 17)
   7. `Nikko AM Japan Dividend` (Tab 18)
 - **月度回报计算公式 (Month-End to Month-End Formula):**
-  $$\text{当月回报率 (1M)} = \frac{\text{报告月月末最后有效交易日价格 (Month-End Price)}}{\text{上月月末最后有效交易日价格 (Prior Month-End Price)}} - 1$$
+  $$\text{当月回报率} = \frac{\text{报告月月末最后有效交易日价格 (Month-End Price)}}{\text{上月月末最后有效交易日价格 (Prior Month-End Price)}} - 1$$
 - **财务逻辑与避坑原理:**
   专户总表的月初结算日（如每月 5 日）主要用于核算客户专户整体资产规模（AUM）；而底层基金当月真实表现必须以完整的自然历月（如 7月31日 至 8月31日）为基准。若从总表切片计算，月初前几天的突发暴涨或回调会被错误隔断（如 8 月大华黄金自然历月实际大涨 +24%，若从 8月5日总表切片则会被低估为 15.38%）。因此，**必须从每个基金的专属 Price List 提取月末价格计算真实月度收益率**。
 
@@ -118,11 +126,11 @@ Whenever referring to **Taiwan** or **Hong Kong** in ANY part of the report (inc
 
 | Slide # | Slide Title | Core Purpose & Contents |
 | :--- | :--- | :--- |
-| **Slide 1** | **月度投资建议备忘录 (Monthly Advisory Memorandum)** | Valuation date, multi-period performance vs MSCI ACWI & S&P 500, Alpha excess return, 7 underlying holdings table, 40-month verified NAV chart with Restructure (🟡) & Rebalance (🟢) timeline markers, monthly attribution & rebalancing notes. |
-| **Slide 2** | **全球宏观脉搏与行业星级评定榜 (Macro Outlook & Sector Star Ratings)** | Top strategy callout, 9 equity & bond performance diverging bar charts (with pixel-perfect 0% ruler alignment), un-truncated US/Japan/China regional reviews from Page 6, Q4 structural themes & risks (with Gold look-through calibration), and verbatim 19-sector single-column Star Ratings table from Page 7. |
-| **Slide 3** | **月度专题深度 (Feature Insight / Ideas of the Month)** | 每期备忘录的第 3 页专题必须严格提取对应参考研报（iFAST Monthly Investment Update）中的“月度精选专题 / 优选标的深度解析 (Ideas of the Month / Feature Insight)”。例如：8月备忘录（参考9月月报）对应《超越银行主导核心——主动布局“新新加坡”高成长机遇》；9月备忘录（参考10月月报）对应《当债券不再扮演债券》。全文必须为 100% 纯正专业中文，严禁夹杂任何英文标题、英文副标题或半英半中生造词（严禁出现 "Tech 新加坡"、"The observation"、"WHY WE LIKE IT" 等）。所有图表、横纵轴、图例及重仓股必须彻底汉化。若研报案例以特定区域指数对比，须在页脚清晰注明本组合全局战略基准仍严格锚定 MSCI 全球指数。 |
-| **Slide 4** | **核心投资哲学与“坚守信念”复盘 (Our Philosophy & Conviction Review)** | Upper half: embedded iFAST Horizon Page 2 verbatim **OUR PHILOSOPHY** (dark teal brand banner + 6 investment principles: Diversification, Valuation-Driven, Fundamentals, Long-Term, Independent, Investors First); Lower half (compact downward ordered): 3 core investment pillars (Absolute Return 35%, High Growth 30%, Counter-Cyclical & Yield 35%), conviction review matrix (reviewed assets, monthly returns, short-term noise, fundamental support, advisory directive), and monthly rebalancing decision box. |
-| **Slide 5** | **重要法律声明与风险提示 (DISCLAIMER & RISK DISCLOSURE)** | Institutional legal disclaimers under the Singapore Financial Advisers Act (FAA): general info & advisory nature only, non-discretionary advisory scope (explicit client instructions required), capital & market risks, accuracy of info & limitation of liability, Gu Haoran registration as appointed representative of Alpha Wealth Financial Advisers Pte. Ltd., and prominent MAS statutory notice. |
+| **Slide 1** | **月度投资建议备忘录 (Monthly Advisory Memorandum)** | Valuation date, multi-period performance vs MSCI ACWI & S&P 500, Alpha excess return, 7 underlying holdings table, dynamically sliced verified NAV chart with Restructure (🟡) & Rebalance (🟢) timeline markers, monthly attribution & rebalancing notes. |
+| **Slide 2** | **全球宏观脉搏与行业星级评定榜 (Macro Outlook & Sector Star Ratings)** | Top strategy callout, 9 equity & bond performance diverging bar charts (with pixel-perfect 0% ruler alignment), un-truncated US/Japan/China regional reviews, Q4 structural themes & risks (with Gold look-through calibration), and verbatim 19-sector single-column Star Ratings table. |
+| **Slide 3** | **月度专题深度 (Feature Insight / Ideas of the Month)** | 每期备忘录的第 3 页专题必须严格提取对应参考研报（iFAST Monthly Investment Update）中的“月度精选专题 / 优选标的深度解析 (Ideas of the Month / Feature Insight)”。例如：8月备忘录（10月前发布于9月，参考9月月报）对应《超越银行主导核心——主动布局“新新加坡”高成长机遇》；9月备忘录（发布于10月，参考10月月报）对应《当债券不再扮演债券》。全文必须遵循语言零混杂铁律。 |
+| **Slide 4** | **核心投资哲学与“坚守信念”复盘 (Our Philosophy & Conviction Review)** | 3 core investment pillars (Absolute Return 35%, High Growth 30%, Counter-Cyclical & Yield 35%), conviction review matrix (reviewed assets, monthly returns, short-term noise, fundamental support, advisory directive), and monthly rebalancing decision box. |
+| **Slide 5** | **重要法律声明与风险提示 (DISCLAIMER & RISK DISCLOSURE)** | Institutional legal disclaimers under the Singapore Financial Advisers Act (FAA): general info & advisory nature only, non-discretionary advisory scope (explicit client instructions required), capital & market risks, accuracy of info & limitation of liability, and prominent MAS statutory notice. |
 
 ---
 
@@ -130,29 +138,40 @@ Whenever referring to **Taiwan** or **Hong Kong** in ANY part of the report (inc
 
 ### 4.1 Master Google Sheet Structure
 - **Sheet ID:** `1VXy6RGThyuQIBwYg9VF3NbWc7wXyfLFQcMGPgEf2Q4I`
-- **Tab: `Calculation_Engine`**:
-  - `Column B`: Date (`YYYY-MM-DD`).
-  - `Column F`: Verified Cumulative NAV (`Current Model`).
-  - `Column H`: S&P 500 (Same Inception, e.g. Row 69 is 171.46% = +71.46%).
-  - `Column I`: MSCI ACWI (Same Inception, e.g. Row 69 is 168.67% = +68.67%).
+- **Tab: `Calculation_Engine`（全组合时间序列计算）**:
+  - **`Column A`**: 估值结算日期 (`YYYY-MM-DD`，如 `2026-09-03`、`2026-10-05`)。
+  - **`Column F`**: 当前组合经核验累计复权净值 (`Current Model`)。
+  - **`Column G`**: 过去未重组组合累计净值 (`Past Model`)。
+  - **`Column H`**: 标普 500 同成立日累计净值 (`S&P 500`)。
+  - **`Column I`**: MSCI 全球同成立日累计净值 (`MSCI ACWI`)。
 - **Tab: `HR_Model_Port_Current`**:
-  - `Column A`: Action status (`Reconstitute` / `Restructure` / `Rebalance`).
-  - `Column B`: Event date (`YYYY-MM-DD`).
-  - `Columns E - N`: Target vs Current weights, latest NAV, monthly return, and attribution contribution across the 7 holdings.
+  - `Column A`: 调仓状态 (`Reconstitute` / `Restructure` / `Rebalance`)。
+  - `Column B`: 事件日期 (`YYYY-MM-DD`)。
+  - `Columns K - R` & `AC - AJ`: 7 只底层基金当前市值、实际权重与目标权重。
 
-### 4.2 Settle Date & Reporting Cycle Anchor Logic
-- In Singapore wealth advisory practice, valuations settled during the first 10 days of Month $M$ (e.g. `2026-10-05`) represent the monthly reporting cycle for Month $M-1$ (e.g. `September 2026`).
-- **Benchmark Calculation Anchor:**
-  - September Monthly Return compares the price on the first trading day of October (Row 69, `2026-10-05`) against the price on the first trading day of September (Row 67, `2026-09-03`).
+### 4.2 估值结算日期与参考研报全自动回溯匹配逻辑 (Automated Settle Date & Reference PDF Resolution)
+1. **顾问唯一手动输入项 (Single Manual Trigger):**
+   - 顾问在工作台第 1 节仅需填入**目标汇报月度** $M$（如制作 9 月份备忘录，填入 `2026-09`）并点击“保存本节设定”。
+2. **跨月发布与参考时间锚点 (Publication & Reference Month $M+1$ Anchor):**
+   - 制作 $M$ 月的备忘录（如 `2026-09` 9月备忘录），实际发布与估值结算发生于次月 $M+1$（即 `2026-10` 10月），所引用的研报为次月发布的 `iFAST Monthly Investment Update October 2026.pdf`。
+   - 制作 `2026-08` 8月备忘录，发布与估值结算发生于 `2026-09` 9月，所引用的研报为 `iFAST Monthly Investment Update Sep 2026.pdf`。
+3. **自动从 `Calculation_Engine` A列拉取估值结算日:**
+   - 系统收到汇报月份 $M$（如 `2026-09`）后，自动查询 Google Sheet `Calculation_Engine` 的 **A 列 (`Column A`)**，定位到制作月份下一个月 $M+1$（如 `2026-10`）中**第一个有净值价格的日期**（即 `2026-10-05`；若制作 `2026-08` 则在 A 列定位 `2026-09` 第一个有价格的日期 `2026-09-03`），并自动写入 `估值结算日期 (settle_date)`。
+4. **自动扫描预设本地文件夹匹配 iFAST 研报与动态页码:**
+   - 系统自动在预设本地文件夹 `G:\我的云端硬盘\0. 工作\2. 投资分析计划 01102026\3. Monthly Report\1. iFast Monthly update\` 中检索匹配 $M+1$ 月份的研报 PDF 文件。
+   - 读取并解析该 PDF 后，自动返还该期研报中各板块的实际适配页码：
+     - 全球资产月度回报页码 (`returns_page`，如 9月刊为 P.3，10月刊为 P.6)
+     - 行业星级榜页码 (`star_ratings_page`，如 9月刊为 P.4，10月刊为 P.7)
+     - 月度深度专题页码与题目 (`topic_page` & `topic_title`，如 9月刊为 P.6《超越银行主导核心——主动布局“新新加坡”高成长机遇》，10月刊为 P.12《当债券不再扮演债券》)
 
 ### 4.3 Chart Reconstitution & Rebalance Markers
-- Chart.js plugin dynamically extracts events from Google Sheet:
-  - **Restructure / Reconstitute:** 🟡 Yellow circle (`rgba(234, 179, 8, 0.5)`), vertical timeline line, and label.
-  - **Rebalance:** 🟢 Green circle (`rgba(16, 185, 129, 0.5)`).
+- 净值走势图根据时间序列自动标注历史调仓节点：
+  - **组合重组 (Restructure / Reconstitute):** 🟡 黄色圆圈与垂直时间锚线。
+  - **季度再平衡 (Rebalance):** 🟢 绿色圆圈。
 
 ### 4.4 Monthly Factsheet Path & Anchor Mapping
 - **Local Directory:** `G:\我的云端硬盘\0. 工作\2. 投资分析计划 01102026\3. Monthly Report\<Month_Name> <YYYY>\`
-- **Anchor Rule:** Reporting Month $M$ uses Factsheets stored in Month $M+1$ folder (e.g., September 2026 Memo -> `Oct 2026` folder; October 2026 Memo -> `Nov 2026` folder).
+- **Anchor Rule:** Reporting Month $M$ uses Factsheets stored in Month $M+1$ folder (e.g., `2026-09` September Memo -> `Oct 2026` folder; `2026-08` August Memo -> `Sep 2026` folder).
 
 ---
 

@@ -66,7 +66,7 @@ export const TopNav: React.FC<TopNavProps> = ({
             <div className="flex items-center gap-2">
               <span className="font-extrabold text-sm tracking-tight text-white">{t.nav_title}</span>
               <span className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold px-2 py-0.5 rounded-full">
-                React + Vite 60FPS
+                {lang === 'en' ? 'React + Vite 60FPS' : '现代响应式投研工作台'}
               </span>
             </div>
             <p className="text-[11px] text-slate-400 hidden md:block">{t.nav_sub}</p>
@@ -128,19 +128,19 @@ export const TopNav: React.FC<TopNavProps> = ({
         {(viewMode === 'presentation' || viewMode === 'split') && (
           <div className="hidden xl:flex items-center gap-1 bg-slate-900/60 p-1 rounded-lg border border-slate-800 text-[11px]">
             <button onClick={() => scrollToSlide('slide1')} className="px-2 py-1 rounded hover:bg-slate-800 text-slate-300">
-              S1 Memo
+              {lang === 'en' ? 'S1 Memo' : '第1页 总览'}
             </button>
             <button onClick={() => scrollToSlide('slide2')} className="px-2 py-1 rounded hover:bg-slate-800 text-slate-300">
-              S2 Macro
+              {lang === 'en' ? 'S2 Macro' : '第2页 宏观'}
             </button>
             <button onClick={() => scrollToSlide('slide3')} className="px-2 py-1 rounded hover:bg-slate-800 text-slate-300">
-              S3 60/40
+              {lang === 'en' ? 'S3 60/40' : '第3页 专题'}
             </button>
             <button onClick={() => scrollToSlide('slide4')} className="px-2 py-1 rounded hover:bg-slate-800 text-slate-300">
-              S4 Conviction
+              {lang === 'en' ? 'S4 Conviction' : '第4页 信念'}
             </button>
             <button onClick={() => scrollToSlide('slide5')} className="px-2 py-1 rounded hover:bg-slate-800 text-slate-300">
-              S5 Legal
+              {lang === 'en' ? 'S5 Legal' : '第5页 合规'}
             </button>
           </div>
         )}
@@ -155,7 +155,7 @@ export const TopNav: React.FC<TopNavProps> = ({
                 lang === 'zh' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'
               }`}
             >
-              中
+              中文
             </button>
             <button
               onClick={() => setLang('en')}
@@ -172,10 +172,12 @@ export const TopNav: React.FC<TopNavProps> = ({
             onClick={onSyncSheet}
             disabled={isSyncing}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 transition disabled:opacity-50"
-            title="Pull latest NAV & weights from Google Sheet"
+            title={lang === 'en' ? 'Pull latest NAV & weights from Google Sheet' : '从谷歌云端表同步最新净值与权重'}
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin text-amber-400' : 'text-slate-400'}`} />
-            <span className="hidden sm:inline">{isSyncing ? 'Syncing...' : t.btn_sync}</span>
+            <span className="hidden sm:inline">
+              {isSyncing ? (lang === 'en' ? 'Syncing...' : '同步中...') : t.btn_sync}
+            </span>
           </button>
 
           {/* Save Button */}
@@ -186,10 +188,12 @@ export const TopNav: React.FC<TopNavProps> = ({
                 ? 'bg-emerald-600/30 border-emerald-500/50 text-emerald-300'
                 : 'bg-slate-800 hover:bg-slate-700 border-slate-700 text-slate-200'
             }`}
-            title="Save custom settings to backend config"
+            title={lang === 'en' ? 'Save custom settings to backend config' : '保存当前设定至后端配置'}
           >
             <Check className={`w-3.5 h-3.5 ${isSaved ? 'text-emerald-400' : 'text-slate-400'}`} />
-            <span className="hidden sm:inline">{isSaved ? 'Saved' : t.btn_save}</span>
+            <span className="hidden sm:inline">
+              {isSaved ? (lang === 'en' ? 'Saved' : '已保存') : t.btn_save}
+            </span>
           </button>
 
           {/* Export PDF Button */}
@@ -199,7 +203,7 @@ export const TopNav: React.FC<TopNavProps> = ({
             className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-extrabold shadow-sm transition disabled:opacity-50"
           >
             <Download className={`w-3.5 h-3.5 ${isExporting ? 'animate-bounce' : ''}`} />
-            <span>{isExporting ? 'Exporting...' : t.btn_print_pdf}</span>
+            <span>{isExporting ? (lang === 'en' ? 'Exporting...' : '导出中...') : t.btn_print_pdf}</span>
           </button>
         </div>
 

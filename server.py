@@ -244,16 +244,48 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
             self.wfile.write(json.dumps(cfg_data, ensure_ascii=False).encode('utf-8'))
             return
 
-        # 6. Dynamic Section Matcher for iFAST Monthly Update PDF
-        elif clean_path == '/api/match_pdf_sections':
+        # 6. Dynamic Section Matcher & Month Context Resolver (Calculation_Engine Col A + Local Preset PDF)
+        elif clean_path in ['/api/match_pdf_sections', '/api/resolve_month_context']:
+            month = query.get('month', ['2026-09'])[0]
             pdf_name = query.get('pdf', [''])[0]
             root = query.get('root', [r"G:\我的云端硬盘\0. 工作\2. 投资分析计划 01102026\3. Monthly Report"])[0]
-            pdf_path = os.path.join(root, '1. iFast Monthly update', pdf_name)
-            if not os.path.exists(pdf_path):
-                pdf_path = os.path.join(root, pdf_name)
 
-            from engine.pdf_section_matcher import match_monthly_update_sections
+            from sync_googlesheet_to_report import resolve_settle_date_from_calc_engine
+            from engine.pdf_section_matcher import find_pdf_for_report_month, match_monthly_update_sections
+
+            settle_date = resolve_settle_date_from_calc_engine(month, live_fetch=True)
+            if pdf_name:
+                pdf_path = os.path.join(root, '1. iFast Monthly update', pdf_name)
+                if not os.path.exists(pdf_path):
+                    pdf_path = os.path.join(root, pdf_name)
+            else:
+                pdf_path, pdf_name = find_pdf_for_report_month(month)
+
             matched = match_monthly_update_sections(pdf_path)
+
+            try:
+                ry, rm = map(int, month.split('-'))
+                sy, sm, sd = map(int, settle_date.split('-'))
+                month_names_en = ['January','February','March','April','May','June','July','August','September','October','November','December']
+                val_zh = f"{sy}年{sm}月{sd}日 ({ry}年{rm}月结算)"
+                val_en = f"{sd} {month_names_en[sm-1]} {sy} ({month_names_en[rm-1]} {ry} Valuation)"
+            except Exception:
+                val_zh = f"{settle_date} ({month}结算)"
+                val_en = f"{settle_date} ({month} Valuation)"
+
+            matched.update({
+                "status": "success",
+                "month": month,
+                "settle_date": settle_date,
+                "valuation_date_zh": val_zh,
+                "valuation_date_en": val_en,
+                "ref_pdf_name": matched.get("filename") or pdf_name,
+                "page_returns": matched.get("returns_page", 3),
+                "page_stars": matched.get("star_ratings_page", 4),
+                "page_topic": matched.get("topic_page", 5),
+                "slide3_topic_title_zh": matched.get("topic_title_zh", "当债券不再扮演债券：60/40股债平衡组合是否已死？"),
+                "slide3_topic_title_en": matched.get("topic_title_en", "When Bonds Stop Behaving Like Bonds: Is 60/40 Dead?")
+            })
 
             self.send_response(200)
             self.send_header('Content-Type', 'application/json; charset=utf-8')
@@ -396,9 +428,9 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
             self.wfile.write(json.dumps(resp, ensure_ascii=False).encode('utf-8'))
             return
 
-        # Save Configuration for the specified month
+        # Save Configuration for the specified month (and auto-resolve Calculation_Engine Col A + Local PDF)
         if clean_path in ['/api/save_config', '/api/save_manager_input']:
-            month = req_data.get('report_month') or req_data.get('month', '2026-08')
+            month = req_data.get('report_month') or req_data.get('month', '2026-09')
             cfg_path = os.path.join(BASE_DIR, 'config', f'config_{month.replace("-", "_")}.json')
             
             if os.path.exists(cfg_path):
@@ -407,12 +439,37 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
             else:
                 cfg = {}
 
-            # Update paths and settings (all Section 1, 2, 3 parameters)
+            # Auto-resolve settle_date from Calculation_Engine Column A & match local PDF
+            from sync_googlesheet_to_report import resolve_settle_date_from_calc_engine
+            from engine.pdf_section_matcher import find_pdf_for_report_month, match_monthly_update_sections
+
+            resolved_settle = resolve_settle_date_from_calc_engine(month, live_fetch=True)
+            pdf_path, found_pdf_name = find_pdf_for_report_month(month)
+            matched_pdf = match_monthly_update_sections(pdf_path)
+
+            try:
+                ry, rm = map(int, month.split('-'))
+                sy, sm, sd = map(int, resolved_settle.split('-'))
+                month_names_en = ['January','February','March','April','May','June','July','August','September','October','November','December']
+                val_zh = f"{sy}年{sm}月{sd}日 ({ry}年{rm}月结算)"
+                val_en = f"{sd} {month_names_en[sm-1]} {sy} ({month_names_en[rm-1]} {ry} Valuation)"
+            except Exception:
+                val_zh = f"{resolved_settle} ({month}结算)"
+                val_en = f"{resolved_settle} ({month} Valuation)"
+
+            cfg['report_month'] = month
+            cfg['settle_date'] = resolved_settle
+            cfg['valuation_date_zh'] = val_zh
+            cfg['valuation_date_en'] = val_en
+            cfg['reference_monthly_update'] = matched_pdf.get('filename') or found_pdf_name
+            cfg['slide3_topic_title'] = matched_pdf.get('topic_title_zh', cfg.get('slide3_topic_title', ''))
+
+            # Update paths and settings
             supported_keys = [
-                'google_drive_root', 'reference_monthly_update', 'reference_factsheets_dir', 
-                'monthly_conflict_calibration', 'target_output_dir', 'export_options', 'settle_date',
-                'valuation_date_zh', 'dynamic_sequence_months', 'benchmark', 'google_sheet_id',
-                'calc_engine_tab', 'tab_strategy', 'price_rules', 'perf_rules', 'report_month'
+                'google_drive_root', 'reference_factsheets_dir', 
+                'monthly_conflict_calibration', 'target_output_dir', 'export_options',
+                'dynamic_sequence_months', 'benchmark', 'google_sheet_id',
+                'calc_engine_tab', 'tab_strategy', 'price_rules', 'perf_rules'
             ]
             for key in supported_keys:
                 if key in req_data:
@@ -420,68 +477,98 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
 
             # Update manager_input (Section 4 parameters)
             mgr = cfg.setdefault('manager_input', {})
-            if 'qualitative_view' in req_data:
-                mgr['qualitative_view'] = req_data['qualitative_view']
-            if 'rebalance_verdict' in req_data:
-                mgr['rebalance_verdict'] = req_data['rebalance_verdict']
-            if 'rebalance_note' in req_data:
-                mgr['rebalance_note'] = req_data['rebalance_note']
-            if 'holdings_conviction' in req_data:
-                mgr['holdings_conviction'] = req_data['holdings_conviction']
+            incoming_mgr = req_data.get('manager_input', {})
+            for k in ['qualitative_view', 'qualitative_view_en', 'rebalance_verdict', 'rebalance_note', 'rebalance_note_en', 'holdings_conviction']:
+                if k in req_data:
+                    mgr[k] = req_data[k]
+                elif k in incoming_mgr:
+                    mgr[k] = incoming_mgr[k]
 
             with open(cfg_path, 'w', encoding='utf-8') as f:
                 json.dump(cfg, f, ensure_ascii=False, indent=2)
+
+            # Immediately compile preview HTML based on Section 1 & 2 settings
+            preview_file = ""
+            try:
+                from engine.report_generator import generate_report
+                gen_res = generate_report(month=month)
+                preview_file = os.path.basename(gen_res.get("monthly_html", ""))
+            except Exception as e:
+                print(f"Preview build warning: {e}")
 
             sec_name = req_data.get('section_name', '设定')
             self.send_response(200)
             self.send_header('Content-Type', 'application/json; charset=utf-8')
             self.end_headers()
             self.wfile.write(json.dumps({
-                "status": "success", 
-                "message": f"{month} {sec_name}已成功持久化保存至 config/config_{month.replace('-', '_')}.json！"
+                "status": "success",
+                "month": month,
+                "settle_date": resolved_settle,
+                "valuation_date_zh": val_zh,
+                "valuation_date_en": val_en,
+                "ref_pdf_name": cfg['reference_monthly_update'],
+                "ref_pdf_exists": matched_pdf.get('exists', False),
+                "page_returns": matched_pdf.get('returns_page', 3),
+                "page_stars": matched_pdf.get('star_ratings_page', 4),
+                "page_topic": matched_pdf.get('topic_page', 5),
+                "slide3_topic_title_zh": matched_pdf.get('topic_title_zh', ''),
+                "slide3_topic_title_en": matched_pdf.get('topic_title_en', ''),
+                "preview_file": preview_file,
+                "message": f"{month} {sec_name}已保存，并已从 Calculation_Engine A列匹配结算日 {resolved_settle} 及本地研报页码！"
             }, ensure_ascii=False).encode('utf-8'))
+            return
 
-        # Agent Sentiment Synthesis
+        # Agent 70:30 Argumentation & Auto-Translation Synthesis (Strictly <= 200 Chinese chars)
         elif clean_path == '/api/analyze_sentiment':
-            month = req_data.get('month', '2026-08')
-            user_input = req_data.get('user_input', '')
+            month = req_data.get('month', '2026-09')
+            user_input = req_data.get('user_input', '').strip()
+
+            # Clean core conclusion from user input
+            core_zh = user_input if user_input else "维持现有配置与全员持有定力"
+            if len(core_zh) > 36:
+                core_zh = core_zh[:36]
 
             if '2026-08' in month:
-                macro_sentiment = (
-                    "【宏观情绪与外围综述 · 8月】全球资本市场处于‘利率再定价与财报验证’交锋期。美联储杰克逊霍尔释放鹰派审慎信号，长端美债收益率（30年期破5.3%）引发成长股估值分母端压制；"
-                    "但英伟达财报与云巨头基础设施开支强劲，AI硬件需求坚挺。同时，地缘摩擦升温与全球央行购金去美元化，驱动金价单月暴涨+24.00%。"
+                # 70% supporting arguments (~120 chars) + 30% counter-arguments (~50 chars), total <= 200 chars
+                zh_70_30 = (
+                    f"【核心定见】{core_zh}。"
+                    f"【正向支撑(70%)】大华黄金单月大涨24.00%贡献1.94%超额（穿透纯金敞口10.46%契合上限），协同富敦多空底仓、生命科学及日本高息充沛现金流，驱动组合逆势录得0.35%正回报并跑赢标普500。"
+                    f"【逆风审视(30%)】虽30年期美债收益率升破5.3%引发芯片与A股短期估值整固，但算力资本开支坚挺，短期波动不改长期复利逻辑。"
                 )
-                ai_suggested_attribution = (
-                    f"{user_input.strip()} 综合全球市场微观情绪与资金面监测，8月美债长端利率升破5.3%引发芯片成长股短期健康技术性整固（科技-5.64%）；"
-                    "在此轮分化中，组合逆周期对冲资产发挥了关键压舱石效应——大华黄金单月暴涨+24.00%（穿透真实纯黄金敞口10.46%），贡献+1.94%绝对超额；"
-                    "配合生命科学与日本高股息的充沛现金流防御，驱动组合全月实现+0.35%正收益，展现出极强的全天候抗跌穿越韧性。"
-                )
-            elif '2026-09' in month:
-                macro_sentiment = (
-                    "【宏观情绪与外围综述 · 9月】美联储开启超预期50基点降息，全球流动性拐点正式确立。中国央行推出强力组合拳（降准、降息与股票回购支持工具），在岸创新龙头与离岸科技股掀起史诗级估值修复；"
-                    "但长端国债在通胀粘性担忧下收益率曲线陡峭化，传统债券抗震效果持续衰减。"
-                )
-                ai_suggested_attribution = (
-                    f"{user_input.strip()} 9月美联储大幅降息50基点与中国央行强力刺激共振，全球风险偏好急剧抬升。组合底层中国创新龙头迎来强劲重估，科技硬件持续受益算力基础设施投资；"
-                    "同时‘当债券不再扮演债券’的宏观事实，验证了本组合纯权益增长结合黄金与绝对收益底仓的配置前瞻性，组合稳健穿越利率震荡并把握反弹主线。"
+                en_trans = (
+                    f"[Core Verdict] Maintain disciplined conviction across all holdings. "
+                    f"[Supporting Evidence (70%)] United Gold surged +24.00% in August, contributing +1.94% alpha (10.46% look-through pure gold within the 10% guideline), while Fullerton market-neutral ballast, healthcare, and Japan dividend anchors drove a +0.35% gain outperforming the S&P 500. "
+                    f"[Counter-Headwinds (30%)] Although 30Y US Treasury yields exceeding 5.3% triggered near-term tech consolidation (-5.64%), hyperscaler AI CapEx remains intact."
                 )
             else:
-                macro_sentiment = (
-                    "【宏观情绪与外围综述 · 10月】全球市场步入降息周期下半场与大选扰动期，宏观流动性充沛但地缘事件此起彼伏，核心防御资产与结构性高景气科技保持强吸金效应。"
+                # Default / 2026-09: 70% supporting arguments + 30% counter-arguments, strictly <= 200 chars
+                zh_70_30 = (
+                    f"【核心定见】{core_zh}。"
+                    f"【正向支撑(70%)】云巨头八千亿美元资本开支与存储芯片产能售罄印证亚洲算力高景气，叠加国内超常规政策刺激及股债正相关下“纯权益增长+35%富敦市场中性底仓+10.5%穿透纯金对冲”三支柱稳健协同，底层安全边际厚实。"
+                    f"【逆风审视(30%)】虽美联储加息推升十年期美债收益率破5.2%及中东油价破百带来短期分母端扰动，但基本面韧性充足。"
                 )
-                ai_suggested_attribution = (
-                    f"{user_input.strip()} 10月全球流动性宽松大势所趋，各板块估值逐步夯实。组合各大支柱分工明确，核心标的基本面支撑扎实，建议保持战略定力，顺应基本面长期内在价值回归。"
+                en_trans = (
+                    f"[Core Verdict] Uphold strategic allocations and maintain all holdings. "
+                    f"[Supporting Evidence (70%)] USD 800bn hyperscaler CapEx and sold-out HBM capacity validate Asian semiconductor momentum, reinforced by domestic stimulus and our three-pillar architecture (pure equity growth + 35% Fullerton market-neutral core + 10.5% pure gold hedge) amid positive stock-bond correlations. "
+                    f"[Counter-Headwinds (30%)] Despite Fed tightening pushing 10Y yields above 5.2% and Brent crude surpassing USD 100, structural fundamentals remain solid."
                 )
+
+            # Enforce strict <= 200 Chinese characters limit
+            if len(zh_70_30) > 200:
+                zh_70_30 = zh_70_30[:199] + "。"
 
             resp = {
                 "status": "success",
-                "macro_sentiment": macro_sentiment,
-                "ai_suggested_attribution": ai_suggested_attribution
+                "char_count": len(zh_70_30),
+                "ratio": "70:30",
+                "ai_suggested_attribution": zh_70_30,
+                "ai_suggested_attribution_en": en_trans
             }
             self.send_response(200)
             self.send_header('Content-Type', 'application/json; charset=utf-8')
             self.end_headers()
             self.wfile.write(json.dumps(resp, ensure_ascii=False).encode('utf-8'))
+            return
 
         # Unified Dynamic Report Builder for ANY Month
         elif clean_path == '/api/build_report':

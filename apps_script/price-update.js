@@ -1,8 +1,8 @@
 /**
- * 【FSM 批量历史净值同步 - 5Y 定向同名更新版】
+ * 【FSM 批量历史净值同步 - 10Y 定向同名更新修复版】
  * 支持多行区间批量处理（例如：'HR Model Portfolio Constitution 2026'!V3:W10）
  * 每一行：第 1 列为 ISIN，第 2 列为带有 FSM 链接的基金名称
- * 规则：默认抓取 5Y 历史；仅更新已存在的同名工作表，若同名工作表不存在则跳过并报警
+ * 规则：默认抓取 10Y 历史；仅更新已存在的同名工作表，若同名工作表不存在则跳过并报警
  * 输出规范：A: Date | B: Price | C: Change | D: Change % | E: Date
  */
 function runBatchPriceUpdate() {
@@ -11,11 +11,11 @@ function runBatchPriceUpdate() {
   
   // 1. 初始化控制台
   setupDebugConsole(); 
-  logToConsole("INFO", "=== 启动 FSM 基金价格批量更新任务 (默认 5Y) ===");
+  logToConsole("INFO", "=== 启动 FSM 基金价格批量更新任务 (修复版 10Y) ===");
   
   // 2. 弹窗询问目标区间
   var response = ui.prompt(
-    '🚀 批量同步基金历史价格 (5Y)',
+    '🚀 批量同步基金历史价格 (10Y)',
     '请输入需要批量同步的区间（例如：HR Model Portfolio Constitution 2026!V3:W10）：',
     ui.ButtonSet.OK_CANCEL
   );
@@ -38,7 +38,7 @@ function runBatchPriceUpdate() {
     var numCols = range.getNumColumns();
     
     if (numCols < 2) {
-      ui.alert('❌ 错误', '选定的区域至少需要包含两列（第 1 行为 ISIN，第 2 行为基金名称/超链接）！', ui.ButtonSet.OK);
+      ui.alert('❌ 错误', '选定的区域至少需要包含两列（第 1 列为 ISIN，第 2 列为基金名称/超链接）！', ui.ButtonSet.OK);
       return;
     }
     
@@ -108,7 +108,7 @@ function runBatchPriceUpdate() {
       Utilities.sleep(800);
     }
     
-    logToConsole("SUCCESS", "'=== 批量同步完成！成功: " + successCount + " 只 | 失败/缺失Sheet: " + failCount + " 只 | 跳过: " + skipCount + " 只 ===");
+    logToConsole("SUCCESS", "=== 批量同步完成！成功: " + successCount + " 只 | 失败/缺失Sheet: " + failCount + " 只 | 跳过: " + skipCount + " 只 ===");
     ui.alert('🎯 批量同步完成', '处理结果汇总：\n✅ 成功: ' + successCount + '\n❌ 失败/未找到同名Sheet: ' + failCount + '\n⚠️ 跳过: ' + skipCount + '\n详细日志请查看 Debug_Console。', ui.ButtonSet.OK);
     
   } catch (e) {
@@ -122,8 +122,7 @@ function runBatchPriceUpdate() {
  */
 function fetchAndSaveFundPrices(fundName, sedol, isin) {
   var apiUrl = "https://fsm.global/sg/rest/fund/find-daily-price-history-by-period";
-  // 默认拉取周期设置为 5y
-  var rawPayload = "paramSedolnumber=" + encodeURIComponent(sedol) + "&paramPeriod=5y";
+  var rawPayload = "paramSedolnumber=" + encodeURIComponent(sedol) + "&paramPeriod=10y";
   
   var headers = {
     'accept': 'application/json, text/plain, */*',
@@ -193,87 +192,126 @@ function fetchAndSaveFundPrices(fundName, sedol, isin) {
   }
   uniqueData.sort(function(a, b) { return b[0] - a[0]; });
   
-  // 更新同名基金工作表
   return updateFundSheet(fundName, uniqueData);
 }
 
 /**
- * 辅助函数：仅更新同名工作表，不自动新建；计算 Change 与 Change %
+ * 【修复升级版】辅助函数：更新或全量初始化同名工作表
  */
 function updateFundSheet(fundName, newData) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var targetSheet = ss.getSheetByName(fundName);
   
-  // 严格校验：若不存在同名工作表，记录警告并中止该基金写入
   if (!targetSheet) {
-    logToConsole("ERROR", "❌ 未找到与基金同名的高精度工作表: [" + fundName + "]，已跳过写入！请先建立该工作表。");
+    logToConsole("ERROR", "❌ 未找到同名工作表: [" + fundName + "]，已跳过写入！请先建立该工作表。");
     return { success: false };
   }
   
-  // 校验并确保第一行符合五列表头
+  // 1. 确保第 1 行为五列标准表头
   targetSheet.getRange(1, 1, 1, 5).setValues([["Date", "Price", "Change", "Change %", "Date"]]);
-  targetSheet.getRange("A1:E1").setFontWeight("bold");
+  targetSheet.getRange("A1:E1").setFontWeight("bold").setBackground("#F1F5F9");
   
-  var existingLatestTime = null;
-  var existingLatestPrice = null;
-  if (targetSheet.getLastRow() >= 2) {
-    var cellDate = targetSheet.getRange(2, 1).getValue();
-    var cellPrice = targetSheet.getRange(2, 2).getValue();
-    if (cellDate instanceof Date) {
-      existingLatestTime = cellDate.getTime();
-      existingLatestPrice = parseFloat(cellPrice);
+  var lastRow = targetSheet.getLastRow();
+  
+  // =========================================================================
+  // 场景 A：工作表是空的（<=1 行，仅有表头） -> 执行【全量 10Y 极速初始化写入】
+  // =========================================================================
+  if (lastRow <= 1) {
+    logToConsole("INFO", "检测到 [" + fundName + "] 为空表，启动【全量 10Y 初始化写入】...");
+    
+    var outputRows = [];
+    for (var k = 0; k < newData.length; k++) {
+      var curD = newData[k][0];
+      var curP = newData[k][1];
+      
+      var prevP = null;
+      if (k + 1 < newData.length) {
+        prevP = newData[k + 1][1];
+      }
+      
+      var chgVal = "";
+      var chgPct = "";
+      if (prevP !== null && !isNaN(prevP) && prevP > 0) {
+        chgVal = curP - prevP;
+        chgPct = (curP - prevP) / prevP;
+      }
+      outputRows.push([curD, curP, chgVal, chgPct, curD]);
     }
-  }
-  
-  var filteredRaw = [];
-  for (var i = 0; i < newData.length; i++) {
-    if (!existingLatestTime || newData[i][0].getTime() > existingLatestTime) {
-      filteredRaw.push(newData[i]);
+    
+    if (outputRows.length > 0) {
+      targetSheet.getRange(2, 1, outputRows.length, 5).setValues(outputRows);
+      formatFundSheetRanges(targetSheet, 2, outputRows.length);
+      logToConsole("SUCCESS", "✅ 成功初始化写入 [" + fundName + "] " + outputRows.length + " 条 10 年完整历史记录！");
     }
-  }
-  
-  if (filteredRaw.length === 0) {
-    logToConsole("INFO", "基金 [" + fundName + "] 工作表现有数据已是最新，无需追加新行。");
     return { success: true };
   }
   
-  var rowsToInsert = filteredRaw.length;
-  var outputRows = [];
+  // =========================================================================
+  // 场景 B：工作表已有数据 -> 执行【高可靠增量追加】
+  // =========================================================================
+  var topCellDate = targetSheet.getRange(2, 1).getValue();
+  var topCellPrice = parseFloat(targetSheet.getRange(2, 2).getValue());
   
-  for (var j = 0; j < rowsToInsert; j++) {
-    var curDate = filteredRaw[j][0];
-    var curPrice = filteredRaw[j][1];
-    
-    var prevPrice = null;
-    if (j + 1 < rowsToInsert) {
-      prevPrice = filteredRaw[j + 1][1];
-    } else if (existingLatestPrice !== null) {
-      prevPrice = existingLatestPrice;
-    }
-    
-    var changeVal = "";
-    var changePct = "";
-    
-    if (prevPrice !== null && !isNaN(prevPrice) && prevPrice !== 0) {
-      changeVal = curPrice - prevPrice;
-      changePct = (curPrice - prevPrice) / prevPrice;
-    }
-    
-    outputRows.push([curDate, curPrice, changeVal, changePct, curDate]);
+  var topDateStr = "";
+  if (topCellDate instanceof Date) {
+    topDateStr = Utilities.formatDate(topCellDate, "GMT+8", "yyyy-MM-dd");
+  } else {
+    topDateStr = topCellDate.toString().trim();
   }
   
-  targetSheet.insertRowsAfter(1, rowsToInsert);
-  var insertRange = targetSheet.getRange(2, 1, rowsToInsert, 5);
-  insertRange.setValues(outputRows);
+  var newRowsToAppend = [];
+  for (var i = 0; i < newData.length; i++) {
+    var curDateStr = Utilities.formatDate(newData[i][0], "GMT+8", "yyyy-MM-dd");
+    if (curDateStr > topDateStr) {
+      newRowsToAppend.push(newData[i]);
+    } else {
+      break; 
+    }
+  }
   
-  targetSheet.getRange(2, 1, rowsToInsert, 1).setNumberFormat('yyyy-mm-dd');
-  targetSheet.getRange(2, 2, rowsToInsert, 1).setNumberFormat('$#,##0.0000');
-  targetSheet.getRange(2, 3, rowsToInsert, 1).setNumberFormat('+$#,##0.0000;-$#,##0.0000;$0.0000');
-  targetSheet.getRange(2, 4, rowsToInsert, 1).setNumberFormat('+0.00%;-0.00%;0.00%');
-  targetSheet.getRange(2, 5, rowsToInsert, 1).setNumberFormat('yyyy-mm-dd');
+  if (newRowsToAppend.length === 0) {
+    logToConsole("INFO", "基金 [" + fundName + "] 已是最新（最新日期: " + topDateStr + "），无需追加。");
+    return { success: true };
+  }
   
-  logToConsole("SUCCESS", "✅ 成功向同名表 [" + fundName + "] 增量追加写入 " + rowsToInsert + " 行 5Y 价格及波动记录。");
+  var incrementalOutput = [];
+  for (var j = 0; j < newRowsToAppend.length; j++) {
+    var cDate = newRowsToAppend[j][0];
+    var cPrice = newRowsToAppend[j][1];
+    
+    var pPrice = null;
+    if (j + 1 < newRowsToAppend.length) {
+      pPrice = newRowsToAppend[j + 1][1];
+    } else {
+      pPrice = topCellPrice;
+    }
+    
+    var cVal = "";
+    var cPct = "";
+    if (pPrice !== null && !isNaN(pPrice) && pPrice > 0) {
+      cVal = cPrice - pPrice;
+      cPct = (cPrice - pPrice) / pPrice;
+    }
+    incrementalOutput.push([cDate, cPrice, cVal, cPct, cDate]);
+  }
+  
+  targetSheet.insertRowsAfter(1, incrementalOutput.length);
+  targetSheet.getRange(2, 1, incrementalOutput.length, 5).setValues(incrementalOutput);
+  formatFundSheetRanges(targetSheet, 2, incrementalOutput.length);
+  
+  logToConsole("SUCCESS", "✅ 成功向 [" + fundName + "] 增量追加 " + incrementalOutput.length + " 条最新行情！");
   return { success: true };
+}
+
+/**
+ * 格式化辅助
+ */
+function formatFundSheetRanges(sheet, startRow, numRows) {
+  sheet.getRange(startRow, 1, numRows, 1).setNumberFormat('yyyy-mm-dd');
+  sheet.getRange(startRow, 2, numRows, 1).setNumberFormat('$#,##0.0000');
+  sheet.getRange(startRow, 3, numRows, 1).setNumberFormat('+$#,##0.0000;-$#,##0.0000;$0.0000');
+  sheet.getRange(startRow, 4, numRows, 1).setNumberFormat('+0.00%;-0.00%;0.00%');
+  sheet.getRange(startRow, 5, numRows, 1).setNumberFormat('yyyy-mm-dd');
 }
 
 /**

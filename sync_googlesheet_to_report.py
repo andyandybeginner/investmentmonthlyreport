@@ -98,10 +98,11 @@ def run_sync():
         })
         print(f"   -> {item['role_zh']}: Val=${val:,.2f} | Actual={cur_w:.2f}% | Target={tar_w*100.0:.2f}%")
         
-    # 2. Fetch Calculation_Engine
+    # 2. Fetch Calculation_Engine (Column A = Full Date YYYY-MM-DD, Column F = Current NAV)
     calc_rows = get_sheet_data("Calculation_Engine")
     # Row 29 is list index 28
     dates = []
+    full_dates = []
     cur_series = []
     past_series = []
     sp_series = []
@@ -110,15 +111,17 @@ def run_sync():
     for r in range(28, len(calc_rows)):
         row = calc_rows[r]
         if len(row) >= 9 and row[0].strip() and row[5].strip():
-            d_str = row[0].strip()[:7] # yyyy-MM
+            full_d = row[0].strip() # YYYY-MM-DD from Column A
+            d_str = full_d[:7]      # YYYY-MM
+            full_dates.append(full_d)
             dates.append(d_str)
             cur_series.append(round(parse_num(row[5]) / 100.0, 4))
             past_series.append(round(parse_num(row[6]) / 100.0, 4))
             sp_series.append(round(parse_num(row[7]) / 100.0, 4))
             msci_series.append(round(parse_num(row[8]) / 100.0, 4))
             
-    print(f"✅ Calculation_Engine: Extracted {len(dates)} periods from {dates[0]} to {dates[-1]}")
-    print(f"   Latest Values (2026-10): Current={cur_series[-1]*100:.2f}%, Past={past_series[-1]*100:.2f}%, S&P={sp_series[-1]*100:.2f}%, MSCI={msci_series[-1]*100:.2f}%")
+    print(f"✅ Calculation_Engine: Extracted {len(dates)} periods from {full_dates[0]} to {full_dates[-1]}")
+    print(f"   Latest Values ({dates[-1]}): Current={cur_series[-1]*100:.2f}%, Past={past_series[-1]*100:.2f}%, S&P={sp_series[-1]*100:.2f}%, MSCI={msci_series[-1]*100:.2f}%")
     
     # Extract Reconstitution / Rebalance events from Col A & Col B
     portfolio_events = []
@@ -139,6 +142,7 @@ def run_sync():
     with open('real_performance_series.json', 'w', encoding='utf-8') as f:
         json.dump({
             "dates": dates,
+            "full_dates": full_dates,
             "current": cur_series,
             "past": past_series,
             "sp500": sp_series,
@@ -160,6 +164,54 @@ def run_sync():
 
     return True
 
+
+def resolve_settle_date_from_calc_engine(report_month, live_fetch=True):
+    """
+    Given report_month 'YYYY-MM' (e.g. '2026-09'), queries Calculation_Engine Column A
+    for the first date in the next month M+1 (e.g. '2026-10') that has a valid price in Column F.
+    """
+    try:
+        y_str, m_str = report_month.split('-')
+        y = int(y_str)
+        m = int(m_str)
+        next_y = y + 1 if m == 12 else y
+        next_m = 1 if m == 12 else m + 1
+        target_ym = f"{next_y}-{next_m:02d}"
+    except Exception:
+        return "2026-10-05"
+
+    # 1. Try live Google Sheet Calculation_Engine Column A
+    if live_fetch:
+        try:
+            calc_rows = get_sheet_data("Calculation_Engine")
+            for r in range(28, len(calc_rows)):
+                row = calc_rows[r]
+                if len(row) >= 6 and row[0].strip() and row[5].strip():
+                    col_a_date = row[0].strip()
+                    price_val = parse_num(row[5])
+                    if col_a_date.startswith(target_ym) and price_val > 0:
+                        return col_a_date
+        except Exception as e:
+            print(f"⚠️ Live Calculation_Engine lookup fallback to cache: {e}")
+
+    # 2. Fallback to cached full_dates in real_performance_series.json
+    try:
+        import os
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        perf_path = os.path.join(base_dir, "real_performance_series.json")
+        if os.path.exists(perf_path):
+            with open(perf_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            for fd in data.get("full_dates", []):
+                if fd.startswith(target_ym):
+                    return fd
+    except Exception:
+        pass
+
+    return f"{target_ym}-05"
+
+
 if __name__ == '__main__':
     run_sync()
+
 

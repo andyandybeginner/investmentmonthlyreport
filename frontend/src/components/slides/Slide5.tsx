@@ -9,6 +9,7 @@ interface Slide5Props {
 
 export const Slide5: React.FC<Slide5Props> = ({ lang }) => {
   const t = getDictionary(lang);
+  const isEn = lang === 'en';
 
   return (
     <div
@@ -29,9 +30,11 @@ export const Slide5: React.FC<Slide5Props> = ({ lang }) => {
         <div className="flex items-center gap-3 text-right">
           <div className="bg-white/10 px-3.5 py-1.5 rounded-lg border border-white/15">
             <span className="text-slate-300 block text-[9.5px] uppercase font-semibold">
-              Legal & Compliance
+              {isEn ? 'Legal & Compliance' : '法律与合规披露'}
             </span>
-            <span className="text-amber-300 font-extrabold text-sm mono-num">MAS SFA 289</span>
+            <span className="text-amber-300 font-extrabold text-sm mono-num">
+              {isEn ? 'MAS SFA 289' : '新加坡证券与期货法 (第289章)'}
+            </span>
           </div>
         </div>
       </div>
@@ -52,7 +55,7 @@ export const Slide5: React.FC<Slide5Props> = ({ lang }) => {
             </div>
           </div>
           <div className="mt-4 pt-2 border-t border-slate-200 text-[9px] text-slate-400 font-mono">
-            MAS SFA 289 Sec. 25 & 26
+            {isEn ? 'MAS SFA 289 Sec. 25 & 26' : '新加坡金融管理局《证券与期货法》第25及26条'}
           </div>
         </div>
 
@@ -70,7 +73,7 @@ export const Slide5: React.FC<Slide5Props> = ({ lang }) => {
             </div>
           </div>
           <div className="mt-4 pt-2 border-t border-slate-200 text-[9px] text-slate-400 font-mono">
-            Capital at Risk Notice
+            {isEn ? 'Capital at Risk Notice' : '投资本金风险提示'}
           </div>
         </div>
 
@@ -88,7 +91,7 @@ export const Slide5: React.FC<Slide5Props> = ({ lang }) => {
             </div>
           </div>
           <div className="mt-4 pt-2 border-t border-slate-200 text-[9px] text-slate-400 font-mono">
-            Republic of Singapore SFA (Cap. 289)
+            {isEn ? 'Republic of Singapore SFA (Cap. 289)' : '新加坡共和国《证券与期货法》(第289章)'}
           </div>
         </div>
       </div>

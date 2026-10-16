@@ -6,7 +6,7 @@
   "google_drive_root": "G:\\我的云端硬盘\\0. 工作\\2. 投资分析计划 01102026\\3. Monthly Report",
   "reference_monthly_update": "iFAST Monthly Investment Update October 2026.pdf",
   "reference_factsheets_dir": "Oct 2026",
-  "slide3_topic_title": "月度专题深度：当债券不再扮演债券",
+  "slide3_topic_title": "当债券不再扮演债券：60/40股债平衡组合是否已死？",
   "slide3_template": "src/components/slide3.html",
   "portfolio_aum_sgd": 181160.09,
   "cumulative_return_current": 81.16,
@@ -17,9 +17,15 @@
   "monthly_return_1m": -1.21,
   "monthly_alpha_1m": -1.18,
   "monthly_conflict_calibration": "长端美债收益率与固收资产校准：研报强调警惕长端美债与久期风险，本组合坚持纯股票高增长架构配搭大华黄金与富敦绝对收益底仓，规避了传统60/40组合在股债正相关环境下的减震失效陷阱。",
+  "pdf_pages": {
+    "philosophy_page": 2,
+    "returns_page": 6,
+    "star_ratings_page": 7,
+    "topic_page": 12
+  },
   "manager_input": {
-    "qualitative_view": "【宏观情绪与外围综述 · 9月】美联储开启超预期50基点降息，全球流动性拐点正式确立。中国央行推出强力组合拳（降准、降息与股票回购支持工具），在岸创新龙头与离岸科技股掀起估值修复；但长端国债在通胀粘性担忧下收益率曲线陡峭化，传统债券抗震效果持续衰减。\n9月全球市场进入利率博弈与地缘动荡交织期，组合维持底仓绝对收益与高成长哑铃配置，稳健应对外围震荡。9月美联储大幅降息50基点与中国央行强力刺激共振，全球风险偏好急剧抬升。组合底层科技硬件持续受益算力基础设施投资（全球科技+9.20%）；黄金基金在8月单月暴涨24%后9月出现正常利润回吐（-9.92%），大额底仓富敦绝对收益（+0.21%）忠实发挥压舱作用。中国板块当前实际权重12.24%仍高于12.00%目标权重，无需被迫调整，9月维持既有目标配比不变。",
-    "qualitative_view_en": "【Macro & External Overview · Sep】The Federal Reserve initiated an aggressive 50 bps rate cut, confirming the global liquidity inflection point. The PBOC unleashed a decisive stimulus package (RRR cut, benchmark cuts, and liquidity support for equity repurchases), triggering a sharp valuation rerating across onshore innovation leaders. Concurrently, persistent inflation concerns steepened the US Treasury yield curve, attenuating the traditional shock-absorbing capacity of fixed income.\nIn September, the portfolio maintained its disciplined barbell allocation: global technology (+9.20%) surged on AI infrastructure CapEx; United Gold (-9.92%) underwent healthy profit consolidation following August's extraordinary +24% rally; and Fullerton Absolute Alpha (+0.21%) faithfully anchored overall portfolio downside. China Innovation stands at 12.24% vs 12.00% target, requiring no forced reduction. Target allocations remain unchanged across all funds.",
+    "qualitative_view": "【正向论据 70%】美联储降息50基点叠加国内刺激，流动性拐点确立；股债正相关常态下，组合坚守纯股票成长、富敦绝对收益底仓与大华黄金三支柱，成立以来累计回报+81.16%，超额收益+12.49%。【反方审视 30%】尽管长端美债收益率反弹与地缘摩擦令当月净值微调1.21%，但回撤主要源于科技与A股短期估值消化，核心盈利逻辑稳固，维持全员持有定力。",
+    "qualitative_view_en": "[Supporting Evidence 70%] Following the 50 bps rate cut and domestic stimulus, a global liquidity inflection is firmly established; amid persistent positive stock-bond correlations, the portfolio adheres to its three-pillar all-equity growth, Fullerton market-neutral core, and United Gold hedge architecture, delivering +81.16% cumulative return and +12.49% alpha since inception. [Counter-Arguments 30%] Although rebounding long-end Treasury yields and geopolitical friction caused a minor 1.21% monthly pullback, the dip reflects temporary valuation digestion rather than fundamental decay, warranting a firm HOLD verdict across all 7 funds.",
     "rebalance_verdict": "持有",
     "rebalance_note": "各标的底层逻辑稳固，偏离度在安全阈值内，9月维持既有目标配比不变。",
     "rebalance_note_en": "Core asset theses remain solid; weighting drifts sit comfortably within safety bands. Existing target allocations for all 7 funds remain unchanged for September.",
@@ -32,7 +38,7 @@
         "current_weight": "17.40%",
         "market_noise": "全球半导体短线震荡，美债收益率曲线陡峭化引发成长估值分歧。",
         "market_noise_en": "Short-term volatility across global semiconductors; steeper yield curve led to valuation dispersion.",
-        "fundamental_support": "北美头部云服务商基础设施资本开支坚挺，AI硬件真实业绩强劲，单月大涨+9.20%，贡献核心超额。",
+        "fundamental_support": "北美头部云服务商基础设施资本开支坚挺，人工智能硬件真实业绩强劲，单月大涨+9.20%，贡献核心超额。",
         "fundamental_support_en": "Cloud hyperscaler CapEx remains resilient; real AI hardware revenue growth drove a robust +9.20% gain, delivering dominant alpha.",
         "advisory_recommendation": "持有"
       },
@@ -56,7 +62,7 @@
         "current_weight": "4.00%",
         "market_noise": "外围汇率预期交织，区域部分出口面临扰动。",
         "market_noise_en": "Currency volatility and selective regional export softness.",
-        "fundamental_support": "聚焦印度消费蓝筹与泛亚高ROE龙头，在区域波动中稳健实现+1.12%正收益。",
+        "fundamental_support": "聚焦印度消费蓝筹与泛亚高资本回报率龙头，在区域波动中稳健实现+1.12%正收益。",
         "fundamental_support_en": "Concentrated in high-quality Indian consumer leaders and pan-Asia high-ROE compounders, generating steady +1.12% return.",
         "advisory_recommendation": "持有"
       },
@@ -68,7 +74,7 @@
         "current_weight": "3.87%",
         "market_noise": "日元汇率与央行利率政策预期交锋，东证指数短期高位整固。",
         "market_noise_en": "Yen fluctuations and BOJ monetary policy debates led to short-term consolidation in TOPIX.",
-        "fundamental_support": "东京交易所PBR改革与企业股息回购持续推进，充沛现金流提供长期坚实托底。",
+        "fundamental_support": "东京交易所市净率改革与企业股息回购持续推进，充沛现金流提供长期坚实托底。",
         "fundamental_support_en": "TSE governance reforms, rising share buybacks and robust corporate cash flows provide reliable long-term support.",
         "advisory_recommendation": "持有"
       },
@@ -122,5 +128,6 @@
     "export_factsheet_zh": true,
     "export_factsheet_en": true,
     "target_dir": "G:\\我的云端硬盘\\0. 工作\\2. 投资分析计划 01102026\\3. Monthly Report"
-  }
+  },
+  "valuation_date_en": "5 October 2026 (September 2026 Valuation)"
 }

@@ -62,10 +62,10 @@ export const Slide4: React.FC<Slide4Props> = ({ state, lang }) => {
         <div className="flex items-center gap-3 text-right">
           <div className="bg-white/10 px-3.5 py-1.5 rounded-lg border border-white/15">
             <span className="text-slate-300 block text-[9.5px] uppercase font-semibold">
-              Advisory Governance
+              {isEn ? 'Advisory Governance' : '投委会治理核查'}
             </span>
             <span className="text-amber-300 font-extrabold text-sm mono-num">
-              Monthly Conviction Audit
+              {isEn ? 'Monthly Conviction Audit' : '月度信念审查复盘'}
             </span>
           </div>
         </div>

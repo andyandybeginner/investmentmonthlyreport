@@ -176,7 +176,9 @@ export const Slide1: React.FC<Slide1Props> = ({ state, lang }) => {
                 <h3 className="text-xs font-bold text-[#0f2347]">
                   {monthInfo.chartTitle(periodsCount, startDate, endDate)}
                 </h3>
-                <span className="text-[9px] text-slate-400 font-mono">Inception = 100.0</span>
+                <span className="text-[9px] text-slate-400 font-mono">
+                  {isEn ? 'Inception = 100.0' : '成立基期 = 100.0'}
+                </span>
               </div>
               {/* Legend with Return Badges */}
               <div className="grid grid-cols-2 gap-x-2 gap-y-0.5 text-[9px] py-1 border-b border-slate-100 mb-1">
@@ -213,7 +215,7 @@ export const Slide1: React.FC<Slide1Props> = ({ state, lang }) => {
 
             {/* Pure Vector SVG Chart (Sliced to selected month) */}
             <div className="flex-1 w-full flex items-center justify-center min-h-[185px]">
-              <PerformanceChart data={sliced} events={state.events} />
+              <PerformanceChart data={sliced} events={state.events} lang={lang} />
             </div>
 
             {/* Chart Sub-legend */}
@@ -235,7 +237,9 @@ export const Slide1: React.FC<Slide1Props> = ({ state, lang }) => {
             <div className="bg-white border border-slate-200 rounded-xl p-3 shadow-xs">
               <div className="flex justify-between items-center mb-1">
                 <h3 className="text-xs font-bold text-[#0f2347]">{t.s1_table2_title}</h3>
-                <span className="text-[9.5px] text-slate-400 font-mono">Unit: %</span>
+                <span className="text-[9.5px] text-slate-400 font-mono">
+                  {isEn ? 'Unit: %' : '单位：%'}
+                </span>
               </div>
               <div className="overflow-hidden border border-slate-200 rounded-lg">
                 <table className="w-full text-left text-xs border-collapse">
@@ -294,7 +298,15 @@ export const Slide1: React.FC<Slide1Props> = ({ state, lang }) => {
                   <span>{t.s1_card_title}</span>
                 </span>
                 <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                  {state.rebalance_verdict}
+                  {isEn
+                    ? state.rebalance_verdict === '持有'
+                      ? 'HOLD'
+                      : state.rebalance_verdict === '调仓'
+                      ? 'REBALANCE'
+                      : state.rebalance_verdict === '更换标的'
+                      ? 'REPLACE'
+                      : state.rebalance_verdict
+                    : state.rebalance_verdict}
                 </span>
               </div>
               <p className="text-[11px] text-slate-600 leading-relaxed overflow-hidden line-clamp-4">

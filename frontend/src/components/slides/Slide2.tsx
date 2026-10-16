@@ -50,7 +50,7 @@ export const Slide2: React.FC<Slide2Props> = ({ state, lang }) => {
         { name: isEn ? 'India' : '印度', stars: '★★' },
         { name: isEn ? 'Global Financials' : '全球金融', stars: '★★' },
         { name: isEn ? 'US' : '美国', stars: '★★' },
-        { name: isEn ? 'ASEAN' : '东盟 (ASEAN)', stars: '★★' },
+        { name: isEn ? 'ASEAN' : '东盟', stars: '★★' },
       ],
     },
   ];
@@ -101,7 +101,7 @@ export const Slide2: React.FC<Slide2Props> = ({ state, lang }) => {
           <div className="flex justify-between items-center mb-1.5 border-b border-slate-100 pb-1">
             <h3 className="text-xs font-bold text-[#0f2347]">{t.s2_mkt_header}</h3>
             <span className="text-[9px] text-slate-400 font-medium">
-              {isEn ? `P.${state.page_returns}` : `彭博与投研综合数据 (P.${state.page_returns})`}
+              {isEn ? `P.${state.page_returns}` : `彭博与投研综合数据 (第${state.page_returns}页)`}
             </span>
           </div>
 
@@ -180,7 +180,9 @@ export const Slide2: React.FC<Slide2Props> = ({ state, lang }) => {
         <div className="col-span-4 bg-white border border-slate-200 rounded-xl p-3 shadow-xs flex flex-col justify-between overflow-hidden">
           <div className="flex justify-between items-center mb-1.5 border-b border-slate-100 pb-1">
             <h3 className="text-xs font-bold text-[#0f2347]">{t.s2_thematic_header}</h3>
-            <span className="text-[9px] text-slate-400 font-medium">iFAST Strategy</span>
+            <span className="text-[9px] text-slate-400 font-medium">
+              {isEn ? 'iFAST Strategy' : '奕丰投研策略'}
+            </span>
           </div>
 
           <div className="space-y-2 flex-1 flex flex-col justify-around">
@@ -218,7 +220,7 @@ export const Slide2: React.FC<Slide2Props> = ({ state, lang }) => {
           <div className="flex justify-between items-center mb-1.5 border-b border-slate-100 pb-1">
             <h3 className="text-xs font-bold text-[#0f2347]">{t.s2_star_header}</h3>
             <span className="text-[9px] text-slate-400 font-medium">
-              {isEn ? `P.${state.page_stars}` : `官方榜单 (P.${state.page_stars})`}
+              {isEn ? `P.${state.page_stars}` : `官方榜单 (第${state.page_stars}页)`}
             </span>
           </div>
 

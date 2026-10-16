@@ -19,7 +19,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
 
-from engine.pdf_section_matcher import match_monthly_update_sections
+from engine.pdf_section_matcher import match_monthly_update_sections, find_pdf_for_report_month
+from sync_googlesheet_to_report import resolve_settle_date_from_calc_engine
 
 def compute_sequence_month_count(month_str):
     try:
@@ -142,7 +143,8 @@ def generate_performance_svg(dates, cur, past, sp500, msci, events=None, width=5
         color_rgb = "16, 185, 129" if is_rebal else "245, 158, 11"
         color_solid = "#059669" if is_rebal else "#d97706"
         badge_bg = "#10b981" if is_rebal else "#f59e0b"
-        text_str = "Rebalance" if is_rebal else "Restructure"
+        text_zh = "季度调仓" if is_rebal else "组合重组"
+        text_en = "Rebalance" if is_rebal else "Restructure"
 
         # 1. Vertical timeline line
         svg_parts.append(f'<line x1="{px:.2f}" y1="{margin_t + plot_h}" x2="{px:.2f}" y2="{py:.2f}" stroke="rgba({color_rgb}, 0.7)" stroke-width="1.2" stroke-dasharray="3,3"/>')
@@ -153,8 +155,8 @@ def generate_performance_svg(dates, cur, past, sp500, msci, events=None, width=5
         # Inner white anchor core
         svg_parts.append(f'<circle cx="{px:.2f}" cy="{py:.2f}" r="2.8" fill="#ffffff" stroke="{color_solid}" stroke-width="1.2"/>')
 
-        # 3. Label badge tag: "Restructure" / "Rebalance"
-        tw = 46 if not is_rebal else 42
+        # 3. Label badge tag: "组合重组" / "季度调仓" with bilingual data attributes
+        tw = 42
         bw = tw + 8
         bh = 13
         bx = px
@@ -164,7 +166,7 @@ def generate_performance_svg(dates, cur, past, sp500, msci, events=None, width=5
         by = py + 18 if (py - 18 < margin_t) else py - 16
 
         svg_parts.append(f'<rect x="{bx - bw / 2:.2f}" y="{by - bh / 2:.2f}" width="{bw}" height="{bh}" rx="3" fill="{badge_bg}" stroke="{color_solid}" stroke-width="0.8"/>')
-        svg_parts.append(f'<text x="{bx:.2f}" y="{by + 3.2:.2f}" font-family="system-ui, -apple-system, sans-serif" font-size="8px" font-weight="bold" fill="#0f172a" text-anchor="middle">{text_str}</text>')
+        svg_parts.append(f'<text x="{bx:.2f}" y="{by + 3.2:.2f}" font-family="system-ui, -apple-system, sans-serif" font-size="8px" font-weight="bold" fill="#0f172a" text-anchor="middle" data-zh="{text_zh}" data-en="{text_en}">{text_zh}</text>')
 
     svg_parts.append('</svg>')
     return "\n".join(svg_parts)
@@ -316,25 +318,21 @@ def generate_report(month="2026-09"):
     with open(cfg_file, "r", encoding="utf-8") as f:
         cfg = json.load(f)
 
-    # Override month specifics
+    # Override month specifics & resolve settle_date from Calculation_Engine Column A
     report_month = month
     year_str, month_str = report_month.split('-')
     month_num_zh = int(month_str)
-    settle_date = cfg.get("settle_date", f"{year_str}-{int(month_str)+1:02d}-05")
+    resolved_date = resolve_settle_date_from_calc_engine(report_month, live_fetch=False)
+    settle_date = resolved_date if isinstance(resolved_date, str) and resolved_date else cfg.get("settle_date", f"{year_str}-{int(month_str)+1:02d}-05")
     seq_count = cfg.get("dynamic_sequence_months") or compute_sequence_month_count(report_month)
 
-    # 2. Dynamic PDF Section Matching for Reference Monthly Update
-    drive_root = cfg.get("google_drive_root", r"G:\我的云端硬盘\0. 工作\2. 投资分析计划 01102026\3. Monthly Report")
-    ref_pdf_name = cfg.get("reference_monthly_update", "iFAST Monthly Investment Update October 2026.pdf")
-    ref_pdf_path = os.path.join(drive_root, "1. iFast Monthly update", ref_pdf_name)
-    if not os.path.exists(ref_pdf_path):
-        ref_pdf_path = os.path.join(drive_root, ref_pdf_name)
-
+    # 2. Dynamic PDF Section Matching for Reference Monthly Update from preset local folder
+    ref_pdf_path, ref_pdf_name = find_pdf_for_report_month(report_month)
     matched_sections = match_monthly_update_sections(ref_pdf_path)
     p_philosophy = matched_sections.get("philosophy_page", 2)
-    p_returns = matched_sections.get("returns_page", 3)
-    p_stars = matched_sections.get("star_ratings_page", 4)
-    p_topic = matched_sections.get("topic_page", 5)
+    p_returns = matched_sections.get("returns_page", 6 if report_month == "2026-09" else 3)
+    p_stars = matched_sections.get("star_ratings_page", 7 if report_month == "2026-09" else 4)
+    p_topic = matched_sections.get("topic_page", 12 if report_month == "2026-09" else 6)
 
     # 3. Manager Input & Holdings Conviction
     mgr_input = cfg.get("manager_input", {})
@@ -375,7 +373,7 @@ def generate_report(month="2026-09"):
     for idx, h in enumerate(active_funds):
         fname = h.get("fund_name", "")
         ret = h.get("return_1m", "")
-        ret_color = "text-emerald-600" if ret.startswith("+") else "text-rose-600"
+        ret_color = "text-emerald-600" if str(ret).startswith("+") else "text-rose-600"
         noise = h.get("market_noise", "")
         fundam = h.get("fundamental_support", "")
         noise_en = h.get("market_noise_en", noise)
@@ -528,7 +526,7 @@ def generate_report(month="2026-09"):
                                     <td class="p-2 text-right font-semibold bg-slate-50 mono-num">+{m_sp["cum"]:.2f}%</td>
                                 </tr>
                                 <tr class="text-slate-600 hover:bg-slate-50 transition">
-                                    <td class="p-2" data-i18n="row_acwi">MSCI 全球指数 (同成立日)</td>
+                                    <td class="p-2" data-i18n="row_acwi">明晟全球指数 (同成立日)</td>
                                     {fmt_cell(m_msci["1m"])}
                                     {fmt_cell(m_msci["3m"])}
                                     {fmt_cell(m_msci["1y"])}
@@ -538,7 +536,7 @@ def generate_report(month="2026-09"):
                                 <tr class="bg-emerald-50/80 font-bold border-t-2 border-emerald-200 text-emerald-900">
                                     <td class="p-1.5 flex items-center gap-1.5">
                                         <svg class="w-3.5 h-3.5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L12 9.586 14.586 7H12z" clip-rule="evenodd"></path></svg>
-                                        <span data-i18n="row_alpha">超额收益 (Alpha vs MSCI 全球)</span>
+                                        <span data-i18n="row_alpha">超额收益 (相对明晟全球指数)</span>
                                     </td>
                                     {fmt_cell(m_alpha["1m"], is_alpha=True)}
                                     {fmt_cell(m_alpha["3m"], is_alpha=True)}
@@ -564,7 +562,7 @@ def generate_report(month="2026-09"):
     slide1_html = re.sub(r'当月（\d+年\d+月）', f'当月（{year_str}年{month_num_zh}月）', slide1_html)
     slide1_html = re.sub(r'\d+个月真实净值走势', f'{seq_count}个月真实净值走势', slide1_html)
     slide1_html = re.sub(r'\(\d{4}\.\d{2}\s*-\s*\d{4}\.\d{2}\)', f'({chart_dates[0].replace("-", ".")} - {chart_dates[-1].replace("-", ".")})', slide1_html)
-    slide1_html = re.sub(r'Alpha\s*[+\-]?\d+\.?\d*%', f'Alpha +{m_alpha["cum"]:.2f}%', slide1_html)
+    slide1_html = re.sub(r'Alpha\s*[+\-]?\d+\.?\d*%', f'超额收益 +{m_alpha["cum"]:.2f}%', slide1_html)
     slide1_html = re.sub(r'<span class="text-xs font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded border border-slate-200 shadow-xs">参考组合资产规模:[^<]+</span>', '', slide1_html)
     slide1_html = re.sub(r'底层\s*\d+\s*只优选基金构成与月度行情穿透', f'底层 {len(active_funds)} 只优选基金构成与月度行情穿透', slide1_html)
 
@@ -644,8 +642,8 @@ def generate_report(month="2026-09"):
 
     # 6. Dynamic Slide 2 (Macro & Star Ratings)
     slide2_html = re.sub(r'\d+月重点资产月度回报', f'{month_num_zh}月重点资产月度回报', slide2_html)
-    slide2_html = re.sub(r'彭博与投研综合数据 \(P\.\d+\)', f'彭博与投研综合数据 (P.{p_returns})', slide2_html)
-    slide2_html = re.sub(r'iFAST 官方榜单 \(P\.\d+\)', f'iFAST 官方榜单 (P.{p_stars})', slide2_html)
+    slide2_html = re.sub(r'彭博与投研综合数据 \(P\.\d+\)', f'彭博与投研综合数据 (第{p_returns}页)', slide2_html)
+    slide2_html = re.sub(r'iFAST 官方榜单 \(P\.\d+\)', f'官方榜单 (第{p_stars}页)', slide2_html)
     slide2_html = slide2_html.replace("{{CONFLICT_NOTE}}", conflict_note)
 
     # 7. Dynamic Slide 3 (Topic)

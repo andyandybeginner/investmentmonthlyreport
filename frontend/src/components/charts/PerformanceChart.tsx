@@ -4,6 +4,7 @@ import { TimeSeriesPoint, PerformanceEvent } from '../../types';
 interface PerformanceChartProps {
   data: TimeSeriesPoint[];
   events?: PerformanceEvent[];
+  lang?: 'zh' | 'en';
   width?: number;
   height?: number;
 }
@@ -11,6 +12,7 @@ interface PerformanceChartProps {
 export const PerformanceChart: React.FC<PerformanceChartProps> = ({
   data,
   events = [],
+  lang = 'zh',
   width = 520,
   height = 185,
 }) => {
@@ -237,7 +239,13 @@ export const PerformanceChart: React.FC<PerformanceChartProps> = ({
               textAnchor="middle"
               fontFamily="system-ui, sans-serif"
             >
-              {isRestruct ? 'Restructure' : 'Rebalance'}
+              {lang === 'en'
+                ? isRestruct
+                  ? 'Restructure'
+                  : 'Rebalance'
+                : isRestruct
+                ? '组合重组'
+                : '季度调仓'}
             </text>
           </g>
         );

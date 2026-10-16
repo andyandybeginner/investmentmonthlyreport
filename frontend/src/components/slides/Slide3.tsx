@@ -32,9 +32,11 @@ export const Slide3: React.FC<Slide3Props> = ({ state, lang }) => {
         <div className="flex items-center gap-3 text-right">
           <div className="bg-white/10 px-3.5 py-1.5 rounded-lg border border-white/15">
             <span className="text-slate-300 block text-[9.5px] uppercase font-semibold">
-              Research Focus
+              {isEn ? 'Research Focus' : '深度专题聚焦'}
             </span>
-            <span className="text-amber-300 font-extrabold text-sm mono-num">iFAST Horizon Feature</span>
+            <span className="text-amber-300 font-extrabold text-sm mono-num">
+              {isEn ? 'iFAST Horizon Feature' : '奕丰投研专题精粹'}
+            </span>
           </div>
         </div>
       </div>
@@ -82,7 +84,9 @@ export const Slide3: React.FC<Slide3Props> = ({ state, lang }) => {
           <div>
             <div className="flex justify-between items-center mb-1">
               <h3 className="text-xs font-bold text-[#0f2347]">{t.s3_chart_title}</h3>
-              <span className="text-[9.5px] text-slate-400 font-mono">NYU Stern / Damodaran</span>
+              <span className="text-[9.5px] text-slate-400 font-mono">
+                {isEn ? 'NYU Stern / Damodaran' : '纽约大学斯特恩商学院'}
+              </span>
             </div>
             {/* Legend */}
             <div className="flex items-center gap-6 text-[10px] py-1 border-b border-slate-100 mb-2">
@@ -111,7 +115,7 @@ export const Slide3: React.FC<Slide3Props> = ({ state, lang }) => {
 
       {/* Footer */}
       <div className="bg-slate-100 px-8 py-2 border-t border-slate-200 flex justify-between items-center text-[10px] text-slate-500 shrink-0">
-        <span>{t.s3_foot_right}</span>
+        <span>{t.s1_foot_left}</span>
         <span className="font-semibold text-slate-700">{t.s3_foot_right}</span>
       </div>
     </div>

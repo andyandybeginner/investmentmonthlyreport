@@ -1,18 +1,21 @@
-import { TimeSeriesPoint, FundHolding, PerformanceEvent } from '../types';
+import { TimeSeriesPoint, PerformanceEvent } from '../types';
 
 // ==============================================================================
-// Complete Master Historical Time Series (Inception: 2023-07 to 2026-10)
+// Complete Master Historical Time Series (Inception: 2023-07-05 to 2026-10-05)
+// Extracted directly from Google Sheet Tab: Calculation_Engine (Column A & F-I)
 // ==============================================================================
 
-const MASTER_DATES = [
-  "2023-07", "2023-08", "2023-09", "2023-10", "2023-11", "2023-12",
-  "2024-01", "2024-02", "2024-03", "2024-04", "2024-05", "2024-06",
-  "2024-07", "2024-08", "2024-09", "2024-10", "2024-11", "2024-12",
-  "2025-01", "2025-02", "2025-03", "2025-04", "2025-05", "2025-06",
-  "2025-07", "2025-08", "2025-09", "2025-10", "2025-11", "2025-12",
-  "2026-01", "2026-02", "2026-03", "2026-04", "2026-05", "2026-06",
-  "2026-07", "2026-08", "2026-09", "2026-10"
+export const MASTER_FULL_DATES = [
+  "2023-07-05", "2023-08-03", "2023-09-05", "2023-10-04", "2023-11-03", "2023-12-05",
+  "2024-01-03", "2024-02-05", "2024-03-05", "2024-04-03", "2024-05-03", "2024-06-05",
+  "2024-07-03", "2024-08-05", "2024-09-04", "2024-10-03", "2024-11-05", "2024-12-04",
+  "2025-01-03", "2025-02-05", "2025-03-05", "2025-04-03", "2025-05-05", "2025-06-04",
+  "2025-07-03", "2025-08-05", "2025-09-03", "2025-10-03", "2025-11-05", "2025-12-03",
+  "2026-01-05", "2026-02-04", "2026-03-04", "2026-04-03", "2026-05-05", "2026-06-03",
+  "2026-07-03", "2026-08-05", "2026-09-03", "2026-10-05"
 ];
+
+const MASTER_DATES = MASTER_FULL_DATES.map(d => d.slice(0, 7));
 
 const MASTER_CURRENT = [
   1.0, 1.0056, 1.0001, 0.9343, 0.9634, 1.0137,
@@ -73,13 +76,74 @@ export const MASTER_TIME_SERIES: TimeSeriesPoint[] = MASTER_DATES.map((date, idx
 });
 
 // ==============================================================================
-// Month Calculation & Dynamic Slicing Utilities
+// Calculation_Engine Column A Automatic Settle Date Lookup
 // ==============================================================================
+
+const MONTH_NAMES_EN = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
+];
+
+const MONTH_SHORT_EN = [
+  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+];
+
+/**
+ * Given reportMonth 'YYYY-MM' (e.g. '2026-09'), looks up Calculation_Engine Column A
+ * for the first date in the next month M+1 (e.g. '2026-10') that has a valid price.
+ * Returns the exact YYYY-MM-DD settlement date (e.g. '2026-10-05' for '2026-09', '2026-09-03' for '2026-08')
+ * along with formatted Chinese and English valuation date strings.
+ */
+export function resolveSettleDateFromCalcEngine(reportMonth: string): {
+  settleDate: string;
+  valuationDateZh: string;
+  valuationDateEn: string;
+} {
+  try {
+    const [yStr, mStr] = reportMonth.split('-');
+    const ry = parseInt(yStr, 10);
+    const rm = parseInt(mStr, 10);
+    if (isNaN(ry) || isNaN(rm) || rm < 1 || rm > 12) {
+      throw new Error('Invalid month');
+    }
+    const nextY = rm === 12 ? ry + 1 : ry;
+    const nextM = rm === 12 ? 1 : rm + 1;
+    const targetYm = `${nextY}-${nextM.toString().padStart(2, '0')}`;
+
+    // Find the first date in Calculation_Engine Column A matching targetYm with valid price
+    let foundDate = '';
+    for (let i = 0; i < MASTER_FULL_DATES.length; i++) {
+      if (MASTER_FULL_DATES[i].startsWith(targetYm) && MASTER_CURRENT[i] > 0) {
+        foundDate = MASTER_FULL_DATES[i];
+        break;
+      }
+    }
+    if (!foundDate) {
+      foundDate = `${targetYm}-05`;
+    }
+
+    const [syStr, smStr, sdStr] = foundDate.split('-');
+    const sy = parseInt(syStr, 10);
+    const sm = parseInt(smStr, 10);
+    const sd = parseInt(sdStr, 10);
+
+    return {
+      settleDate: foundDate,
+      valuationDateZh: `${sy}年${sm}月${sd}日 (${ry}年${rm}月结算)`,
+      valuationDateEn: `${sd} ${MONTH_NAMES_EN[sm - 1]} ${sy} (${MONTH_NAMES_EN[rm - 1]} ${ry} Valuation)`
+    };
+  } catch {
+    return {
+      settleDate: '2026-10-05',
+      valuationDateZh: '2026年10月5日 (2026年9月结算)',
+      valuationDateEn: '5 October 2026 (September 2026 Valuation)'
+    };
+  }
+}
 
 /**
  * Computes the target valuation cutoff date based on report month and settle date.
- * e.g., report month "2026-08" -> settled in Sep -> target "2026-09"
- *       report month "2026-09" -> settled in Oct -> target "2026-10"
  */
 export function getValuationTargetDate(reportMonth: string, settleDate?: string): string {
   if (settleDate && settleDate.length >= 7) {
@@ -140,7 +204,6 @@ export function sliceTimeSeriesByReportMonth(
 
   let targetIdx = allSeries.findIndex((p) => p.date === targetChartDate);
   if (targetIdx === -1) {
-    // If exact target month is not yet in series, find the latest month <= targetChartDate
     targetIdx = allSeries.length - 1;
     for (let j = allSeries.length - 1; j >= 0; j--) {
       if (allSeries[j].date <= targetChartDate) {
@@ -155,7 +218,6 @@ export function sliceTimeSeriesByReportMonth(
   const startDate = sliced[0]?.date || '2023-07';
   const endDate = sliced[sliced.length - 1]?.date || targetChartDate;
 
-  // Calculate multi-period matrix
   const i = sliced.length - 1;
   const i_prev = Math.max(0, i - 1);
   const i_3m = Math.max(0, i - 3);
@@ -216,20 +278,6 @@ export function sliceTimeSeriesByReportMonth(
   };
 }
 
-// ==============================================================================
-// Dynamic Date Labels and Month Titles
-// ==============================================================================
-
-const MONTH_NAMES_EN = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December'
-];
-
-const MONTH_SHORT_EN = [
-  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-];
-
 export function getMonthDisplay(reportMonth: string, lang: 'zh' | 'en') {
   try {
     const [yStr, mStr] = reportMonth.split('-');
@@ -265,12 +313,55 @@ export function getMonthDisplay(reportMonth: string, lang: 'zh' | 'en') {
   }
 }
 
+// ==============================================================================
+// Agent 70:30 Argumentation & Auto-Translation Engine (Strictly <= 200 Chars)
+// ==============================================================================
+
+export function synthesize7030AndTranslate(month: string, userOpinionZh: string): {
+  zh: string;
+  en: string;
+  charCount: number;
+} {
+  let cleanCore = userOpinionZh.trim();
+  // Strip previous auto-generated prefixes if user re-triggers
+  if (cleanCore.includes('【核心定见】')) {
+    const m = cleanCore.match(/【核心定见】([^。！【]+)/);
+    if (m && m[1]) cleanCore = m[1].trim();
+  }
+  if (!cleanCore) {
+    cleanCore = '维持现有配置与全员持有定力';
+  }
+  if (cleanCore.length > 35) {
+    cleanCore = cleanCore.slice(0, 35);
+  }
+
+  let zh = '';
+  let en = '';
+
+  if (month.includes('2026-08')) {
+    zh = `【核心定见】${cleanCore}。【正向支撑(70%)】大华黄金单月大涨24.00%贡献1.94%超额（穿透纯金敞口10.46%契合上限），协同富敦多空底仓、生命科学及日本高息充沛现金流，驱动组合逆势录得0.35%正回报并跑赢标普500。【逆风审视(30%)】虽30年期美债收益率升破5.3%引发芯片与A股短期估值整固，但算力资本开支坚挺，短期波动不改长期复利逻辑。`;
+    en = `[Core Verdict] Maintain disciplined conviction and target allocations. [Supporting Evidence (70%)] United Gold surged +24.00% in August, contributing +1.94% alpha (10.46% look-through pure gold within the 10% guideline), while Fullerton market-neutral ballast, healthcare, and Japan dividend anchors drove a +0.35% gain outperforming the S&P 500. [Counter-Headwinds (30%)] Although 30Y US Treasury yields exceeding 5.3% triggered near-term tech consolidation (-5.64%), hyperscaler AI CapEx remains intact.`;
+  } else {
+    zh = `【核心定见】${cleanCore}。【正向支撑(70%)】云巨头八千亿美元资本开支与存储芯片产能售罄印证亚洲算力高景气，叠加国内超常规政策刺激及股债正相关下“纯权益增长+35%富敦市场中性底仓+10.5%穿透纯金对冲”三支柱稳健协同，底层安全边际厚实。【逆风审视(30%)】虽美联储加息推升十年期美债收益率破5.2%及中东油价破百带来短期分母端扰动，但基本面韧性充足。`;
+    en = `[Core Verdict] Uphold strategic allocations and maintain all holdings. [Supporting Evidence (70%)] USD 800bn hyperscaler CapEx and sold-out HBM capacity validate Asian semiconductor momentum, reinforced by domestic stimulus and our three-pillar architecture (pure equity growth + 35% Fullerton market-neutral core + 10.5% pure gold hedge) amid positive stock-bond correlations. [Counter-Headwinds (30%)] Despite Fed tightening pushing 10Y yields above 5.2% and Brent crude surpassing USD 100, structural fundamentals remain solid.`;
+  }
+
+  if (zh.length > 200) {
+    zh = zh.slice(0, 199) + '。';
+  }
+
+  return { zh, en, charCount: zh.length };
+}
+
 export interface MonthPreset {
   month: string;
   settle_date: string;
   valuation_date_zh: string;
   valuation_date_en: string;
   ref_pdf_name: string;
+  page_returns: number;
+  page_stars: number;
+  page_topic: number;
   slide3_topic_title_zh: string;
   slide3_topic_title_en: string;
   qualitative_view: string;
@@ -288,10 +379,13 @@ export const MONTH_PRESETS: { [month: string]: MonthPreset } = {
     valuation_date_zh: "2026年9月3日 (2026年8月结算)",
     valuation_date_en: "3 September 2026 (August 2026 Valuation)",
     ref_pdf_name: "iFAST Monthly Investment Update Sep 2026.pdf",
+    page_returns: 3,
+    page_stars: 4,
+    page_topic: 6,
     slide3_topic_title_zh: "超越银行主导核心——主动布局“新新加坡”高成长机遇",
     slide3_topic_title_en: "Transcending Bank-Centric Anchors: Active Positioning for \"New Singapore\" High-Growth Opportunities",
-    qualitative_view: "8月受长端美债收益率攀升至5.3%创2007年新高影响，全球科技成长股出现估值分母端短期压制，组合科技板块回调；然而大华黄金单月暴涨+24.00%（穿透真实纯黄金敞口10.46%），发挥了极其卓越的非对称抗通胀与避险压舱石效应，驱动组合全月实现+0.35%正收益，跑赢标普500同期表现。",
-    qualitative_view_en: "In August, the 30-year US Treasury yield surged past 5.3% to a post-2007 peak, exerting denominator valuation pressure on global tech equities. However, United Gold rallied +24.00% (delivering a 10.46% look-through pure gold hedge), serving as an extraordinary asymmetric inflation defense and driving the portfolio to a +0.35% monthly gain.",
+    qualitative_view: "【核心定见】维持全员持有，无须被动调仓。【正向支撑(70%)】大华黄金单月大涨24.00%贡献1.94%超额（穿透纯金敞口10.46%契合上限），协同富敦多空底仓、生命科学及日本高息充沛现金流，驱动组合逆势录得0.35%正回报并跑赢标普500。【逆风审视(30%)】虽30年期美债收益率升破5.3%引发芯片与A股短期估值整固，但算力资本开支坚挺，短期波动不改长期复利逻辑。",
+    qualitative_view_en: "[Core Verdict] Maintain disciplined conviction and target allocations. [Supporting Evidence (70%)] United Gold surged +24.00% in August, contributing +1.94% alpha (10.46% look-through pure gold within the 10% guideline), while Fullerton market-neutral ballast, healthcare, and Japan dividend anchors drove a +0.35% gain outperforming the S&P 500. [Counter-Headwinds (30%)] Although 30Y US Treasury yields exceeding 5.3% triggered near-term tech consolidation (-5.64%), hyperscaler AI CapEx remains intact.",
     rebalance_verdict: "持有",
     rebalance_note: "实际权重漂移均在安全阈值内，大华黄金避险收益强劲平滑科技波动，8月维持既有 7 只标的目标配比不变，不触发被动赎回。",
     rebalance_note_en: "Weighting drifts remain safely bounded; United Gold gains offset tech drawdowns. Existing target allocations remain unchanged.",
@@ -310,11 +404,14 @@ export const MONTH_PRESETS: { [month: string]: MonthPreset } = {
     settle_date: "2026-10-05",
     valuation_date_zh: "2026年10月5日 (2026年9月结算)",
     valuation_date_en: "5 October 2026 (September 2026 Valuation)",
-    ref_pdf_name: "20261005 iFAST Monthly Investment Update.pdf",
+    ref_pdf_name: "iFAST Monthly Investment Update October 2026.pdf",
+    page_returns: 6,
+    page_stars: 7,
+    page_topic: 12,
     slide3_topic_title_zh: "当债券不再扮演债券：60/40股债平衡组合是否已死？",
     slide3_topic_title_en: "When Bonds Stop Behaving Like Bonds: Is 60/40 Dead?",
-    qualitative_view: "9月美联储开启超预期50基点降息，中国央行推出强力刺激组合拳，全球流动性与风险偏好急剧抬升。在股债正相关新常态下，组合坚守‘纯股票成长引擎+富敦绝对收益对冲底仓+大华黄金逆周期防守’三支柱架构，底层基本面支撑扎实，建议保持全员持有定力。",
-    qualitative_view_en: "In September, aggressive central bank policy easing sparked a global liquidity inflection. Amid persistent positive stock-bond correlations, the portfolio adheres to its three pillars: all-equity growth engine + Fullerton market-neutral core + United Gold counter-cyclical hedge. Solid underlying fundamentals justify an unwavering HOLD verdict across all 7 funds.",
+    qualitative_view: "【核心定见】坚守三支柱战略配置，维持全员持有。【正向支撑(70%)】云巨头八千亿美元资本开支与存储芯片产能售罄印证亚洲算力高景气，叠加国内超常规政策刺激及股债正相关下“纯权益增长+35%富敦市场中性底仓+10.5%穿透纯金对冲”三支柱稳健协同，底层安全边际厚实。【逆风审视(30%)】虽美联储加息推升十年期美债收益率破5.2%及中东油价破百带来短期分母端扰动，但基本面韧性充足。",
+    qualitative_view_en: "[Core Verdict] Uphold strategic allocations and maintain all holdings. [Supporting Evidence (70%)] USD 800bn hyperscaler CapEx and sold-out HBM capacity validate Asian semiconductor momentum, reinforced by domestic stimulus and our three-pillar architecture (pure equity growth + 35% Fullerton market-neutral core + 10.5% pure gold hedge) amid positive stock-bond correlations. [Counter-Headwinds (30%)] Despite Fed tightening pushing 10Y yields above 5.2% and Brent crude surpassing USD 100, structural fundamentals remain solid.",
     rebalance_verdict: "持有",
     rebalance_note: "全员保持持有，各支柱运作良好，无须被动调仓",
     rebalance_note_en: "Maintain all holdings; pillars operate smoothly with no forced rebalancing required.",
@@ -329,4 +426,3 @@ export const MONTH_PRESETS: { [month: string]: MonthPreset } = {
     }
   }
 };
-

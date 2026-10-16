@@ -1,6 +1,7 @@
 import React from 'react';
 import { PortfolioState, Language } from '../../types';
 import { getDictionary } from '../../i18n';
+import { getMonthDisplay } from '../../utils/performance';
 import { Shield, TrendingUp, Layers, Globe } from 'lucide-react';
 
 interface FactsheetProps {
@@ -11,6 +12,7 @@ interface FactsheetProps {
 export const Factsheet: React.FC<FactsheetProps> = ({ portfolio, lang }) => {
   const t = getDictionary(lang);
   const lookthrough = portfolio.lookthrough;
+  const monthInfo = getMonthDisplay(portfolio.month, lang);
 
   // Split top 10 holdings into 1-5 and 6-10
   const top10 = lookthrough.top_holdings || [];
@@ -18,7 +20,7 @@ export const Factsheet: React.FC<FactsheetProps> = ({ portfolio, lang }) => {
   const top6to10 = top10.slice(5, 10);
 
   // Month tag text
-  const monthTag = lang === 'en' ? 'September Look-Through' : '9月底层透析';
+  const monthTag = monthInfo.monthTag;
   const valuationDate = lang === 'en' ? portfolio.valuation_date_en : portfolio.valuation_date_zh;
 
   return (
@@ -175,7 +177,7 @@ export const Factsheet: React.FC<FactsheetProps> = ({ portfolio, lang }) => {
               <span>{t.fs_sec_title}</span>
             </h4>
             <span className="text-[9px] text-slate-400 font-semibold">
-              {lang === 'en' ? 'GICS Look-Through' : 'GICS 行业分布'}
+              {lang === 'en' ? 'GICS Look-Through' : '全球行业分类分布'}
             </span>
           </div>
 
@@ -302,7 +304,7 @@ export const Factsheet: React.FC<FactsheetProps> = ({ portfolio, lang }) => {
                 <span>{t.fs_fund_matrix_title}</span>
               </h4>
               <span className="text-[9px] text-slate-400 font-semibold">
-                {lang === 'en' ? 'Official Factsheets Statistics' : '官方 Factsheet 数据统计'}
+                {lang === 'en' ? 'Official Factsheets Statistics' : '官方基金月报数据统计'}
               </span>
             </div>
 
