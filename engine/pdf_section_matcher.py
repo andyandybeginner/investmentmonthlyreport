@@ -121,7 +121,25 @@ def match_monthly_update_sections(pdf_path):
         "topic_title_en": None
     }
 
-    # Start searching from page 2 (index 1) to skip cover/TOC
+    try:
+        from engine.ifast_pdf_decomposer import iFASTPDFDecomposer
+        decomposer = iFASTPDFDecomposer(pdf_path)
+        sec = decomposer.find_section_pages()
+        info["returns_page"] = sec.get("returns_page")
+        info["star_ratings_page"] = sec.get("star_ratings_page")
+        info["topic_page"] = sec.get("topic_page")
+        info["topic_title"] = sec.get("topic_title")
+        info["topic_title_zh"] = sec.get("topic_title_zh")
+        info["topic_title_en"] = sec.get("topic_title_en")
+        try:
+            info["market_performance"] = decomposer.extract_market_performance(info["returns_page"])
+        except Exception:
+            pass
+        return info
+    except Exception as decomposer_err:
+        pass
+
+    # Fallback to direct text scanning if decomposer encounters an issue
     for i in range(1, len(doc)):
         text = doc[i].get_text()
         norm = re.sub(r'\s+', '', text).upper()
