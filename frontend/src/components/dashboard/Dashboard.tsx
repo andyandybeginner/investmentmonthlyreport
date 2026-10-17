@@ -936,7 +936,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
             </p>
             <div className="flex gap-2">
               <a
-                href="/download/memo_zh"
+                href={`/download/memo_zh?month=${portfolio.month}`}
                 target="_blank"
                 rel="noreferrer"
                 className="flex-1 text-center py-2 px-3 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-bold border border-blue-200 transition"
@@ -944,7 +944,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 下载中文备忘录 PDF
               </a>
               <a
-                href="/download/memo_en"
+                href={`/download/memo_en?month=${portfolio.month}`}
                 target="_blank"
                 rel="noreferrer"
                 className="flex-1 text-center py-2 px-3 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold border border-slate-300 transition"
@@ -972,7 +972,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
             </p>
             <div className="flex gap-2">
               <a
-                href="/download/factsheet_zh"
+                href={`/download/factsheet_zh?month=${portfolio.month}`}
                 target="_blank"
                 rel="noreferrer"
                 className="flex-1 text-center py-2 px-3 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-bold border border-amber-200 transition"
@@ -980,7 +980,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 下载中文穿透单页 PDF
               </a>
               <a
-                href="/download/factsheet_en"
+                href={`/download/factsheet_en?month=${portfolio.month}`}
                 target="_blank"
                 rel="noreferrer"
                 className="flex-1 text-center py-2 px-3 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold border border-slate-300 transition"

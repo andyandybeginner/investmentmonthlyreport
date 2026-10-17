@@ -79,26 +79,126 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
         # Named Direct Downloads
         elif clean_path.startswith('/download/'):
             target = clean_path.replace('/download/', '')
-            matched_file = None
+            month = query.get('month', ['2026-09'])[0]
             out_dir = os.path.join(BASE_DIR, 'output')
+
+            # Lookup settle_date for this month
+            settle_date = '2026-10-05' if month >= '2026-09' else '2026-09-03'
+            cfg_file = os.path.join(BASE_DIR, 'config', f'config_{month.replace("-", "_")}.json')
+            if os.path.exists(cfg_file):
+                try:
+                    with open(cfg_file, 'r', encoding='utf-8') as cf:
+                        cfg_obj = json.load(cf)
+                        settle_date = cfg_obj.get('settle_date', settle_date)
+                except Exception:
+                    pass
+
+            matched_file = None
             if target == 'memo_zh':
-                matched_file = os.path.join(out_dir, 'HR_Model_Portfolio_Monthly_Memo_2026-09_ZH.pdf')
+                candidates = [
+                    os.path.join(out_dir, f'HR_模板投资组合_月度备忘录_{settle_date}.pdf'),
+                    os.path.join(BASE_DIR, f'HR_模板投资组合_月度备忘录_{settle_date}.pdf'),
+                    os.path.join(out_dir, f'HR_Model_Portfolio_Monthly_Memo_{month}_ZH.pdf'),
+                ]
+                for c in candidates:
+                    if os.path.exists(c):
+                        matched_file = c
+                        break
+                if not matched_file and os.path.exists(out_dir):
+                    memos = [os.path.join(out_dir, f) for f in os.listdir(out_dir) if f.endswith('.pdf') and '月度备忘录' in f]
+                    if memos:
+                        memos.sort(key=os.path.getmtime, reverse=True)
+                        matched_file = memos[0]
+
             elif target == 'memo_en':
-                matched_file = os.path.join(out_dir, 'HR_Model_Portfolio_Monthly_Memo_2026-09_EN.pdf')
+                candidates = [
+                    os.path.join(out_dir, f'HR_Model_Portfolio_Advisory_Memorandum_{settle_date}.pdf'),
+                    os.path.join(BASE_DIR, f'HR_Model_Portfolio_Advisory_Memorandum_{settle_date}.pdf'),
+                    os.path.join(out_dir, f'HR_Model_Portfolio_Monthly_Memo_{month}_EN.pdf'),
+                ]
+                for c in candidates:
+                    if os.path.exists(c):
+                        matched_file = c
+                        break
+                if not matched_file and os.path.exists(out_dir):
+                    memos = [os.path.join(out_dir, f) for f in os.listdir(out_dir) if f.endswith('.pdf') and ('Advisory_Memorandum' in f or 'Memo' in f)]
+                    if memos:
+                        memos.sort(key=os.path.getmtime, reverse=True)
+                        matched_file = memos[0]
+
             elif target == 'factsheet_zh':
-                matched_file = os.path.join(out_dir, 'HR_Model_Portfolio_Risk_Factsheet_2026-10-05.pdf')
+                candidates = [
+                    os.path.join(out_dir, f'HR_模板投资组合_资产穿透与风险报告_{settle_date}.pdf'),
+                    os.path.join(BASE_DIR, f'HR_模板投资组合_资产穿透与风险报告_{settle_date}.pdf'),
+                    os.path.join(out_dir, f'HR_Model_Portfolio_Risk_Factsheet_{settle_date}.pdf'),
+                ]
+                for c in candidates:
+                    if os.path.exists(c):
+                        matched_file = c
+                        break
+                if not matched_file and os.path.exists(out_dir):
+                    fss = [os.path.join(out_dir, f) for f in os.listdir(out_dir) if f.endswith('.pdf') and '资产穿透' in f]
+                    if fss:
+                        fss.sort(key=os.path.getmtime, reverse=True)
+                        matched_file = fss[0]
+
             elif target == 'factsheet_en':
-                matched_file = os.path.join(out_dir, 'HR_Model_Portfolio_Risk_Factsheet_2026-10-05.pdf')
+                candidates = [
+                    os.path.join(out_dir, f'HR_Model_Portfolio_Risk_Factsheet_{settle_date}.pdf'),
+                    os.path.join(BASE_DIR, f'HR_Model_Portfolio_Risk_Factsheet_{settle_date}.pdf'),
+                ]
+                for c in candidates:
+                    if os.path.exists(c):
+                        matched_file = c
+                        break
+                if not matched_file and os.path.exists(out_dir):
+                    fss = [os.path.join(out_dir, f) for f in os.listdir(out_dir) if f.endswith('.pdf') and 'Risk_Factsheet' in f]
+                    if fss:
+                        fss.sort(key=os.path.getmtime, reverse=True)
+                        matched_file = fss[0]
+
+            # If still not found, try auto-generating on the fly!
+            if not matched_file or not os.path.exists(matched_file):
+                try:
+                    from engine.exporter import export_all_deliverables
+                    export_all_deliverables({'month': month})
+                    if target == 'memo_zh':
+                        cf = os.path.join(out_dir, f'HR_模板投资组合_月度备忘录_{settle_date}.pdf')
+                        if os.path.exists(cf): matched_file = cf
+                    elif target == 'memo_en':
+                        cf = os.path.join(out_dir, f'HR_Model_Portfolio_Advisory_Memorandum_{settle_date}.pdf')
+                        if os.path.exists(cf): matched_file = cf
+                    elif target == 'factsheet_zh':
+                        cf = os.path.join(out_dir, f'HR_模板投资组合_资产穿透与风险报告_{settle_date}.pdf')
+                        if os.path.exists(cf): matched_file = cf
+                    elif target == 'factsheet_en':
+                        cf = os.path.join(out_dir, f'HR_Model_Portfolio_Risk_Factsheet_{settle_date}.pdf')
+                        if os.path.exists(cf): matched_file = cf
+                except Exception as ex:
+                    print(f"Error auto-exporting {target}: {ex}")
 
             if matched_file and os.path.exists(matched_file):
                 self.send_response(200)
                 self.send_header('Content-Type', 'application/pdf')
                 fn = os.path.basename(matched_file)
-                self.send_header('Content-Disposition', f'attachment; filename="{fn}"')
+                encoded_fn = urllib.parse.quote(fn)
+                self.send_header('Content-Disposition', f'attachment; filename="{encoded_fn}"; filename*=UTF-8\'\'{encoded_fn}')
                 self.send_header('Content-Length', str(os.path.getsize(matched_file)))
                 self.end_headers()
                 with open(matched_file, 'rb') as f:
                     self.wfile.write(f.read())
+                return
+            else:
+                self.send_response(404)
+                self.send_header('Content-Type', 'text/html; charset=utf-8')
+                self.end_headers()
+                self.wfile.write(f"""
+                <div style="font-family:sans-serif;padding:40px;text-align:center;">
+                    <h2 style="color:#e11d48;">交付物文档生成中或未就绪</h2>
+                    <p style="color:#475569;">目标月份 [{month}] 的该项交付物暂未生成，请在工作台顶部点击 <strong>“导出矢量 PDF”</strong> 批量生成交付物后再行下载。</p>
+                    <a href="/" style="display:inline-block;margin-top:16px;padding:8px 16px;background:#2563eb;color:#fff;border-radius:8px;text-decoration:none;font-weight:bold;">返回工作台</a>
+                </div>
+                """.encode('utf-8'))
                 return
 
         # Direct File Download Endpoint
