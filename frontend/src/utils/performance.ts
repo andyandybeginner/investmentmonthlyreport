@@ -510,7 +510,7 @@ export const MONTH_PRESETS: { [month: string]: MonthPreset } = {
       "fund-fullerton": {
         target_weight: 35.0,
         current_weight: 35.09,
-        nav: "$18.0091",
+        nav: "$19.4244",
         return_1m: 0.21,
         contrib_1m: 0.07,
         market_noise: "多空对冲在强趋势成长单边行情中弹性较为温和。",
@@ -522,7 +522,7 @@ export const MONTH_PRESETS: { [month: string]: MonthPreset } = {
       "fund-eastspring": {
         target_weight: 15.0,
         current_weight: 17.40,
-        nav: "$4.3330",
+        nav: "$5.5180",
         return_1m: 9.20,
         contrib_1m: 1.60,
         market_noise: "全球半导体短线震荡，美债收益率曲线陡峭化引发成长估值分歧。",
@@ -534,7 +534,7 @@ export const MONTH_PRESETS: { [month: string]: MonthPreset } = {
       "fund-janus": {
         target_weight: 15.0,
         current_weight: 14.17,
-        nav: "$17.7700",
+        nav: "$18.5100",
         return_1m: -5.30,
         contrib_1m: -0.75,
         market_noise: "高利率尾声阶段生物医药并购节奏略有放缓，板块出现获利了结回吐。",
@@ -546,11 +546,11 @@ export const MONTH_PRESETS: { [month: string]: MonthPreset } = {
       "fund-gold": {
         target_weight: 15.0,
         current_weight: 13.23,
-        nav: "$5.1323",
-        return_1m: -9.92,
-        contrib_1m: -1.31,
-        market_noise: "8月暴涨+24%后短线投机盘获利了结回吐-9.92%，美元汇率短线技术性反抽。",
-        market_noise_en: "Speculative profit-taking after August's +24% surge combined with short-term DXY technical bounce.",
+        nav: "$4.3846",
+        return_1m: -7.43,
+        contrib_1m: -0.98,
+        market_noise: "8月冲高后9月短线获利了结回吐-7.43%，美元汇率短线技术性反抽。",
+        market_noise_en: "Healthy short-term profit consolidation of -7.43% in September following August's surge, combined with brief DXY technical bounce.",
         fundamental_support: "全球央行去美元化购金逻辑与长期地缘避险属性未变，前期大涨累积丰厚利润后正常整固，无需惊慌。",
         fundamental_support_en: "Central bank de-dollarization reserve purchases and structural geopolitical hedging remain intact; healthy profit consolidation.",
         recommendation: "持有"
@@ -558,7 +558,7 @@ export const MONTH_PRESETS: { [month: string]: MonthPreset } = {
       "fund-china": {
         target_weight: 12.0,
         current_weight: 12.24,
-        nav: "$0.8579",
+        nav: "$0.9597",
         return_1m: -3.87,
         contrib_1m: -0.47,
         market_noise: "短期宏观经济修复斜率较缓，房地产市场仍处于筑底期。",
@@ -570,7 +570,7 @@ export const MONTH_PRESETS: { [month: string]: MonthPreset } = {
       "fund-fssa": {
         target_weight: 4.0,
         current_weight: 4.00,
-        nav: "$3.9428",
+        nav: "$4.3600",
         return_1m: 1.12,
         contrib_1m: 0.04,
         market_noise: "外围汇率预期交织，区域部分出口面临扰动。",
@@ -582,7 +582,7 @@ export const MONTH_PRESETS: { [month: string]: MonthPreset } = {
       "fund-nikko": {
         target_weight: 4.0,
         current_weight: 3.87,
-        nav: "$2.2261",
+        nav: "$2.3519",
         return_1m: -1.73,
         contrib_1m: -0.07,
         market_noise: "日元汇率与央行利率政策预期交锋，东证指数短期高位整固。",

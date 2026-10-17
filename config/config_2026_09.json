@@ -28,7 +28,7 @@
     "qualitative_view": "当月的组合回报不及基准指数，主要是黄金基金在8月24%单月暴涨之后的收益落袋。云巨头八千亿美元资本开支与存储芯片产能售罄印证亚洲算力高景气，叠加国内超常规政策刺激及股债正相关下“纯权益增长+35%富敦市场中性底仓+10.5%穿透纯金对冲”三支柱稳健协同，底层安全边际厚实。虽美联储加息推升十年期美债收益率破5.2%及中东油价破百带来短期分母端扰动。",
     "qualitative_view_en": "Monthly portfolio return trailed the benchmark index primarily due to profit-taking in the Gold fund following its 24% single-month surge in August. USD 800bn hyperscaler CapEx and sold-out memory chip capacity validate Asian compute momentum, reinforced by domestic stimulus and our three-pillar architecture (pure equity growth + 35% Fullerton market-neutral core + 10.5% look-through pure gold hedge) amid positive stock-bond correlations. Despite Fed rate hikes pushing 10Y Treasury yields above 5.2% and Middle East oil surpassing USD 100 causing short-term denominator headwinds, underlying safety margins remain solid.",
     "rebalance_verdict": "持有",
-    "rebalance_note": "全员保持持有，各支柱运作良好，无须被动调仓",
+    "rebalance_note": "坚守三支柱战略配置，维持板块分配。建议亚洲除日本板块更换标的。",
     "rebalance_note_en": "Core asset theses remain solid; weighting drifts sit comfortably within safety bands. Existing target allocations for all 7 funds remain unchanged for September.",
     "rebalance_memo_link": "https://docs.google.com/document/d/1KI_t1-eodHpmd8sx7H2GGpEJDf5qbwi4/edit?usp=sharing&ouid=106447183490540600770&rtpof=true&sd=true",
     "show_rebalance_memo": false,
@@ -40,7 +40,7 @@
         "role_en": "Core Ballast",
         "target_weight": "35.00%",
         "current_weight": "35.09%",
-        "nav": "$18.0091",
+        "nav": "$19.4244",
         "return_1m": "+0.21%",
         "contrib_1m": "+0.07%",
         "active": true,
@@ -57,7 +57,7 @@
         "role_en": "Tech Growth",
         "target_weight": "15.00%",
         "current_weight": "17.40%",
-        "nav": "$4.3330",
+        "nav": "$5.5180",
         "return_1m": "+9.20%",
         "contrib_1m": "+1.60%",
         "active": true,
@@ -74,7 +74,7 @@
         "role_en": "Healthcare",
         "target_weight": "15.00%",
         "current_weight": "14.17%",
-        "nav": "$17.7700",
+        "nav": "$18.5100",
         "return_1m": "-5.30%",
         "contrib_1m": "-0.75%",
         "active": true,
@@ -91,12 +91,12 @@
         "role_en": "Gold & Commodity",
         "target_weight": "15.00%",
         "current_weight": "13.23%",
-        "nav": "$5.1323",
-        "return_1m": "-9.92%",
-        "contrib_1m": "-1.31%",
+        "nav": "$4.3846",
+        "return_1m": "-7.43%",
+        "contrib_1m": "-0.98%",
         "active": true,
-        "market_noise": "8月暴涨+24%后短线投机盘获利了结回吐-9.92%，美元汇率短线技术性反抽。",
-        "market_noise_en": "Speculative profit-taking after August's +24% surge combined with short-term DXY technical bounce.",
+        "market_noise": "8月冲高后9月短线获利了结回吐-7.43%，美元汇率短线技术性反抽。",
+        "market_noise_en": "Healthy short-term profit consolidation of -7.43% in September following August's surge, combined with brief DXY technical bounce.",
         "fundamental_support": "全球央行去美元化购金逻辑与长期地缘避险属性未变，前期大涨累积丰厚利润后正常整固，无需惊慌。",
         "fundamental_support_en": "Central bank de-dollarization reserve purchases and structural geopolitical hedging remain intact; healthy profit consolidation.",
         "advisory_recommendation": "持有"
@@ -108,7 +108,7 @@
         "role_en": "China Innovation",
         "target_weight": "12.00%",
         "current_weight": "12.24%",
-        "nav": "$0.8579",
+        "nav": "$0.9597",
         "return_1m": "-3.87%",
         "contrib_1m": "-0.47%",
         "active": true,
@@ -125,7 +125,7 @@
         "role_en": "Asia Focus",
         "target_weight": "4.00%",
         "current_weight": "4.00%",
-        "nav": "$3.9428",
+        "nav": "$4.3600",
         "return_1m": "+1.12%",
         "contrib_1m": "+0.04%",
         "active": true,
@@ -142,7 +142,7 @@
         "role_en": "Japan Dividend",
         "target_weight": "4.00%",
         "current_weight": "3.87%",
-        "nav": "$2.2261",
+        "nav": "$2.3519",
         "return_1m": "-1.73%",
         "contrib_1m": "-0.07%",
         "active": true,
@@ -153,21 +153,21 @@
         "advisory_recommendation": "持有"
       },
       {
-        "id": "fund-1792243446430",
+        "id": "fund-1792245443680",
         "fund_name": "M&G (LUX) ASIAN A ACC USD",
-        "role": "亚太除日本",
+        "role": "卫星成长配置",
         "role_en": "Satellite Growth Asset",
         "target_weight": "4.00%",
-        "current_weight": "4.00%",
+        "current_weight": "0.00%",
         "nav": "—",
-        "return_1m": "-5.06%",
+        "return_1m": "-2.00%",
         "contrib_1m": "+0.00%",
-        "active": true,
-        "market_noise": " 风险特征：超额收益主要来自选股，而非放大市场敞口",
+        "active": false,
+        "market_noise": "短期波动正常",
         "market_noise_en": "Normal short-term noise",
-        "fundamental_support": "M&G 寻找长期前景被市场低估的公司，判断依据是资本回报、估值和公司治理三个要素。这与 FSSA 偏重高质量、高定价成长股的方法形成互补。M&G 月报逐月披露业绩归因及新建仓、清仓标的（例如 8 月新建仓韩国 KCC，清仓 ICICI Bank 与 BlueScope Steel），便于我们持续检验管理人的执行纪律。",
+        "fundamental_support": " M&G 寻找长期前景被市场低估的公司，判断依据是资本回报、估值和公司治理三个要素。这与 FSSA 偏重高质量、高定价成长股的方法形成互补。M&G 月报逐月披露业绩归因及新建仓、清仓标的（例如 8 月新建仓韩国 KCC，清仓 ICICI Bank 与 BlueScope Steel），便于我们持续检验管理人的执行纪律。\n",
         "fundamental_support_en": "Solid secular fundamentals",
-        "advisory_recommendation": "持有"
+        "advisory_recommendation": "候选替换标的"
       }
     ]
   },
@@ -188,786 +188,13 @@
   "page_stars": 7,
   "rebalance_memo_link": "https://docs.google.com/document/d/1KI_t1-eodHpmd8sx7H2GGpEJDf5qbwi4/edit?usp=sharing&ouid=106447183490540600770&rtpof=true&sd=true",
   "show_rebalance_memo": false,
-  "dynamic_slides": [
-    {
-      "id": "funds_matrix",
-      "title_zh": "官方精选基金库回报全景矩阵",
-      "title_en": "Official Recommended Unit Trusts Performance Matrix",
-      "category_badge_zh": "附录扩充 · 官方优选基金池",
-      "category_badge_en": "Appendix · Recommended Funds Matrix",
-      "source_page": 20,
-      "source_pdf": "iFAST Monthly Investment Update October 2026.pdf",
-      "layout": "table_matrix",
-      "table_data": {
-        "columns": [
-          "基金名称 (Fund Name)",
-          "投资类别",
-          "1个月",
-          "3个月",
-          "年初至今 (YTD)",
-          "1年",
-          "3年年化",
-          "5年年化"
-        ],
-        "rows": [
-          {
-            "name": "M&G (Lux) Asian",
-            "category": "核心股票 · 亚洲除日",
-            "m1": "-2.1%",
-            "m3": "-0.7%",
-            "ytd": "19.3%",
-            "y1": "26.1%",
-            "y3": "24.1%",
-            "y5": "11.8%"
-          },
-          {
-            "name": "Fidelity Asia Pacific Dividend",
-            "category": "核心股票 · 亚洲除日",
-            "m1": "-1.3%",
-            "m3": "-0.4%",
-            "ytd": "16.5%",
-            "y1": "22.1%",
-            "y3": "15.2%",
-            "y5": "5.8%"
-          },
-          {
-            "name": "Fidelity Asian Smaller Companies",
-            "category": "核心股票 · 亚洲除日",
-            "m1": "-3.1%",
-            "m3": "5.5%",
-            "ytd": "0.4%",
-            "y1": "2.0%",
-            "y3": "6.6%",
-            "y5": "4.1%"
-          },
-          {
-            "name": "Fidelity Global Technology",
-            "category": "核心股票配置",
-            "m1": "-0.1%",
-            "m3": "3.6%",
-            "ytd": "14.5%",
-            "y1": "17.6%",
-            "y3": "22.4%",
-            "y5": "12.8%"
-          },
-          {
-            "name": "Eastspring Global Technology",
-            "category": "核心股票配置",
-            "m1": "3.8%",
-            "m3": "-3.4%",
-            "ytd": "27.5%",
-            "y1": "29.1%",
-            "y3": "31.2%",
-            "y5": "15.4%"
-          },
-          {
-            "name": "M&G (Lux) European Strategic Value",
-            "category": "核心股票配置",
-            "m1": "-3.3%",
-            "m3": "0.0%",
-            "ytd": "3.6%",
-            "y1": "4.7%",
-            "y3": "10.1%",
-            "y5": "5.5%"
-          },
-          {
-            "name": "BNP Paribas Europe Small Cap",
-            "category": "核心股票配置",
-            "m1": "-2.8%",
-            "m3": "-1.3%",
-            "ytd": "4.3%",
-            "y1": "8.6%",
-            "y3": "15.7%",
-            "y5": "2.8%"
-          },
-          {
-            "name": "Allianz Best Styles Global Equity",
-            "category": "核心股票 · 全球优质",
-            "m1": "0.1%",
-            "m3": "2.6%",
-            "ytd": "12.2%",
-            "y1": "16.5%",
-            "y3": "17.6%",
-            "y5": "13.0%"
-          },
-          {
-            "name": "Allspring Global Equity Enhanced Income",
-            "category": "核心股票 · 全球优质",
-            "m1": "-1.1%",
-            "m3": "-0.4%",
-            "ytd": "9.7%",
-            "y1": "13.5%",
-            "y3": "14.0%",
-            "y5": "5.0%"
-          },
-          {
-            "name": "JPMorgan Emerging Markets Dividend",
-            "category": "核心股票 · 新兴市场",
-            "m1": "0.7%",
-            "m3": "1.5%",
-            "ytd": "22.5%",
-            "y1": "28.5%",
-            "y3": "16.2%",
-            "y5": "4.2%"
-          },
-          {
-            "name": "Amova Japan Equity",
-            "category": "核心股票配置",
-            "m1": "-0.9%",
-            "m3": "2.1%",
-            "ytd": "19.7%",
-            "y1": "23.8%",
-            "y3": "22.5%",
-            "y5": "11.9%"
-          },
-          {
-            "name": "BNP Paribas Japan Small Cap Classic Cap",
-            "category": "核心股票配置",
-            "m1": "2.3%",
-            "m3": "1.4%",
-            "ytd": "27.2%",
-            "y1": "30.0%",
-            "y3": "—",
-            "y5": "—"
-          },
-          {
-            "name": "PineBridge US Large Cap Research Enhanced",
-            "category": "核心股票配置",
-            "m1": "-1.1%",
-            "m3": "1.8%",
-            "ytd": "6.6%",
-            "y1": "7.7%",
-            "y3": "17.4%",
-            "y5": "10.3%"
-          },
-          {
-            "name": "BlackRock US Mid-Cap Value",
-            "category": "核心股票配置",
-            "m1": "-4.9%",
-            "m3": "-3.2%",
-            "ytd": "7.8%",
-            "y1": "11.0%",
-            "y3": "10.6%",
-            "y5": "6.0%"
-          },
-          {
-            "name": "BNP Paribas Responsible US Value Multi-Factor Equity Classic Cap",
-            "category": "核心股票配置",
-            "m1": "-3.4%",
-            "m3": "2.5%",
-            "ytd": "12.0%",
-            "y1": "15.4%",
-            "y3": "16.5%",
-            "y5": "10.9%"
-          },
-          {
-            "name": "United ASEAN Fund",
-            "category": "辅助配置与平衡资产",
-            "m1": "-2.4%",
-            "m3": "4.6%",
-            "ytd": "4.8%",
-            "y1": "7.5%",
-            "y3": "9.2%",
-            "y5": "4.7%"
-          },
-          {
-            "name": "LionGlobal China Growth",
-            "category": "辅助配置与平衡资产",
-            "m1": "-0.6%",
-            "m3": "-2.5%",
-            "ytd": "19.3%",
-            "y1": "16.5%",
-            "y3": "25.3%",
-            "y5": "5.9%"
-          },
-          {
-            "name": "JPMorgan Latin America Equity",
-            "category": "辅助配置与平衡资产",
-            "m1": "0.2%",
-            "m3": "0.1%",
-            "ytd": "9.0%",
-            "y1": "14.9%",
-            "y3": "11.1%",
-            "y5": "9.0%"
-          },
-          {
-            "name": "Fidelity China Focus",
-            "category": "辅助配置与平衡资产",
-            "m1": "-3.8%",
-            "m3": "1.7%",
-            "ytd": "-13.4%",
-            "y1": "-17.3%",
-            "y3": "1.2%",
-            "y5": "-2.1%"
-          },
-          {
-            "name": "BlackRock Systematic China A-Share",
-            "category": "辅助配置与平衡资产",
-            "m1": "-5.4%",
-            "m3": "-12.3%",
-            "ytd": "2.2%",
-            "y1": "3.4%",
-            "y3": "9.2%",
-            "y5": "-2.4%"
-          },
-          {
-            "name": "Nippon India Equity",
-            "category": "辅助配置与平衡资产",
-            "m1": "-5.1%",
-            "m3": "-5.8%",
-            "ytd": "-13.4%",
-            "y1": "-13.6%",
-            "y3": "0.0%",
-            "y5": "0.9%"
-          },
-          {
-            "name": "abrdn Malaysian Equity",
-            "category": "辅助配置与平衡资产",
-            "m1": "-3.9%",
-            "m3": "-0.3%",
-            "ytd": "-4.3%",
-            "y1": "1.3%",
-            "y3": "10.9%",
-            "y5": "4.9%"
-          },
-          {
-            "name": "iFAST - Amova Singapore Equity",
-            "category": "辅助配置与平衡资产",
-            "m1": "-1.0%",
-            "m3": "8.5%",
-            "ytd": "33.4%",
-            "y1": "46.3%",
-            "y3": "32.2%",
-            "y5": "15.8%"
-          },
-          {
-            "name": "LionGlobal Korea",
-            "category": "辅助配置与平衡资产",
-            "m1": "2.0%",
-            "m3": "-11.1%",
-            "ytd": "98.7%",
-            "y1": "142.1%",
-            "y3": "52.3%",
-            "y5": "22.8%"
-          },
-          {
-            "name": "Janus Henderson Horizon Asia-Pacific Property Income",
-            "category": "辅助配置与平衡资产",
-            "m1": "-2.9%",
-            "m3": "-3.3%",
-            "ytd": "-9.2%",
-            "y1": "-7.8%",
-            "y3": "0.3%",
-            "y5": "-4.9%"
-          },
-          {
-            "name": "Blackrock World Financials",
-            "category": "辅助配置与平衡资产",
-            "m1": "-5.9%",
-            "m3": "-4.2%",
-            "ytd": "-0.9%",
-            "y1": "8.0%",
-            "y3": "25.4%",
-            "y5": "11.9%"
-          },
-          {
-            "name": "Manulife Global Fund Healthcare",
-            "category": "辅助配置与平衡资产",
-            "m1": "-1.1%",
-            "m3": "0.2%",
-            "ytd": "3.2%",
-            "y1": "18.5%",
-            "y3": "7.0%",
-            "y5": "5.1%"
-          },
-          {
-            "name": "BNY Mellon Global Infrastructure Income",
-            "category": "辅助配置与平衡资产",
-            "m1": "-4.2%",
-            "m3": "-5.6%",
-            "ytd": "5.6%",
-            "y1": "11.4%",
-            "y3": "18.5%",
-            "y5": "10.3%"
-          },
-          {
-            "name": "Nordea 1 - Global Real Estate",
-            "category": "辅助配置与平衡资产",
-            "m1": "-4.9%",
-            "m3": "-7.5%",
-            "ytd": "2.8%",
-            "y1": "2.1%",
-            "y3": "6.8%",
-            "y5": "-1.4%"
-          },
-          {
-            "name": "Ninety One Global Strategy Fund - Global Natural Resources",
-            "category": "辅助配置与平衡资产",
-            "m1": "-6.3%",
-            "m3": "9.1%",
-            "ytd": "15.4%",
-            "y1": "26.3%",
-            "y3": "16.6%",
-            "y5": "15.3%"
-          },
-          {
-            "name": "-2.0%",
-            "category": "辅助配置与平衡资产",
-            "m1": "-4.8%",
-            "m3": "19.4%",
-            "ytd": "18.8%",
-            "y1": "12.0%",
-            "y3": "3.8%",
-            "y5": "—"
-          },
-          {
-            "name": "Schroder Multi-Asset Revolution",
-            "category": "辅助配置与平衡资产",
-            "m1": "-1.7%",
-            "m3": "-1.7%",
-            "ytd": "1.0%",
-            "y1": "1.9%",
-            "y3": "6.2%",
-            "y5": "0.1%"
-          },
-          {
-            "name": "Manulife Asia Pacific Investment Grade Bond",
-            "category": "固定收益与高等级债",
-            "m1": "-2.2%",
-            "m3": "-3.6%",
-            "ytd": "-6.0%",
-            "y1": "-7.0%",
-            "y3": "-1.2%",
-            "y5": "-3.8%"
-          },
-          {
-            "name": "Eastspring Asia Select Bond",
-            "category": "固定收益与高等级债",
-            "m1": "-1.1%",
-            "m3": "-3.2%",
-            "ytd": "-1.2%",
-            "y1": "-1.1%",
-            "y3": "3.4%",
-            "y5": "0.3%"
-          },
-          {
-            "name": "Schroder ISF Asian Local Currency Bond",
-            "category": "固定收益与高等级债",
-            "m1": "-0.7%",
-            "m3": "-0.4%",
-            "ytd": "-2.8%",
-            "y1": "-3.2%",
-            "y3": "1.1%",
-            "y5": "-1.2%"
-          },
-          {
-            "name": "United Asian High Yield Bond Fund",
-            "category": "固定收益与高等级债",
-            "m1": "-1.6%",
-            "m3": "-1.4%",
-            "ytd": "-3.2%",
-            "y1": "-3.4%",
-            "y3": "0.7%",
-            "y5": "-5.3%"
-          },
-          {
-            "name": "PIMCO Income Fund Admin",
-            "category": "固定收益与高等级债",
-            "m1": "-4.1%",
-            "m3": "-6.4%",
-            "ytd": "-9.5%",
-            "y1": "-9.6%",
-            "y3": "-3.0%",
-            "y5": "-5.3%"
-          },
-          {
-            "name": "-2.9%",
-            "category": "固定收益与高等级债",
-            "m1": "-3.9%",
-            "m3": "-5.4%",
-            "ytd": "-5.8%",
-            "y1": "-0.3%",
-            "y3": "-2.5%",
-            "y5": "—"
-          },
-          {
-            "name": "BNY Mellon Global Short-Dated High Yield Bond",
-            "category": "固定收益与高等级债",
-            "m1": "-1.6%",
-            "m3": "-2.5%",
-            "ytd": "-3.6%",
-            "y1": "-4.3%",
-            "y3": "—",
-            "y5": "—"
-          },
-          {
-            "name": "Neuberger Berman Short Duration Emerging Market Debt",
-            "category": "固定收益与高等级债",
-            "m1": "-2.4%",
-            "m3": "-3.3%",
-            "ytd": "-5.8%",
-            "y1": "-6.4%",
-            "y3": "-2.1%",
-            "y5": "-4.7%"
-          },
-          {
-            "name": "iFAST SGD Enhanced Liquidity",
-            "category": "固定收益与高等级债",
-            "m1": "0.1%",
-            "m3": "0.3%",
-            "ytd": "0.9%",
-            "y1": "1.3%",
-            "y3": "—",
-            "y5": "—"
-          },
-          {
-            "name": "iFAST USD Enhanced Liquidity",
-            "category": "固定收益与高等级债",
-            "m1": "0.8%",
-            "m3": "-0.4%",
-            "ytd": "1.9%",
-            "y1": "2.7%",
-            "y3": "2.1%",
-            "y5": "—"
-          },
-          {
-            "name": "Fullerton SGD Cash Fund",
-            "category": "固定收益与高等级债",
-            "m1": "0.1%",
-            "m3": "0.3%",
-            "ytd": "0.9%",
-            "y1": "1.3%",
-            "y3": "2.6%",
-            "y5": "2.5%"
-          },
-          {
-            "name": "Amundi Funds Cash USD",
-            "category": "固定收益与高等级债",
-            "m1": "0.7%",
-            "m3": "-0.5%",
-            "ytd": "1.9%",
-            "y1": "2.6%",
-            "y3": "2.1%",
-            "y5": "2.5%"
-          },
-          {
-            "name": "Amova Short Term Bond",
-            "category": "固定收益与高等级债",
-            "m1": "-0.5%",
-            "m3": "-0.5%",
-            "ytd": "0.3%",
-            "y1": "0.5%",
-            "y3": "3.4%",
-            "y5": "2.3%"
-          },
-          {
-            "name": "United SGD Fund",
-            "category": "固定收益与高等级债",
-            "m1": "-0.5%",
-            "m3": "-0.7%",
-            "ytd": "0.0%",
-            "y1": "0.2%",
-            "y3": "3.1%",
-            "y5": "1.8%"
-          }
-        ],
-        "category_groups": [
-          "固定收益与高等级债",
-          "核心股票 · 亚洲除日",
-          "核心股票 · 全球优质",
-          "核心股票 · 新兴市场",
-          "核心股票配置",
-          "辅助配置与平衡资产"
-        ],
-        "count": 46
-      }
-    },
-    {
-      "id": "dpms",
-      "title_zh": "全权委托管理 (DPMS) 组合理念与多资产架构",
-      "title_en": "Discretionary Portfolio Solutions (DPMS) & Multi-Asset Framework",
-      "category_badge_zh": "附录扩充 · 专户方案架构",
-      "category_badge_en": "Appendix · Discretionary Strategy",
-      "source_page": 13,
-      "source_pdf": "iFAST Monthly Investment Update October 2026.pdf",
-      "layout": "cards_briefing",
-      "cards_data": {
-        "summary": "奕丰全权委托投资解决方案 (DPMS) 秉承‘通过价值投资在长期实现稳健收益与成长’的哲学，由专业投研团队独立运作，精选全球底层优质公募基金，实现自适应动态股债跨周期资产配置。",
-        "summary_en": "iFAST Discretionary Portfolio Solutions (\"DPMS\") deliver steady income and capital growth over the long run through disciplined value investing, actively allocating across handpicked global equity and fixed income funds.",
-        "pillars": [
-          {
-            "title": "全球跨资产分散与价值深耕",
-            "title_en": "Global Multi-Asset Diversification",
-            "desc": "打破单一市场偏好，在全球股票、投资级债券及另类资产中构建非对称收益风险结构，严控个券集中度风险。",
-            "desc_en": "Diversifies across global equities, IG bonds and defensive buffers to generate asymmetric risk-reward profile.",
-            "tag": "核心哲学",
-            "stat": "全球穿透"
-          },
-          {
-            "title": "严格买方立场与基金筛选池",
-            "title_en": "Independent Fiduciary Fund Selection",
-            "desc": "从超过 1,500 只公募基金中，以夏普比率、下行保护及超额阿尔法稳定性为标尺，精选出前 5% 的官方优选标的构建底层。",
-            "desc_en": "Strict top-decile selection based on 3Y Sharpe, downside capture ratio and persistent manager alpha.",
-            "tag": "底层甄选",
-            "stat": "Top 5% 标的"
-          },
-          {
-            "title": "自适应阶梯式风险矩阵",
-            "title_en": "Adaptive Tiered Risk Portfolios",
-            "desc": "涵盖稳健平衡型 (Balanced, 股债均衡) 与适度进取型 (Moderately Aggressive, 偏股进攻)，提供稳健现金流与资本增值双重选择。",
-            "desc_en": "Provides Balanced (Income focus) and Moderately Aggressive (Growth focus) tailored portfolio architectures.",
-            "tag": "客群匹配",
-            "stat": "双重方案"
-          }
-        ],
-        "adviser_takeaway": "【与 HR 顾问模型组合对比】：DPMS 专户理念与我们坚守的‘纯权益增长+富敦市场中性核心+纯金避险’三支柱高度呼应。本月我们维持 100% 积极持有，并可为偏好全权委托的机构及超高净值客户无缝接入 DPMS 托管架构。"
-      }
-    },
-    {
-      "id": "calendar",
-      "title_zh": "全球重要经济事件与央行议息日历",
-      "title_en": "Global Macroeconomic Calendar & Policy Schedule",
-      "category_badge_zh": "附录扩充 · 宏观日程时间线",
-      "category_badge_en": "Appendix · Global Macro Schedule",
-      "source_page": 24,
-      "source_pdf": "iFAST Monthly Investment Update October 2026.pdf",
-      "layout": "timeline_calendar",
-      "calendar_data": {
-        "events": [
-          {
-            "date": "03",
-            "day": "D3",
-            "region": "JP",
-            "event_zh": "Tankan Large Manufacturers Index",
-            "event_en": "Tankan Large Manufacturers Index",
-            "importance": "high"
-          },
-          {
-            "date": "03",
-            "day": "D3",
-            "region": "US",
-            "event_zh": "ISM Manufacturing PMI",
-            "event_en": "ISM Manufacturing PMI",
-            "importance": "high"
-          },
-          {
-            "date": "03",
-            "day": "D3",
-            "region": "JP",
-            "event_zh": "Consumer Confidence",
-            "event_en": "Consumer Confidence",
-            "importance": "medium"
-          },
-          {
-            "date": "03",
-            "day": "D3",
-            "region": "EU",
-            "event_zh": "Inflation Rate",
-            "event_en": "Inflation Rate",
-            "importance": "high"
-          },
-          {
-            "date": "03",
-            "day": "D3",
-            "region": "US",
-            "event_zh": "Non-Farm Payrolls, Unemployment Rate",
-            "event_en": "Non-Farm Payrolls, Unemployment Rate",
-            "importance": "high"
-          },
-          {
-            "date": "10",
-            "day": "D10",
-            "region": "US",
-            "event_zh": "ISM Services PMI",
-            "event_en": "ISM Services PMI",
-            "importance": "high"
-          },
-          {
-            "date": "10",
-            "day": "D10",
-            "region": "US",
-            "event_zh": "FOMC Minutes",
-            "event_en": "FOMC Minutes",
-            "importance": "high"
-          },
-          {
-            "date": "10",
-            "day": "D10",
-            "region": "US",
-            "event_zh": "Michigan Consumer Sentiment",
-            "event_en": "Michigan Consumer Sentiment",
-            "importance": "medium"
-          },
-          {
-            "date": "17",
-            "day": "D17",
-            "region": "US",
-            "event_zh": "Existing Home Sales",
-            "event_en": "Existing Home Sales",
-            "importance": "medium"
-          },
-          {
-            "date": "17",
-            "day": "D17",
-            "region": "CN",
-            "event_zh": "Inflation Rate, Balance of Trade, Exports, Imports",
-            "event_en": "Inflation Rate, Balance of Trade, Exports, Imports",
-            "importance": "high"
-          },
-          {
-            "date": "17",
-            "day": "D17",
-            "region": "US",
-            "event_zh": "Inflation, Core Inflation Rate",
-            "event_en": "Inflation, Core Inflation Rate",
-            "importance": "high"
-          },
-          {
-            "date": "17",
-            "day": "D17",
-            "region": "UK",
-            "event_zh": "GDP",
-            "event_en": "GDP",
-            "importance": "medium"
-          },
-          {
-            "date": "17",
-            "day": "D17",
-            "region": "US",
-            "event_zh": "PPI, Retail Sales",
-            "event_en": "PPI, Retail Sales",
-            "importance": "medium"
-          },
-          {
-            "date": "24",
-            "day": "D24",
-            "region": "CN",
-            "event_zh": "GDP Growth Rate, Industrial Production, Retail Sales",
-            "event_en": "GDP Growth Rate, Industrial Production, Retail Sales",
-            "importance": "high"
-          },
-          {
-            "date": "24",
-            "day": "D24",
-            "region": "UK",
-            "event_zh": "Unemployment Rate",
-            "event_en": "Unemployment Rate",
-            "importance": "high"
-          },
-          {
-            "date": "24",
-            "day": "D24",
-            "region": "US",
-            "event_zh": "Building Permits, Housing Starts",
-            "event_en": "Building Permits, Housing Starts",
-            "importance": "medium"
-          },
-          {
-            "date": "24",
-            "day": "D24",
-            "region": "JP",
-            "event_zh": "Balance of Trade",
-            "event_en": "Balance of Trade",
-            "importance": "medium"
-          },
-          {
-            "date": "24",
-            "day": "D24",
-            "region": "UK",
-            "event_zh": "Inflation Rate",
-            "event_en": "Inflation Rate",
-            "importance": "high"
-          },
-          {
-            "date": "24",
-            "day": "D24",
-            "region": "JP",
-            "event_zh": "Inflation Rate",
-            "event_en": "Inflation Rate",
-            "importance": "high"
-          },
-          {
-            "date": "24",
-            "day": "D24",
-            "region": "UK",
-            "event_zh": "Retail Sales,",
-            "event_en": "Retail Sales,",
-            "importance": "medium"
-          },
-          {
-            "date": "31",
-            "day": "D31",
-            "region": "US",
-            "event_zh": "Durable Goods Orders",
-            "event_en": "Durable Goods Orders",
-            "importance": "medium"
-          },
-          {
-            "date": "31",
-            "day": "D31",
-            "region": "US",
-            "event_zh": "Fed Interest Rate Decision, Fed Press Conference, Core PCE,",
-            "event_en": "Fed Interest Rate Decision, Fed Press Conference, Core PCE,",
-            "importance": "high"
-          },
-          {
-            "date": "31",
-            "day": "D31",
-            "region": "EU",
-            "event_zh": "Deposit Facility Rate, ECB Interest Rate Decision, ECB",
-            "event_en": "Deposit Facility Rate, ECB Interest Rate Decision, ECB",
-            "importance": "high"
-          },
-          {
-            "date": "31",
-            "day": "D31",
-            "region": "JP",
-            "event_zh": "Consumer Confidence",
-            "event_en": "Consumer Confidence",
-            "importance": "medium"
-          }
-        ],
-        "high_impact_count": 14,
-        "total_count": 24
-      }
-    },
-    {
-      "id": "custom_page_12",
-      "title_zh": "研报深度透析 · 第 12 页专栏",
-      "title_en": "Research In-Depth Focus · Page 12",
-      "category_badge_zh": "附录扩充 · 研报第 12 页",
-      "category_badge_en": "Appendix · Page 12",
-      "source_page": 12,
-      "source_pdf": "iFAST Monthly Investment Update October 2026.pdf",
-      "layout": "cards_briefing",
-      "cards_data": {
-        "summary": "When Bonds Stop Behaving Like Bonds",
-        "summary_en": "Detailed macroeconomic and sector perspective extracted directly from the reference research publication.",
-        "pillars": [
-          {
-            "title": "核心研报论点",
-            "title_en": "Core Thesis",
-            "desc": "For nearly four decades, the 60/40 portfolio worked on a simple premise: equities for growth, bonds for ballast. When stocks fell, bonds typically held steady or rallied, cushioning the blow. Comparing portfolio returns from 1986-2020 against 2021-2025 shows that relationship has changed. Pure equity allocations have performed broadly as expected; higher risk, higher return. But every blended allocation tells a different story: adding bonds still reduces expected return as it always has, but it no longer reduces portfolio risk the way it used to. Why? the mechanism is a shift in stock-bond correlation. The correlation was historically negative or near-zero, but has turned positive in this period, blunting the very diversification that bonds were meant to provide.",
-            "tag": "逻辑推导"
-          },
-          {
-            "title": "重点数据与关键指标",
-            "title_en": "Key Empirical Indicators",
-            "desc": "提取指标样本: 100%, 5.0%, 0.0%, 10.0%",
-            "tag": "数理实证",
-            "stat": "100%"
-          }
-        ],
-        "adviser_takeaway": "【投顾针对第 12 页的配置启示】：结合当月宏观数据与研报推演，建议持续关注相关资产的估值变动与流动性窗口。"
-      }
-    }
-  ],
+  "dynamic_slides": [],
   "selected_sections": {
     "returns": true,
     "stars": true,
     "topic": true,
-    "funds_matrix": true,
-    "dpms": true,
-    "calendar": true
+    "funds_matrix": false,
+    "dpms": false,
+    "calendar": false
   }
 }
