@@ -28,7 +28,13 @@ import {
   Sliders,
   Check,
   FileSearch,
-  ChevronRight
+  ChevronRight,
+  Folder,
+  FolderCheck,
+  ArrowDownToLine,
+  CheckCircle,
+  AlertCircle,
+  Download
 } from 'lucide-react';
 
 interface DashboardProps {
@@ -573,6 +579,199 @@ export const Dashboard: React.FC<DashboardProps> = ({
     }) ||
     Boolean(portfolio.show_rebalance_memo);
 
+  // Unified Deliverables Download Modal state
+  const [showDownloadModal, setShowDownloadModal] = useState<boolean>(false);
+  const [selectedDeliverableKeys, setSelectedDeliverableKeys] = useState<string[]>([
+    'memo_zh', 'memo_en', 'factsheet_zh', 'factsheet_en'
+  ]);
+  const [targetDirHandle, setTargetDirHandle] = useState<any | null>(null);
+  const [targetDirName, setTargetDirName] = useState<string>('');
+  const [customDestinationPath, setCustomDestinationPath] = useState<string>('');
+  const [isBatchDownloading, setIsBatchDownloading] = useState<boolean>(false);
+  const [downloadStepStatus, setDownloadStepStatus] = useState<Record<string, 'idle' | 'downloading' | 'success' | 'error'>>({});
+  const [batchDownloadSuccessMsg, setBatchDownloadSuccessMsg] = useState<string>('');
+
+  const DELIVERABLE_ITEMS = [
+    {
+      key: 'memo_zh',
+      title: 'HR 模板投资组合月度投资咨询备忘录 (中文版)',
+      filename: `HR_模板投资组合_月度备忘录_${portfolio.settle_date}.pdf`,
+      format: '16:9 横版演示报告 · 第 1–5 页',
+      language: '中文 (ZH)',
+      badge: '核心交付物 1',
+      desc: '涵盖业绩走势、宏观脉搏与行业星级、股债专题研读、核心投资支柱与标的信念审查、新加坡法定免责声明。',
+      accentColor: 'blue'
+    },
+    {
+      key: 'memo_en',
+      title: 'HR Model Portfolio Monthly Advisory Memorandum (English)',
+      filename: `HR_Model_Portfolio_Advisory_Memorandum_${portfolio.settle_date}.pdf`,
+      format: '16:9 Landscape Presentation · Pages 1–5',
+      language: 'English (EN)',
+      badge: 'Core Deliverable 1',
+      desc: 'Performance Trajectory, Macro Pulse, Industry Stars, Conviction Matrix, and Singapore MAS Regulatory Disclaimers in pure English.',
+      accentColor: 'indigo'
+    },
+    {
+      key: 'factsheet_zh',
+      title: 'HR 投资组合底层穿透配置与风险透析单页 (中文版)',
+      filename: `HR_模板投资组合_资产穿透与风险报告_${portfolio.settle_date}.pdf`,
+      format: 'A4 竖版穿透透析 · 独立单页',
+      language: '中文 (ZH)',
+      badge: '核心交付物 2',
+      desc: '独立单页文件，不夹带于备忘录。底层 7 只基金穿透持仓、资产配置比例、夏普比率、波动率矩阵与合规监控。',
+      accentColor: 'amber'
+    },
+    {
+      key: 'factsheet_en',
+      title: 'HR Model Portfolio Risk & Look-Through Factsheet (English)',
+      filename: `HR_Model_Portfolio_Risk_Factsheet_${portfolio.settle_date}.pdf`,
+      format: 'A4 Portrait Factsheet · Standalone Page',
+      language: 'English (EN)',
+      badge: 'Core Deliverable 2',
+      desc: 'Standalone look-through factsheet. Top 10 underlying assets, asset allocation breakdown, and risk metrics in pure English.',
+      accentColor: 'emerald'
+    }
+  ];
+
+  // Folder Selection via File System Access API
+  const handleSelectFolder = async () => {
+    try {
+      if (typeof window !== 'undefined' && 'showDirectoryPicker' in window) {
+        const handle = await (window as any).showDirectoryPicker();
+        setTargetDirHandle(handle);
+        setTargetDirName(handle.name);
+        setCustomDestinationPath(`本地目录: ${handle.name}`);
+      } else {
+        alert('当前浏览器环境不支持直接调用原生文件夹选择框。您可以在下方手动输入本地路径，或直接下载保存至浏览器默认下载文件夹。');
+      }
+    } catch (err: any) {
+      if (err.name !== 'AbortError') {
+        console.warn('Directory picker cancelled or unsupported:', err);
+      }
+    }
+  };
+
+  // Toggle individual deliverable key
+  const toggleDeliverableKey = (key: string) => {
+    setSelectedDeliverableKeys(prev =>
+      prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]
+    );
+  };
+
+  // Quick Select Helpers
+  const handleQuickSelect = (type: 'all' | 'memos' | 'factsheets' | 'zh' | 'en' | 'none') => {
+    switch (type) {
+      case 'all':
+        setSelectedDeliverableKeys(['memo_zh', 'memo_en', 'factsheet_zh', 'factsheet_en']);
+        break;
+      case 'memos':
+        setSelectedDeliverableKeys(['memo_zh', 'memo_en']);
+        break;
+      case 'factsheets':
+        setSelectedDeliverableKeys(['factsheet_zh', 'factsheet_en']);
+        break;
+      case 'zh':
+        setSelectedDeliverableKeys(['memo_zh', 'factsheet_zh']);
+        break;
+      case 'en':
+        setSelectedDeliverableKeys(['memo_en', 'factsheet_en']);
+        break;
+      case 'none':
+        setSelectedDeliverableKeys([]);
+        break;
+    }
+  };
+
+  // Execute Batch Download Handler
+  const handleExecuteBatchDownload = async () => {
+    if (selectedDeliverableKeys.length === 0) {
+      alert('请至少勾选一个需要导出的交付物文件！');
+      return;
+    }
+
+    setIsBatchDownloading(true);
+    setBatchDownloadSuccessMsg('');
+    const initialStatus: Record<string, 'idle' | 'downloading' | 'success' | 'error'> = {};
+    selectedDeliverableKeys.forEach(k => { initialStatus[k] = 'idle'; });
+    setDownloadStepStatus(initialStatus);
+
+    try {
+      // 1. If user specified a custom path (and not local handle indicator), notify backend to copy
+      if (customDestinationPath && !customDestinationPath.startsWith('本地目录:')) {
+        try {
+          await fetch('/api/batch_export_files', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              month: portfolio.month,
+              target_keys: selectedDeliverableKeys,
+              destination_dir: customDestinationPath
+            })
+          });
+        } catch (e) {
+          console.warn('Backend copy warning:', e);
+        }
+      }
+
+      // 2. Download / Write each file
+      for (const key of selectedDeliverableKeys) {
+        setDownloadStepStatus(prev => ({ ...prev, [key]: 'downloading' }));
+        const item = DELIVERABLE_ITEMS.find(it => it.key === key);
+        const targetFilename = item?.filename || `${key}_${portfolio.settle_date}.pdf`;
+
+        const fileResp = await fetch(`/download/${key}?month=${portfolio.month}`);
+        if (!fileResp.ok) {
+          throw new Error(`下载文件 ${targetFilename} 失败: HTTP ${fileResp.status}`);
+        }
+        const blob = await fileResp.blob();
+
+        // If native directory handle is available, write directly to user's selected folder!
+        let savedDirectly = false;
+        if (targetDirHandle) {
+          try {
+            // @ts-ignore
+            const fileHandle = await targetDirHandle.getFileHandle(targetFilename, { create: true });
+            const writable = await fileHandle.createWritable();
+            await writable.write(blob);
+            await writable.close();
+            savedDirectly = true;
+          } catch (writeErr) {
+            console.warn('Direct file handle write failed, falling back to browser download:', writeErr);
+          }
+        }
+
+        // Fallback / standard browser download trigger
+        if (!savedDirectly) {
+          const blobUrl = window.URL.createObjectURL(blob);
+          const tempLink = document.createElement('a');
+          tempLink.href = blobUrl;
+          tempLink.download = targetFilename;
+          document.body.appendChild(tempLink);
+          tempLink.click();
+          window.URL.revokeObjectURL(blobUrl);
+          document.body.removeChild(tempLink);
+        }
+
+        setDownloadStepStatus(prev => ({ ...prev, [key]: 'success' }));
+        // Stagger by 250ms so browser doesn't throttle concurrent downloads
+        await new Promise(r => setTimeout(r, 250));
+      }
+
+      const destDesc = targetDirName 
+        ? `本地文件夹「${targetDirName}」` 
+        : customDestinationPath 
+        ? `指定路径「${customDestinationPath}」` 
+        : '浏览器下载文件夹';
+      setBatchDownloadSuccessMsg(`🎉 成功下载 ${selectedDeliverableKeys.length} 个交付物！已保存至 ${destDesc}。`);
+    } catch (err: any) {
+      console.error('Batch download error:', err);
+      alert(`下载过程中发生错误: ${err.message || err}`);
+    } finally {
+      setIsBatchDownloading(false);
+    }
+  };
+
   return (
     <div className="max-w-[1500px] mx-auto px-4 py-8 space-y-8">
       
@@ -937,7 +1136,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
       {/* SECTION 3: DELIVERABLES & EXPORT MANAGEMENT                               */}
       {/* ========================================================================= */}
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="bg-slate-50/80 px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+        <div className="bg-slate-50/80 px-6 py-4 border-b border-slate-200 flex flex-wrap justify-between items-center gap-4">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-sm">
               3
@@ -951,79 +1150,134 @@ export const Dashboard: React.FC<DashboardProps> = ({
               </p>
             </div>
           </div>
+
+          {/* Unified Deliverables Download Action Button */}
+          <button
+            type="button"
+            onClick={() => {
+              setShowDownloadModal(true);
+              setBatchDownloadSuccessMsg('');
+            }}
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-extrabold text-xs md:text-sm rounded-xl shadow-md hover:shadow-lg transition transform active:scale-95 cursor-pointer"
+          >
+            <ArrowDownToLine className="w-4 h-4" />
+            <span>📥 批量分发与一键下载交付物 (最多 4 个独立 PDF)</span>
+          </button>
         </div>
 
-        <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* File 1: Monthly Memo (Slide 1-5) */}
-          <div className="border border-slate-200 rounded-xl p-5 hover:border-blue-400 transition bg-gradient-to-b from-white to-slate-50/50">
-            <div className="flex justify-between items-start mb-3">
+        <div className="p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* File 1: Monthly Memo (Slide 1-5) */}
+            <div className="border border-slate-200 rounded-xl p-5 hover:border-blue-400 transition bg-gradient-to-b from-white to-slate-50/50 flex flex-col justify-between">
               <div>
-                <span className="text-[10px] font-bold text-blue-700 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded">
-                  核心交付物 1 · 16:9 横版演示报告
-                </span>
-                <h3 className="text-sm font-extrabold text-slate-900 mt-1">
-                  HR 模板投资组合月度投资咨询备忘录 (第 1–5 页)
-                </h3>
+                <div className="flex justify-between items-start mb-3">
+                  <div>
+                    <span className="text-[10px] font-bold text-blue-700 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded">
+                      核心交付物 1 · 16:9 横版演示报告
+                    </span>
+                    <h3 className="text-sm font-extrabold text-slate-900 mt-1">
+                      HR 模板投资组合月度投资咨询备忘录 (第 1–5 页)
+                    </h3>
+                  </div>
+                  <FileCheck className="w-5 h-5 text-blue-600" />
+                </div>
+                <p className="text-xs text-slate-500 mb-4 leading-relaxed">
+                  涵盖业绩走势、宏观脉搏与行业星级、股债专题研读、核心投资支柱与标的信念审查、新加坡法定免责声明。
+                </p>
               </div>
-              <FileCheck className="w-5 h-5 text-blue-600" />
+
+              {/* Sub-file Specifications */}
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div className="p-2.5 rounded-lg bg-blue-50/60 border border-blue-100 flex flex-col justify-between">
+                  <div className="flex items-center justify-between font-bold text-blue-900 text-[11px] mb-1">
+                    <span>中文备忘录 (16:9)</span>
+                    <span className="text-[9px] bg-blue-200 text-blue-800 px-1.5 py-0.2 rounded font-semibold">ZH</span>
+                  </div>
+                  <div className="text-[10px] text-slate-500 truncate" title={`HR_模板投资组合_月度备忘录_${portfolio.settle_date}.pdf`}>
+                    HR_模板投资组合_月度备忘录_{portfolio.settle_date}.pdf
+                  </div>
+                </div>
+                <div className="p-2.5 rounded-lg bg-indigo-50/60 border border-indigo-100 flex flex-col justify-between">
+                  <div className="flex items-center justify-between font-bold text-indigo-900 text-[11px] mb-1">
+                    <span>英文备忘录 (16:9)</span>
+                    <span className="text-[9px] bg-indigo-200 text-indigo-800 px-1.5 py-0.2 rounded font-semibold">EN</span>
+                  </div>
+                  <div className="text-[10px] text-slate-500 truncate" title={`HR_Model_Portfolio_Advisory_Memorandum_${portfolio.settle_date}.pdf`}>
+                    HR_Model_Portfolio_Advisory_Memorandum_{portfolio.settle_date}.pdf
+                  </div>
+                </div>
+              </div>
             </div>
-            <p className="text-xs text-slate-500 mb-4 leading-relaxed">
-              涵盖业绩走势、宏观脉搏与行业星级、股债专题研读、核心投资支柱与标的信念审查、新加坡法定声明。
-            </p>
-            <div className="flex gap-2">
-              <a
-                href={`/download/memo_zh?month=${portfolio.month}`}
-                target="_blank"
-                rel="noreferrer"
-                className="flex-1 text-center py-2 px-3 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-bold border border-blue-200 transition"
-              >
-                下载中文备忘录 PDF
-              </a>
-              <a
-                href={`/download/memo_en?month=${portfolio.month}`}
-                target="_blank"
-                rel="noreferrer"
-                className="flex-1 text-center py-2 px-3 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold border border-slate-300 transition"
-              >
-                下载英文备忘录 PDF
-              </a>
+
+            {/* File 2: Look-Through Factsheet (Standalone) */}
+            <div className="border border-slate-200 rounded-xl p-5 hover:border-amber-400 transition bg-gradient-to-b from-white to-slate-50/50 flex flex-col justify-between">
+              <div>
+                <div className="flex justify-between items-start mb-3">
+                  <div>
+                    <span className="text-[10px] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded">
+                      核心交付物 2 · 独立穿透分析单页
+                    </span>
+                    <h3 className="text-sm font-extrabold text-slate-900 mt-1">
+                      HR 投资组合底层穿透配置与风险透析单页
+                    </h3>
+                  </div>
+                  <FileText className="w-5 h-5 text-amber-600" />
+                </div>
+                <p className="text-xs text-slate-500 mb-4 leading-relaxed">
+                  独立文件，不夹带于备忘录内。包含前十大底层穿透持仓、地理行业穿透分布、7 只基金夏普波动矩阵与合规风控。
+                </p>
+              </div>
+
+              {/* Sub-file Specifications */}
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div className="p-2.5 rounded-lg bg-amber-50/60 border border-amber-100 flex flex-col justify-between">
+                  <div className="flex items-center justify-between font-bold text-amber-900 text-[11px] mb-1">
+                    <span>中文穿透单页 (A4)</span>
+                    <span className="text-[9px] bg-amber-200 text-amber-800 px-1.5 py-0.2 rounded font-semibold">ZH</span>
+                  </div>
+                  <div className="text-[10px] text-slate-500 truncate" title={`HR_模板投资组合_资产穿透与风险报告_${portfolio.settle_date}.pdf`}>
+                    HR_模板投资组合_资产穿透与风险报告_{portfolio.settle_date}.pdf
+                  </div>
+                </div>
+                <div className="p-2.5 rounded-lg bg-emerald-50/60 border border-emerald-100 flex flex-col justify-between">
+                  <div className="flex items-center justify-between font-bold text-emerald-900 text-[11px] mb-1">
+                    <span>英文穿透单页 (A4)</span>
+                    <span className="text-[9px] bg-emerald-200 text-emerald-800 px-1.5 py-0.2 rounded font-semibold">EN</span>
+                  </div>
+                  <div className="text-[10px] text-slate-500 truncate" title={`HR_Model_Portfolio_Risk_Factsheet_${portfolio.settle_date}.pdf`}>
+                    HR_Model_Portfolio_Risk_Factsheet_{portfolio.settle_date}.pdf
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* File 2: Look-Through Factsheet (Standalone) */}
-          <div className="border border-slate-200 rounded-xl p-5 hover:border-amber-400 transition bg-gradient-to-b from-white to-slate-50/50">
-            <div className="flex justify-between items-start mb-3">
-              <div>
-                <span className="text-[10px] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded">
-                  核心交付物 2 · 独立穿透分析单页
-                </span>
-                <h3 className="text-sm font-extrabold text-slate-900 mt-1">
-                  HR 投资组合底层穿透配置与风险透析单页
-                </h3>
+          {/* Unified Action Strip */}
+          <div className="mt-5 p-4 rounded-xl bg-gradient-to-r from-slate-50 via-blue-50/30 to-purple-50/30 border border-slate-200 flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-blue-100 text-blue-700 rounded-lg">
+                <FolderCheck className="w-5 h-5" />
               </div>
-              <FileText className="w-5 h-5 text-amber-600" />
+              <div>
+                <p className="text-xs font-bold text-slate-800">
+                  交付物分发与导出矩阵 · 4 个独立 PDF 均已就绪
+                </p>
+                <p className="text-[11px] text-slate-500">
+                  点击按钮即可调起下载弹窗：先询问/选择目标保存文件夹，再勾选所需文件（最多全部 4 个），实现一键批量下载。
+                </p>
+              </div>
             </div>
-            <p className="text-xs text-slate-500 mb-4 leading-relaxed">
-              独立文件，不夹带于备忘录内。包含前十大底层穿透持仓、地理行业穿透分布、7 只基金夏普波动矩阵。
-            </p>
-            <div className="flex gap-2">
-              <a
-                href={`/download/factsheet_zh?month=${portfolio.month}`}
-                target="_blank"
-                rel="noreferrer"
-                className="flex-1 text-center py-2 px-3 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-bold border border-amber-200 transition"
-              >
-                下载中文穿透单页 PDF
-              </a>
-              <a
-                href={`/download/factsheet_en?month=${portfolio.month}`}
-                target="_blank"
-                rel="noreferrer"
-                className="flex-1 text-center py-2 px-3 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold border border-slate-300 transition"
-              >
-                下载英文穿透单页 PDF
-              </a>
-            </div>
+            <button
+              type="button"
+              onClick={() => {
+                setShowDownloadModal(true);
+                setBatchDownloadSuccessMsg('');
+              }}
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs rounded-xl shadow transition cursor-pointer"
+            >
+              <Download className="w-4 h-4" />
+              <span>选择文件夹并一键下载 (4 个文件)</span>
+            </button>
           </div>
         </div>
       </div>
@@ -1857,6 +2111,352 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 >
                   <Check className="w-4 h-4" />
                   <span>确认应用所选板块配置并同步第 2 节 →</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* UNIFIED DELIVERABLES DOWNLOAD & EXPORT MODAL                             */}
+      {/* ========================================================================= */}
+      {showDownloadModal && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-200">
+          <div className="bg-white rounded-3xl max-w-4xl w-full border border-slate-200 shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
+            {/* Modal Header */}
+            <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 p-6 text-white flex justify-between items-start">
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-blue-500/30 text-blue-200 border border-blue-400/40">
+                    一键分发中心 · BATCH EXPORT & DOWNLOAD
+                  </span>
+                  <span className="text-xs text-slate-400 font-mono">
+                    [{portfolio.month} 报告期 · 结算日: {portfolio.settle_date}]
+                  </span>
+                </div>
+                <h3 className="text-xl font-black tracking-tight flex items-center gap-2">
+                  <span>📥 批量分发与一键下载交付物</span>
+                </h3>
+                <p className="text-xs text-slate-300 mt-1.5 leading-relaxed max-w-2xl">
+                  首先确认或选择本地目标保存文件夹，随后勾选所需交付物文件（最多全部 4 个独立 PDF），单击一键即可安全高效批量下载。
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  if (!isBatchDownloading) setShowDownloadModal(false);
+                }}
+                disabled={isBatchDownloading}
+                className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition disabled:opacity-50 cursor-pointer"
+                title="关闭"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Scrollable Body */}
+            <div className="p-6 overflow-y-auto space-y-6 flex-1 bg-slate-50/50">
+
+              {/* STEP 1: FOLDER SELECTION */}
+              <div className="bg-white rounded-2xl border-2 border-indigo-100 p-5 shadow-sm space-y-3">
+                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center font-black text-xs">
+                      1
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-extrabold text-slate-900">
+                        确认或选择目标下载文件夹 (Destination Folder)
+                      </h4>
+                      <p className="text-[11px] text-slate-500">
+                        支持现代浏览器直接选取本地文件夹写入，或指定输出路径 / 浏览器默认下载目录
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleSelectFolder}
+                    className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs border border-indigo-200 transition cursor-pointer shadow-2xs"
+                  >
+                    <Folder className="w-4 h-4" />
+                    <span>📁 选择本地文件夹...</span>
+                  </button>
+                </div>
+
+                {/* Current Selected Folder Banner */}
+                <div className="flex flex-wrap items-center justify-between gap-2 p-3 rounded-xl bg-slate-50 border border-slate-200">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <FolderCheck className="w-5 h-5 text-indigo-600 shrink-0" />
+                    <div className="min-w-0">
+                      <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wide block">
+                        当前目标保存位置:
+                      </span>
+                      <span className="text-xs font-mono font-bold text-slate-800 break-all">
+                        {targetDirName ? (
+                          <span className="text-emerald-700 flex items-center gap-1">
+                            <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
+                            本地目录句柄: {targetDirName} (支持直接写入本地磁盘)
+                          </span>
+                        ) : customDestinationPath ? (
+                          <span className="text-blue-700">{customDestinationPath}</span>
+                        ) : (
+                          <span className="text-slate-600">💻 浏览器默认下载文件夹 (Downloads)</span>
+                        )}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Preset quick actions */}
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setTargetDirHandle(null);
+                        setTargetDirName('');
+                        setCustomDestinationPath('output');
+                      }}
+                      className="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 transition cursor-pointer"
+                    >
+                      output/ 目录
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setTargetDirHandle(null);
+                        setTargetDirName('');
+                        setCustomDestinationPath('');
+                      }}
+                      className="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 transition cursor-pointer"
+                    >
+                      重置为浏览器下载
+                    </button>
+                  </div>
+                </div>
+
+                {/* Optional path input */}
+                <div className="pt-1">
+                  <label className="text-[11px] font-bold text-slate-600 flex items-center justify-between mb-1">
+                    <span>手动指定本地绝对路径 (选填，支持 Windows 绝对路径，如 G:\我的云端硬盘\...):</span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="例如: D:\3. Working Related\1.Antigravity_projects\Investment Machine\output"
+                    value={customDestinationPath}
+                    onChange={(e) => {
+                      setTargetDirHandle(null);
+                      setTargetDirName('');
+                      setCustomDestinationPath(e.target.value);
+                    }}
+                    className="w-full px-3 py-1.5 text-xs font-mono bg-white rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
+                  />
+                </div>
+              </div>
+
+              {/* STEP 2: FILE SELECTION (UP TO 4 FILES) */}
+              <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-7 h-7 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center font-black text-xs">
+                      2
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-extrabold text-slate-900">
+                        勾选需要导出的交付物 (最多全部 4 个)
+                      </h4>
+                      <p className="text-[11px] text-slate-500">
+                        已选择 <span className="font-extrabold text-blue-600">{selectedDeliverableKeys.length}</span> / 4 个独立交付物文件
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Quick Select Buttons */}
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => handleQuickSelect('all')}
+                      className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition cursor-pointer ${
+                        selectedDeliverableKeys.length === 4
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                      }`}
+                    >
+                      全选 (4/4)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleQuickSelect('memos')}
+                      className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition cursor-pointer"
+                    >
+                      仅备忘录 (2)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleQuickSelect('factsheets')}
+                      className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition cursor-pointer"
+                    >
+                      仅穿透单页 (2)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleQuickSelect('zh')}
+                      className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition cursor-pointer"
+                    >
+                      仅中文 (2)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleQuickSelect('en')}
+                      className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition cursor-pointer"
+                    >
+                      仅英文 (2)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleQuickSelect('none')}
+                      className="px-2 py-1 rounded-lg text-[11px] font-semibold text-slate-500 hover:text-slate-800 transition cursor-pointer"
+                    >
+                      清空
+                    </button>
+                  </div>
+                </div>
+
+                {/* 4 Deliverable Selection Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {DELIVERABLE_ITEMS.map((item) => {
+                    const isChecked = selectedDeliverableKeys.includes(item.key);
+                    const status = downloadStepStatus[item.key] || 'idle';
+
+                    return (
+                      <div
+                        key={item.key}
+                        onClick={() => toggleDeliverableKey(item.key)}
+                        className={`p-4 rounded-xl border-2 transition-all cursor-pointer select-none flex flex-col justify-between ${
+                          isChecked
+                            ? 'bg-blue-50/40 border-blue-500 shadow-sm'
+                            : 'bg-slate-50/50 border-slate-200 hover:border-slate-300 opacity-80'
+                        }`}
+                      >
+                        <div>
+                          {/* Card Header with Checkbox and Badges */}
+                          <div className="flex items-start justify-between gap-2 mb-2">
+                            <div className="flex items-center gap-2">
+                              <div className={`w-5 h-5 rounded flex items-center justify-center transition ${
+                                isChecked ? 'bg-blue-600 text-white' : 'border border-slate-400 bg-white text-transparent'
+                              }`}>
+                                <Check className="w-3.5 h-3.5 stroke-[3]" />
+                              </div>
+                              <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">
+                                {item.badge}
+                              </span>
+                            </div>
+
+                            {/* Status Pill */}
+                            <div>
+                              {status === 'downloading' && (
+                                <span className="inline-flex items-center gap-1 text-[10px] font-extrabold text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full animate-pulse">
+                                  <RefreshCw className="w-3 h-3 animate-spin" /> 下载中...
+                                </span>
+                              )}
+                              {status === 'success' && (
+                                <span className="inline-flex items-center gap-1 text-[10px] font-extrabold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">
+                                  <CheckCircle className="w-3 h-3" /> 已保存
+                                </span>
+                              )}
+                              {status === 'error' && (
+                                <span className="inline-flex items-center gap-1 text-[10px] font-extrabold text-rose-700 bg-rose-100 px-2 py-0.5 rounded-full">
+                                  <AlertCircle className="w-3 h-3" /> 失败
+                                </span>
+                              )}
+                              {status === 'idle' && (
+                                <span className="text-[10px] font-semibold text-slate-400">
+                                  {isChecked ? '已勾选' : '未勾选'}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* File Title and Name */}
+                          <h5 className="text-xs font-extrabold text-slate-900 leading-snug">
+                            {item.title}
+                          </h5>
+                          <div className="text-[11px] font-mono font-medium text-slate-600 truncate mt-1 bg-white/80 px-2 py-1 rounded border border-slate-200/80">
+                            {item.filename}
+                          </div>
+
+                          {/* Description */}
+                          <p className="text-[11px] text-slate-500 mt-2 leading-relaxed">
+                            {item.desc}
+                          </p>
+                        </div>
+
+                        {/* Format & Lang Tags */}
+                        <div className="mt-3 pt-2.5 border-t border-slate-200/60 flex items-center justify-between text-[10px] font-bold text-slate-500">
+                          <span>{item.format}</span>
+                          <span className="bg-slate-200/70 text-slate-700 px-1.5 py-0.5 rounded font-mono">
+                            {item.language}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Success Notification Banner */}
+              {batchDownloadSuccessMsg && (
+                <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center gap-3 text-emerald-900 text-xs font-bold animate-in fade-in">
+                  <CheckCircle className="w-5 h-5 text-emerald-600 shrink-0" />
+                  <span>{batchDownloadSuccessMsg}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer / Action Bar */}
+            <div className="bg-slate-100 px-6 py-4 border-t border-slate-200 flex flex-wrap justify-between items-center gap-4">
+              <div className="flex items-center gap-2 max-w-xl">
+                {batchDownloadSuccessMsg ? (
+                  <span className="text-xs font-extrabold text-emerald-800 flex items-center gap-1.5 bg-emerald-100/90 border border-emerald-300 px-3 py-1 rounded-lg animate-in fade-in">
+                    <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>{batchDownloadSuccessMsg}</span>
+                  </span>
+                ) : selectedDeliverableKeys.length > 0 ? (
+                  <span className="text-xs text-slate-600 font-bold">
+                    已就绪: <strong className="text-blue-700">{selectedDeliverableKeys.length}</strong> / 4 个交付物
+                  </span>
+                ) : (
+                  <span className="text-amber-600 font-semibold text-xs">
+                    ⚠️ 请至少勾选一个交付物以启动下载
+                  </span>
+                )}
+              </div>
+
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  disabled={isBatchDownloading}
+                  onClick={() => setShowDownloadModal(false)}
+                  className="px-4 py-2 rounded-xl text-xs font-bold text-slate-700 hover:text-slate-900 hover:bg-slate-200 transition cursor-pointer disabled:opacity-50"
+                >
+                  关闭
+                </button>
+                <button
+                  type="button"
+                  disabled={selectedDeliverableKeys.length === 0 || isBatchDownloading}
+                  onClick={handleExecuteBatchDownload}
+                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-black text-xs bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-md hover:shadow-lg transition transform active:scale-95 disabled:opacity-50 cursor-pointer"
+                >
+                  {isBatchDownloading ? (
+                    <>
+                      <RefreshCw className="w-4 h-4 animate-spin" />
+                      <span>正在批量下载中...</span>
+                    </>
+                  ) : (
+                    <>
+                      <ArrowDownToLine className="w-4 h-4" />
+                      <span>🚀 一键下载选中的 {selectedDeliverableKeys.length} 个交付物 PDF</span>
+                    </>
+                  )}
                 </button>
               </div>
             </div>
