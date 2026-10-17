@@ -3,7 +3,7 @@
  * 支持多行区间批量处理（例如：'HR Model Portfolio Constitution 2026'!V3:W10）
  * 每一行：第 1 列为 ISIN，第 2 列为带有 FSM 链接的基金名称
  * 规则：默认抓取 10Y 历史；仅更新已存在的同名工作表，若同名工作表不存在则跳过并报警
- * 输出规范：A: Date | B: Price | C: Change | D: Change % | E: Date
+ * 输出规范：A: Date | B: Price | C: Change | D: Change % | E: Date（日期按新加坡时区归一）
  */
 function runBatchPriceUpdate() {
   var ui = SpreadsheetApp.getUi();
@@ -167,36 +167,62 @@ function fetchAndSaveFundPrices(fundName, sedol, isin) {
     return { success: false };
   }
   
+  // 统一按 FSM 所在时区（新加坡）把 showDate 转成纯日期字符串 yyyy-MM-dd。
+  // 旧版用 toISOString()（UTC）做排重、用 new Date() 直接写入表格（按表格时区显示），
+  // 新加坡 00:00 = UTC 前一天 16:00，导致部分日期被错位到前一天、出现周日日期/重复日期/丢失日期。
   var dataPoints = [];
   for (var i = 0; i < rawList.length; i++) {
     var item = rawList[i];
-    var timestamp = item.dailyPricePk ? item.dailyPricePk.showDate : null;
+    var dateKey = toFundDateKey(item.dailyPricePk ? item.dailyPricePk.showDate : null);
     var priceVal = (item.bidPrice !== null && item.bidPrice !== undefined) ? item.bidPrice :
                    ((item.bidPriceSgd !== null && item.bidPriceSgd !== undefined) ? item.bidPriceSgd : item.navPrice);
-    
+
     var price = parseFloat(priceVal);
-    if (timestamp && !isNaN(price)) {
-      dataPoints.push([new Date(timestamp), price]);
+    if (dateKey && !isNaN(price)) {
+      dataPoints.push([dateKey, price]);
     }
   }
-  
-  // 数据排重与倒序排序
+
+  // 数据排重与倒序排序（按日期字符串）
   var uniqueData = [];
   var seen = {};
   for (var j = 0; j < dataPoints.length; j++) {
-    var dateKey = dataPoints[j][0].toISOString().split('T')[0];
-    if (!seen[dateKey]) { 
-      seen[dateKey] = true; 
-      uniqueData.push(dataPoints[j]); 
+    if (!seen[dataPoints[j][0]]) {
+      seen[dataPoints[j][0]] = true;
+      uniqueData.push(dataPoints[j]);
     }
   }
-  uniqueData.sort(function(a, b) { return b[0] - a[0]; });
-  
+  uniqueData.sort(function(a, b) { return a[0] < b[0] ? 1 : (a[0] > b[0] ? -1 : 0); });
+
   return updateFundSheet(fundName, uniqueData);
 }
 
+var FUND_TIMEZONE = "Asia/Singapore";
+
 /**
- * 【修复升级版】辅助函数：更新或全量初始化同名工作表
+ * 把 FSM 返回的 showDate（毫秒时间戳或日期字符串）转成新加坡时区的 yyyy-MM-dd
+ */
+function toFundDateKey(raw) {
+  if (raw === null || raw === undefined || raw === "") return null;
+  if (typeof raw === "string" && /^\d{4}-\d{2}-\d{2}/.test(raw)) {
+    return raw.substring(0, 10);
+  }
+  var d = new Date(typeof raw === "string" && /^\d+$/.test(raw) ? Number(raw) : raw);
+  if (isNaN(d.getTime())) return null;
+  return Utilities.formatDate(d, FUND_TIMEZONE, "yyyy-MM-dd");
+}
+
+/**
+ * 把表格中已有的日期单元格转成 yyyy-MM-dd（按表格自身时区读取）
+ */
+function sheetCellToDateKey(val, sheetTz) {
+  if (val instanceof Date) return Utilities.formatDate(val, sheetTz, "yyyy-MM-dd");
+  var s = (val || "").toString().trim();
+  return /^\d{4}-\d{2}-\d{2}/.test(s) ? s.substring(0, 10) : null;
+}
+
+/**
+ * 辅助函数：全量重建同名工作表（自动修复错位日期）
  */
 function updateFundSheet(fundName, newData) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -211,95 +237,58 @@ function updateFundSheet(fundName, newData) {
   targetSheet.getRange(1, 1, 1, 5).setValues([["Date", "Price", "Change", "Change %", "Date"]]);
   targetSheet.getRange("A1:E1").setFontWeight("bold").setBackground("#F1F5F9");
   
+  var sheetTz = ss.getSpreadsheetTimeZone();
   var lastRow = targetSheet.getLastRow();
   
   // =========================================================================
-  // 场景 A：工作表是空的（<=1 行，仅有表头） -> 执行【全量 10Y 极速初始化写入】
+  // 全量重建：以 FSM 返回的 10Y 数据为准，覆盖表内对应时间段；
+  // 表内早于 10Y 窗口的旧记录予以保留。每次运行都会自动修复历史错位数据。
   // =========================================================================
-  if (lastRow <= 1) {
-    logToConsole("INFO", "检测到 [" + fundName + "] 为空表，启动【全量 10Y 初始化写入】...");
-    
-    var outputRows = [];
-    for (var k = 0; k < newData.length; k++) {
-      var curD = newData[k][0];
-      var curP = newData[k][1];
-      
-      var prevP = null;
-      if (k + 1 < newData.length) {
-        prevP = newData[k + 1][1];
+  var merged = newData.slice(); // [dateKey, price]，已倒序
+  var oldestFetched = newData.length > 0 ? newData[newData.length - 1][0] : null;
+  var keptOld = 0;
+  
+  if (lastRow > 1 && oldestFetched) {
+    var existing = targetSheet.getRange(2, 1, lastRow - 1, 2).getValues();
+    for (var e = 0; e < existing.length; e++) {
+      var oldKey = sheetCellToDateKey(existing[e][0], sheetTz);
+      var oldPrice = parseFloat(existing[e][1]);
+      if (oldKey && oldKey < oldestFetched && !isNaN(oldPrice)) {
+        merged.push([oldKey, oldPrice]);
+        keptOld++;
       }
-      
-      var chgVal = "";
-      var chgPct = "";
-      if (prevP !== null && !isNaN(prevP) && prevP > 0) {
-        chgVal = curP - prevP;
-        chgPct = (curP - prevP) / prevP;
-      }
-      outputRows.push([curD, curP, chgVal, chgPct, curD]);
     }
+    merged.sort(function(a, b) { return a[0] < b[0] ? 1 : (a[0] > b[0] ? -1 : 0); });
+  }
+  
+  var outputRows = [];
+  for (var k = 0; k < merged.length; k++) {
+    // 按表格时区构造当天 00:00，保证单元格显示的日期就是 dateKey
+    var curD = Utilities.parseDate(merged[k][0], sheetTz, "yyyy-MM-dd");
+    var curP = merged[k][1];
+    var prevP = (k + 1 < merged.length) ? merged[k + 1][1] : null;
     
-    if (outputRows.length > 0) {
-      targetSheet.getRange(2, 1, outputRows.length, 5).setValues(outputRows);
-      formatFundSheetRanges(targetSheet, 2, outputRows.length);
-      logToConsole("SUCCESS", "✅ 成功初始化写入 [" + fundName + "] " + outputRows.length + " 条 10 年完整历史记录！");
+    var chgVal = "";
+    var chgPct = "";
+    if (prevP !== null && !isNaN(prevP) && prevP > 0) {
+      chgVal = curP - prevP;
+      chgPct = (curP - prevP) / prevP;
     }
-    return { success: true };
+    outputRows.push([curD, curP, chgVal, chgPct, curD]);
   }
   
-  // =========================================================================
-  // 场景 B：工作表已有数据 -> 执行【高可靠增量追加】
-  // =========================================================================
-  var topCellDate = targetSheet.getRange(2, 1).getValue();
-  var topCellPrice = parseFloat(targetSheet.getRange(2, 2).getValue());
-  
-  var topDateStr = "";
-  if (topCellDate instanceof Date) {
-    topDateStr = Utilities.formatDate(topCellDate, "GMT+8", "yyyy-MM-dd");
-  } else {
-    topDateStr = topCellDate.toString().trim();
+  if (outputRows.length === 0) {
+    logToConsole("WARN", "基金 [" + fundName + "] 无可写入数据。");
+    return { success: false };
   }
   
-  var newRowsToAppend = [];
-  for (var i = 0; i < newData.length; i++) {
-    var curDateStr = Utilities.formatDate(newData[i][0], "GMT+8", "yyyy-MM-dd");
-    if (curDateStr > topDateStr) {
-      newRowsToAppend.push(newData[i]);
-    } else {
-      break; 
-    }
+  if (lastRow > 1) {
+    targetSheet.getRange(2, 1, lastRow - 1, 5).clearContent();
   }
+  targetSheet.getRange(2, 1, outputRows.length, 5).setValues(outputRows);
+  formatFundSheetRanges(targetSheet, 2, outputRows.length);
   
-  if (newRowsToAppend.length === 0) {
-    logToConsole("INFO", "基金 [" + fundName + "] 已是最新（最新日期: " + topDateStr + "），无需追加。");
-    return { success: true };
-  }
-  
-  var incrementalOutput = [];
-  for (var j = 0; j < newRowsToAppend.length; j++) {
-    var cDate = newRowsToAppend[j][0];
-    var cPrice = newRowsToAppend[j][1];
-    
-    var pPrice = null;
-    if (j + 1 < newRowsToAppend.length) {
-      pPrice = newRowsToAppend[j + 1][1];
-    } else {
-      pPrice = topCellPrice;
-    }
-    
-    var cVal = "";
-    var cPct = "";
-    if (pPrice !== null && !isNaN(pPrice) && pPrice > 0) {
-      cVal = cPrice - pPrice;
-      cPct = (cPrice - pPrice) / pPrice;
-    }
-    incrementalOutput.push([cDate, cPrice, cVal, cPct, cDate]);
-  }
-  
-  targetSheet.insertRowsAfter(1, incrementalOutput.length);
-  targetSheet.getRange(2, 1, incrementalOutput.length, 5).setValues(incrementalOutput);
-  formatFundSheetRanges(targetSheet, 2, incrementalOutput.length);
-  
-  logToConsole("SUCCESS", "✅ 成功向 [" + fundName + "] 增量追加 " + incrementalOutput.length + " 条最新行情！");
+  logToConsole("SUCCESS", "✅ 已全量重建 [" + fundName + "] 共 " + outputRows.length + " 条记录（最新: " + merged[0][0] + "，保留 10Y 之前旧记录 " + keptOld + " 条）");
   return { success: true };
 }
 
