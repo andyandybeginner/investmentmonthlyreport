@@ -245,8 +245,8 @@
                 <!-- 7 Funds Holdings Table (Drawer 2) -->
                 <div class="bg-white border border-slate-200 rounded-xl p-3.5 shadow-xs flex-1 min-h-0 flex flex-col justify-between">
                     <div class="flex justify-between items-center mb-2 shrink-0">
-                        <h4 class="text-sm font-extrabold uppercase tracking-tight text-[#0f2347]" data-i18n="s1_holdings_title">底层 7 只优选基金构成与月度行情穿透</h4>
-                        <span class="text-xs font-bold text-slate-700 bg-slate-100 px-2.5 py-0.5 rounded border border-slate-200 shadow-xs" data-i18n="s1_total_weight">权重加总: 100.0%</span>
+                        <h4 class="text-sm font-extrabold uppercase tracking-tight text-[#0f2347]" data-i18n="s1_holdings_title">底层 8 只优选基金构成与月度行情穿透</h4>
+                        <span class="text-xs font-bold text-slate-700 bg-slate-100 px-2.5 py-0.5 rounded border border-slate-200 shadow-xs" data-i18n="s1_total_weight">权重加总: 104.0%</span>
                     </div>
                     <div class="overflow-hidden border border-slate-200 rounded-lg flex-1 min-h-0 flex flex-col">
                         <table class="w-full h-full text-left text-xs border-collapse">
@@ -325,6 +325,15 @@
                             <td class="p-1.5 text-right text-slate-700 mono-num">$2.2261</td>
                             <td class="p-1.5 text-right text-rose-600 font-semibold mono-num">-1.73%</td>
                             <td class="p-1.5 text-right pr-2 text-rose-700 font-bold mono-num">-0.07%</td>
+                        </tr>
+                        <tr>
+                            <td class="p-1.5 pl-2 font-bold text-slate-800" >卫星成长配置</td>
+                            <td class="p-1.5 font-semibold text-slate-800 truncate max-w-[210px]">M&G (LUX) ASIAN A ACC USD</td>
+                            <td class="p-1.5 text-right font-semibold text-slate-600 mono-num">4.00%</td>
+                            <td class="p-1.5 text-right font-bold text-[#0f2347] mono-num bg-amber-50/50 border-l border-r border-amber-100">0.00%</td>
+                            <td class="p-1.5 text-right text-slate-700 mono-num">—</td>
+                            <td class="p-1.5 text-right text-rose-600 font-semibold mono-num">-5.06%</td>
+                            <td class="p-1.5 text-right pr-2 text-emerald-800 font-bold mono-num">+0.00%</td>
                         </tr>
                     </tbody>
                         </table>
@@ -846,141 +855,205 @@
             </div>
 
             <!-- Main Body: 5 Cols for 3 Verbatim Sections | 7 Cols for Exact 2D Frontier Chart -->
-            <div class="px-7 py-2.5 grid grid-cols-12 gap-4 flex-1 items-stretch">
+            <div class="px-7 py-4 grid grid-cols-12 gap-5 flex-1 items-stretch overflow-hidden min-h-0">
                 
-                <!-- Left Column: 3 Verbatim Sections from Page 12 (5 Cols) -->
-                <div class="col-span-5 flex flex-col justify-between space-y-2">
+                <!-- Left Column: 3 Structured Sections (5 Cols) -->
+                <div class="col-span-5 h-full flex flex-col justify-between gap-3.5 overflow-hidden">
                     
                     <!-- Section 1: The observation -->
-                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 space-y-1 shadow-xs flex-1 flex flex-col justify-start">
-                        <h4 class="text-[12.5px] font-extrabold text-[#0f2347] uppercase tracking-wide flex items-center gap-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
-                            <span data-i18n="s3_obs_title">现象与宏观观察</span>
+                    <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-xs flex-[1.1] flex flex-col justify-start overflow-hidden">
+                        <h4 class="text-xs font-bold text-[#0f2347] flex items-center justify-between mb-2 border-b border-slate-100 pb-1.5 shrink-0">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-blue-600"></span>
+                                <span class="font-extrabold text-[13px]" data-i18n="s3_obs_title">现象与宏观观察</span>
+                            </div>
+                            <span class="text-[10px] font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200" data-i18n="s3_obs_badge">四十年范式位移</span>
                         </h4>
-                        <p class="text-[11px] text-slate-700 leading-relaxed" data-i18n="s3_obs_desc">
+                        <p class="text-[11.5px] text-slate-700 leading-relaxed font-normal overflow-y-auto" data-i18n="s3_obs_desc">
                             近四十年来，60/40 经典配置建立在一个简单的逻辑上：股票负责增长，债券负责防守减震。当股票下跌时，债券通常走平或上涨，从而平滑冲击。然而，对比 1986-2020 年与 2021-2025 年的资产组合回报，这一关系已发生深刻改变。纯股票配置的表现大致符合预期（更高风险、更高回报）；但所有混合配置却呈现出截然不同的现实：向组合中加入债券依然如往常一样降低了预期回报，但它不再能像过去那样降低组合的整体风险。究其原因，核心机制在于股债相关性的结构性转变——历史上股债相关性通常为负或接近零，但在此期间已转为正相关，从而削弱了债券本应提供的分散化防御效果。
                         </p>
+                        <div class="mt-2.5 p-2 bg-slate-50 border border-slate-200/90 rounded-lg flex items-center justify-between text-[10.5px] text-slate-600 shrink-0">
+                            <span class="flex items-center gap-1.5 font-medium">
+                                <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                                <span data-i18n="s3_mech_label">核心传导机制</span>
+                            </span>
+                            <span class="font-bold text-[#0f2347]" data-i18n="s3_mech_val">股债相关性：由历史上负相关转为显著正相关</span>
+                        </div>
                     </div>
 
                     <!-- Section 2: An open debate, not a settled one -->
-                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 space-y-1 shadow-xs flex-1 flex flex-col justify-start">
-                        <h4 class="text-[12.5px] font-extrabold text-[#0f2347] uppercase tracking-wide flex items-center gap-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                            <span data-i18n="s3_debate_title">持续的争论，而非定论</span>
+                    <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-xs flex-[0.95] flex flex-col justify-start overflow-hidden">
+                        <h4 class="text-xs font-bold text-[#0f2347] flex items-center justify-between mb-2 border-b border-slate-100 pb-1.5 shrink-0">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                                <span class="font-extrabold text-[13px]" data-i18n="s3_debate_title">持续的争论，而非定论</span>
+                            </div>
+                            <span class="text-[10px] font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200" data-i18n="s3_debate_badge">机构争议焦点</span>
                         </h4>
-                        <p class="text-[11px] text-slate-700 leading-relaxed" data-i18n="s3_debate_desc">
+                        <p class="text-[11.5px] text-slate-700 leading-relaxed font-normal overflow-y-auto" data-i18n="s3_debate_desc">
                             这些是既定事实，但究竟是什么在推动这一转变，在专业资产配置机构之间仍存在激烈的争论。持久的高通胀、更强劲的财政支出扩张、企业与云服务巨头为争夺同一资本池而大规模发行债券，以及对央行独立性的质疑，都被提出作为可能的解释，目前各方对于哪一因素最为关键尚未达成共识。
                         </p>
+                        <div class="mt-2.5 grid grid-cols-2 gap-1.5 shrink-0">
+                            <div class="bg-slate-50 border border-slate-200/80 rounded-md px-2 py-1 flex items-center gap-1.5 text-[10px] text-slate-700">
+                                <span class="text-rose-500 font-bold">●</span>
+                                <span class="font-semibold" data-i18n="s3_deb_1">持久性高通胀中枢</span>
+                            </div>
+                            <div class="bg-slate-50 border border-slate-200/80 rounded-md px-2 py-1 flex items-center gap-1.5 text-[10px] text-slate-700">
+                                <span class="text-amber-500 font-bold">●</span>
+                                <span class="font-semibold" data-i18n="s3_deb_2">财政赤字与债务供给扩张</span>
+                            </div>
+                            <div class="bg-slate-50 border border-slate-200/80 rounded-md px-2 py-1 flex items-center gap-1.5 text-[10px] text-slate-700">
+                                <span class="text-blue-500 font-bold">●</span>
+                                <span class="font-semibold" data-i18n="s3_deb_3">科技巨头发债挤占资本池</span>
+                            </div>
+                            <div class="bg-slate-50 border border-slate-200/80 rounded-md px-2 py-1 flex items-center gap-1.5 text-[10px] text-slate-700">
+                                <span class="text-purple-500 font-bold">●</span>
+                                <span class="font-semibold" data-i18n="s3_deb_4">央行独立性与利率锚重估</span>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Section 3: A question worth sitting with -->
-                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 space-y-1 shadow-xs flex-1 flex flex-col justify-start">
-                        <h4 class="text-[12.5px] font-extrabold text-[#0f2347] uppercase tracking-wide flex items-center gap-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
-                            <span data-i18n="s3_question_title">资产配置者的深层反思</span>
+                    <div class="bg-blue-50/40 border border-blue-200/90 rounded-xl p-4 shadow-xs flex-[1.25] flex flex-col justify-start overflow-hidden">
+                        <h4 class="text-xs font-bold text-blue-950 flex items-center justify-between mb-2 border-b border-blue-200 pb-1.5 shrink-0">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                                <span class="font-extrabold text-[13px]" data-i18n="s3_question_title">资产配置者的深层反思</span>
+                            </div>
+                            <span class="text-[10px] font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200" data-i18n="s3_question_badge">配置逻辑穿透</span>
                         </h4>
-                        <p class="text-[11px] text-slate-700 leading-relaxed" data-i18n="s3_question_desc">
-                            这为当今的资产配置者提出了一个严峻的问题：如果股票与债券之间的关系已经改变，那么我们赋予那“40%”债券的防御定位是否依然成立？一些机构如今开始区分资产在真正流动性危机与在常态市场波动中的表现差异，认为这两种“相关性”需要分别判断；另一些机构则认为这只是一个暂时阶段，一旦通胀稳定下来就会恢复常态。合理的资产配置者可能会得出不同的结论，但毫无争议的是——“债券会自动分散股票风险”这一曾经被过去四十年视作理所当然的前提假设，今天值得我们重新审视与审慎评估。这也是本组合坚定确立“纯股票全权益增长引擎（以 MSCI 全球指数为基准）+ 黄金多元大宗对冲”而非配置平庸债券的数理基石。
+                        <p class="text-[11.5px] text-slate-700 leading-relaxed font-normal overflow-y-auto" data-i18n="s3_question_desc">
+                            这为当今的资产配置者提出了一个严峻的问题：如果股票与债券之间的关系已经改变，那么我们赋予那“40%”债券的防御定位是否依然成立？一些机构如今开始区分资产在真正流动性危机与在常态市场波动中的表现差异，认为这两种“相关性”需要分别判断；另一些机构则认为这只是一个暂时阶段，一旦通胀稳定下来就会恢复常态。合理的资产配置者可能会得出不同的结论，但毫无争议的是——“债券会自动分散股票风险”这一曾经被过去四十年视作理所当然的前提假设，今天值得我们重新审视与审慎评估。
                         </p>
+                        <div class="mt-2.5 p-3 bg-gradient-to-r from-[#091528] via-[#0f2347] to-[#163566] text-white rounded-xl shadow-xs border border-blue-800 flex items-start gap-2.5 shrink-0">
+                            <div class="shrink-0 mt-0.5">
+                                <span class="px-2 py-0.5 rounded bg-amber-400 text-slate-950 text-[10px] font-extrabold uppercase tracking-wide" data-i18n="s3_verdict_badge">配置定见</span>
+                            </div>
+                            <p class="text-[11px] text-slate-100 font-medium leading-relaxed" data-i18n="s3_verdict_text">
+                                坚定确立“纯股票全权益增长引擎（以 MSCI 全球指数为基准）+ 黄金多元大宗对冲”而非配置平庸债券的数理基石。
+                            </p>
+                        </div>
                     </div>
 
                 </div>
 
                 <!-- Right Column: Exact 2D Risk-Return Frontier Chart (7 Cols) -->
-                <div class="col-span-7 flex flex-col justify-between">
-                    <div class="bg-[#edf2f7] border border-slate-300 rounded-2xl p-3 shadow-sm flex-1 flex flex-col justify-between">
-                        <div class="text-center mb-1">
-                            <h4 class="text-xs font-extrabold text-slate-900 tracking-tight" data-i18n="s3_chart_title">
-                                股债资产组合配置与回报对比：<span class="text-blue-900">1986-2020年</span> vs <span class="text-rose-600">2021-2025年</span>
-                            </h4>
+                <div class="col-span-7 h-full bg-white border border-slate-200 rounded-xl p-4.5 shadow-xs flex flex-col justify-between overflow-hidden">
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <div>
+                                <h4 class="text-sm font-extrabold text-[#0f2347] tracking-tight" data-i18n="s3_chart_title">
+                                    股债资产组合配置与回报对比：<span class="text-blue-900">1986-2020年</span> vs <span class="text-rose-600">2021-2025年</span>
+                                </h4>
+                                <span class="text-[10px] text-slate-500 font-medium mt-0.5 block" data-i18n="s3_chart_subtitle">
+                                    股债组合风险-收益特征前沿对比：历史经典期 vs 当代新常态
+                                </span>
+                            </div>
+                            <span class="text-[10px] text-slate-500 font-mono bg-slate-100 px-2.5 py-1 rounded-md border border-slate-200">
+                                纽约大学斯特恩商学院
+                            </span>
                         </div>
                         
-                        <div class="flex-1 relative w-full min-h-[310px]">
-                            <svg id="lsFrontierChart" viewBox="0 0 580 280" class="w-full h-full block" xmlns="http://www.w3.org/2000/svg">
-<line x1="45" y1="248.00" x2="550" y2="248.00" stroke="#e2e8f0" stroke-width="0.8" stroke-dasharray="3,3"/>
-<text x="39" y="251.50" font-family="system-ui, -apple-system, sans-serif" font-size="9px" fill="#64748b" text-anchor="end" font-weight="500">-4%</text>
-<line x1="45" y1="207.45" x2="550" y2="207.45" stroke="#94a3b8" stroke-width="1.2"/>
-<text x="39" y="210.95" font-family="system-ui, -apple-system, sans-serif" font-size="9px" fill="#64748b" text-anchor="end" font-weight="500">0%</text>
-<line x1="45" y1="166.91" x2="550" y2="166.91" stroke="#e2e8f0" stroke-width="0.8" stroke-dasharray="3,3"/>
-<text x="39" y="170.41" font-family="system-ui, -apple-system, sans-serif" font-size="9px" fill="#64748b" text-anchor="end" font-weight="500">4%</text>
-<line x1="45" y1="126.36" x2="550" y2="126.36" stroke="#e2e8f0" stroke-width="0.8" stroke-dasharray="3,3"/>
-<text x="39" y="129.86" font-family="system-ui, -apple-system, sans-serif" font-size="9px" fill="#64748b" text-anchor="end" font-weight="500">8%</text>
-<line x1="45" y1="85.82" x2="550" y2="85.82" stroke="#e2e8f0" stroke-width="0.8" stroke-dasharray="3,3"/>
-<text x="39" y="89.32" font-family="system-ui, -apple-system, sans-serif" font-size="9px" fill="#64748b" text-anchor="end" font-weight="500">12%</text>
-<line x1="45" y1="45.27" x2="550" y2="45.27" stroke="#e2e8f0" stroke-width="0.8" stroke-dasharray="3,3"/>
-<text x="39" y="48.77" font-family="system-ui, -apple-system, sans-serif" font-size="9px" fill="#64748b" text-anchor="end" font-weight="500">16%</text>
-<line x1="45.00" y1="25" x2="45.00" y2="248" stroke="#e2e8f0" stroke-width="0.8" stroke-dasharray="3,3"/>
-<text x="45.00" y="262" font-family="system-ui, -apple-system, sans-serif" font-size="9px" fill="#64748b" text-anchor="middle" font-weight="500">6%</text>
-<line x1="112.33" y1="25" x2="112.33" y2="248" stroke="#e2e8f0" stroke-width="0.8" stroke-dasharray="3,3"/>
-<text x="112.33" y="262" font-family="system-ui, -apple-system, sans-serif" font-size="9px" fill="#64748b" text-anchor="middle" font-weight="500">8%</text>
-<line x1="179.67" y1="25" x2="179.67" y2="248" stroke="#e2e8f0" stroke-width="0.8" stroke-dasharray="3,3"/>
-<text x="179.67" y="262" font-family="system-ui, -apple-system, sans-serif" font-size="9px" fill="#64748b" text-anchor="middle" font-weight="500">10%</text>
-<line x1="247.00" y1="25" x2="247.00" y2="248" stroke="#e2e8f0" stroke-width="0.8" stroke-dasharray="3,3"/>
-<text x="247.00" y="262" font-family="system-ui, -apple-system, sans-serif" font-size="9px" fill="#64748b" text-anchor="middle" font-weight="500">12%</text>
-<line x1="314.33" y1="25" x2="314.33" y2="248" stroke="#e2e8f0" stroke-width="0.8" stroke-dasharray="3,3"/>
-<text x="314.33" y="262" font-family="system-ui, -apple-system, sans-serif" font-size="9px" fill="#64748b" text-anchor="middle" font-weight="500">14%</text>
-<line x1="381.67" y1="25" x2="381.67" y2="248" stroke="#e2e8f0" stroke-width="0.8" stroke-dasharray="3,3"/>
-<text x="381.67" y="262" font-family="system-ui, -apple-system, sans-serif" font-size="9px" fill="#64748b" text-anchor="middle" font-weight="500">16%</text>
-<line x1="449.00" y1="25" x2="449.00" y2="248" stroke="#e2e8f0" stroke-width="0.8" stroke-dasharray="3,3"/>
-<text x="449.00" y="262" font-family="system-ui, -apple-system, sans-serif" font-size="9px" fill="#64748b" text-anchor="middle" font-weight="500">18%</text>
-<line x1="516.33" y1="25" x2="516.33" y2="248" stroke="#e2e8f0" stroke-width="0.8" stroke-dasharray="3,3"/>
-<text x="516.33" y="262" font-family="system-ui, -apple-system, sans-serif" font-size="9px" fill="#64748b" text-anchor="middle" font-weight="500">20%</text>
-<text x="297.5" y="276" font-family="system-ui, -apple-system, sans-serif" font-size="9.5px" fill="#475569" text-anchor="middle" font-weight="bold" data-zh="年化波动率 / 风险 (%)" data-en="Annualized Volatility / Risk (%)">年化波动率 / 风险 (%)</text>
-<text x="53" y="17" font-family="system-ui, -apple-system, sans-serif" font-size="9.5px" fill="#475569" text-anchor="start" font-weight="bold" data-zh="年化回报率 (%)" data-en="Annualized Return (%)">年化回报率 (%)</text>
-<path d="M 129.17 138.53 C 126.34 136.58, 104.39 125.96, 105.60 122.31 C 106.81 118.66, 130.38 110.31, 139.27 108.12 C 148.15 105.93, 167.55 105.16, 179.67 104.06 C 191.79 102.97, 227.34 100.21, 240.27 99.00 C 253.19 97.78, 272.05 95.87, 287.40 93.93 C 302.75 91.98, 358.50 84.12, 368.20 82.78" fill="none" stroke="#1e3a8a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-<circle cx="129.17" cy="138.53" r="4.5" fill="#1e3a8a" stroke="#ffffff" stroke-width="1.5"/>
-<text x="121.17" y="144.53" font-family="system-ui, -apple-system, sans-serif" font-size="8.5px" font-weight="bold" fill="#1e3a8a" text-anchor="end" data-zh="100% 债券" data-en="100% Bonds">100% 债券</text>
-<circle cx="105.60" cy="122.31" r="4.5" fill="#1e3a8a" stroke="#ffffff" stroke-width="1.5"/>
-<text x="97.60" y="116.31" font-family="system-ui, -apple-system, sans-serif" font-size="8.5px" font-weight="bold" fill="#1e3a8a" text-anchor="end" data-zh="25/75" data-en="25/75">25/75</text>
-<circle cx="139.27" cy="108.12" r="4.5" fill="#1e3a8a" stroke="#ffffff" stroke-width="1.5"/>
-<text x="139.27" y="97.12" font-family="system-ui, -apple-system, sans-serif" font-size="8.5px" font-weight="bold" fill="#1e3a8a" text-anchor="middle" data-zh="50/50" data-en="50/50">50/50</text>
-<circle cx="179.67" cy="104.06" r="4.5" fill="#1e3a8a" stroke="#ffffff" stroke-width="1.5"/>
-<text x="185.67" y="94.06" font-family="system-ui, -apple-system, sans-serif" font-size="8.5px" font-weight="bold" fill="#1e3a8a" text-anchor="start" data-zh="60/40" data-en="60/40">60/40</text>
-<circle cx="240.27" cy="99.00" r="4.5" fill="#1e3a8a" stroke="#ffffff" stroke-width="1.5"/>
-<text x="240.27" y="88.00" font-family="system-ui, -apple-system, sans-serif" font-size="8.5px" font-weight="bold" fill="#1e3a8a" text-anchor="middle" data-zh="70/30" data-en="70/30">70/30</text>
-<circle cx="287.40" cy="93.93" r="4.5" fill="#1e3a8a" stroke="#ffffff" stroke-width="1.5"/>
-<text x="287.40" y="82.93" font-family="system-ui, -apple-system, sans-serif" font-size="8.5px" font-weight="bold" fill="#1e3a8a" text-anchor="middle" data-zh="80/20" data-en="80/20">80/20</text>
-<circle cx="368.20" cy="82.78" r="4.5" fill="#1e3a8a" stroke="#ffffff" stroke-width="1.5"/>
-<text x="376.20" y="78.78" font-family="system-ui, -apple-system, sans-serif" font-size="8.5px" font-weight="bold" fill="#1e3a8a" text-anchor="start" data-zh="100% 股票" data-en="100% Stocks">100% 股票</text>
-<path d="M 196.50 232.80 C 202.96 226.71, 236.63 193.43, 250.37 182.11 C 264.10 170.80, 298.44 146.31, 310.97 138.53 C 323.49 130.74, 346.25 121.62, 354.73 117.24 C 363.22 112.86, 373.18 105.93, 381.67 102.04 C 390.15 98.14, 412.10 91.37, 425.43 84.80 C 438.77 78.24, 484.69 51.80, 492.77 47.30" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-<circle cx="196.50" cy="232.80" r="4.5" fill="#dc2626" stroke="#ffffff" stroke-width="1.5"/>
-<text x="188.50" y="240.80" font-family="system-ui, -apple-system, sans-serif" font-size="8.5px" font-weight="bold" fill="#dc2626" text-anchor="end" data-zh="100% 债券" data-en="100% Bonds">100% 债券</text>
-<circle cx="250.37" cy="182.11" r="4.5" fill="#dc2626" stroke="#ffffff" stroke-width="1.5"/>
-<text x="257.37" y="185.11" font-family="system-ui, -apple-system, sans-serif" font-size="8.5px" font-weight="bold" fill="#dc2626" text-anchor="start" data-zh="25/75" data-en="25/75">25/75</text>
-<circle cx="310.97" cy="138.53" r="4.5" fill="#dc2626" stroke="#ffffff" stroke-width="1.5"/>
-<text x="317.97" y="141.53" font-family="system-ui, -apple-system, sans-serif" font-size="8.5px" font-weight="bold" fill="#dc2626" text-anchor="start" data-zh="50/50" data-en="50/50">50/50</text>
-<circle cx="354.73" cy="117.24" r="4.5" fill="#dc2626" stroke="#ffffff" stroke-width="1.5"/>
-<text x="362.73" y="121.24" font-family="system-ui, -apple-system, sans-serif" font-size="8.5px" font-weight="bold" fill="#dc2626" text-anchor="start" data-zh="60/40" data-en="60/40">60/40</text>
-<circle cx="381.67" cy="102.04" r="4.5" fill="#dc2626" stroke="#ffffff" stroke-width="1.5"/>
-<text x="388.67" y="105.04" font-family="system-ui, -apple-system, sans-serif" font-size="8.5px" font-weight="bold" fill="#dc2626" text-anchor="start" data-zh="70/30" data-en="70/30">70/30</text>
-<circle cx="425.43" cy="84.80" r="4.5" fill="#dc2626" stroke="#ffffff" stroke-width="1.5"/>
-<text x="432.43" y="87.80" font-family="system-ui, -apple-system, sans-serif" font-size="8.5px" font-weight="bold" fill="#dc2626" text-anchor="start" data-zh="80/20" data-en="80/20">80/20</text>
-<circle cx="492.77" cy="47.30" r="4.5" fill="#dc2626" stroke="#ffffff" stroke-width="1.5"/>
-<text x="500.77" y="51.30" font-family="system-ui, -apple-system, sans-serif" font-size="8.5px" font-weight="bold" fill="#dc2626" text-anchor="start" data-zh="100% 股票" data-en="100% Stocks">100% 股票</text>
+                        <div class="flex items-center justify-between text-[11px] py-1.5 border-b border-slate-100 mb-2">
+                            <div class="flex items-center gap-6">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-4 h-1 bg-blue-900 rounded-full inline-block"></span>
+                                    <span class="font-bold text-blue-950" data-i18n="s3_lg_2020">1986-2020年组合历史回报率</span>
+                                    <span class="text-[9.5px] text-slate-400 font-medium">(传统负相关减震)</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="w-4 h-1 bg-rose-600 rounded-full inline-block"></span>
+                                    <span class="font-bold text-rose-700" data-i18n="s3_lg_2025">2021-2025年组合实际回报率</span>
+                                    <span class="text-[9.5px] text-slate-400 font-medium">(正相关范式转变)</span>
+                                </div>
+                            </div>
+                            <span class="text-[9.5px] text-slate-400 italic">几何年化回报率</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex-1 w-full flex items-center justify-center min-h-0 overflow-hidden">
+                        <svg id="lsFrontierChart" viewBox="0 0 740 480" class="w-full h-full block" xmlns="http://www.w3.org/2000/svg">
+<line x1="52" y1="420.35" x2="705" y2="420.35" stroke="#e2e8f0" stroke-width="0.9" stroke-dasharray="3,3"/>
+<text x="44" y="424.35" font-family="system-ui, -apple-system, sans-serif" font-size="10.5px" fill="#64748b" text-anchor="end" font-weight="500">-4%</text>
+<line x1="52" y1="349.74" x2="705" y2="349.74" stroke="#94a3b8" stroke-width="1.4"/>
+<text x="44" y="353.74" font-family="system-ui, -apple-system, sans-serif" font-size="10.5px" fill="#334155" text-anchor="end" font-weight="700">0%</text>
+<line x1="52" y1="279.13" x2="705" y2="279.13" stroke="#e2e8f0" stroke-width="0.9" stroke-dasharray="3,3"/>
+<text x="44" y="283.13" font-family="system-ui, -apple-system, sans-serif" font-size="10.5px" fill="#64748b" text-anchor="end" font-weight="500">4%</text>
+<line x1="52" y1="208.52" x2="705" y2="208.52" stroke="#e2e8f0" stroke-width="0.9" stroke-dasharray="3,3"/>
+<text x="44" y="212.52" font-family="system-ui, -apple-system, sans-serif" font-size="10.5px" fill="#64748b" text-anchor="end" font-weight="500">8%</text>
+<line x1="52" y1="137.91" x2="705" y2="137.91" stroke="#e2e8f0" stroke-width="0.9" stroke-dasharray="3,3"/>
+<text x="44" y="141.91" font-family="system-ui, -apple-system, sans-serif" font-size="10.5px" fill="#64748b" text-anchor="end" font-weight="500">12%</text>
+<line x1="52" y1="67.30" x2="705" y2="67.30" stroke="#e2e8f0" stroke-width="0.9" stroke-dasharray="3,3"/>
+<text x="44" y="71.30" font-family="system-ui, -apple-system, sans-serif" font-size="10.5px" fill="#64748b" text-anchor="end" font-weight="500">16%</text>
+<line x1="92.81" y1="32" x2="92.81" y2="438" stroke="#e2e8f0" stroke-width="0.9" stroke-dasharray="3,3"/>
+<text x="92.81" y="454" font-family="system-ui, -apple-system, sans-serif" font-size="10.5px" fill="#64748b" text-anchor="middle" font-weight="500">6%</text>
+<line x1="174.44" y1="32" x2="174.44" y2="438" stroke="#e2e8f0" stroke-width="0.9" stroke-dasharray="3,3"/>
+<text x="174.44" y="454" font-family="system-ui, -apple-system, sans-serif" font-size="10.5px" fill="#64748b" text-anchor="middle" font-weight="500">8%</text>
+<line x1="256.06" y1="32" x2="256.06" y2="438" stroke="#e2e8f0" stroke-width="0.9" stroke-dasharray="3,3"/>
+<text x="256.06" y="454" font-family="system-ui, -apple-system, sans-serif" font-size="10.5px" fill="#64748b" text-anchor="middle" font-weight="500">10%</text>
+<line x1="337.69" y1="32" x2="337.69" y2="438" stroke="#e2e8f0" stroke-width="0.9" stroke-dasharray="3,3"/>
+<text x="337.69" y="454" font-family="system-ui, -apple-system, sans-serif" font-size="10.5px" fill="#64748b" text-anchor="middle" font-weight="500">12%</text>
+<line x1="419.31" y1="32" x2="419.31" y2="438" stroke="#e2e8f0" stroke-width="0.9" stroke-dasharray="3,3"/>
+<text x="419.31" y="454" font-family="system-ui, -apple-system, sans-serif" font-size="10.5px" fill="#64748b" text-anchor="middle" font-weight="500">14%</text>
+<line x1="500.94" y1="32" x2="500.94" y2="438" stroke="#e2e8f0" stroke-width="0.9" stroke-dasharray="3,3"/>
+<text x="500.94" y="454" font-family="system-ui, -apple-system, sans-serif" font-size="10.5px" fill="#64748b" text-anchor="middle" font-weight="500">16%</text>
+<line x1="582.56" y1="32" x2="582.56" y2="438" stroke="#e2e8f0" stroke-width="0.9" stroke-dasharray="3,3"/>
+<text x="582.56" y="454" font-family="system-ui, -apple-system, sans-serif" font-size="10.5px" fill="#64748b" text-anchor="middle" font-weight="500">18%</text>
+<line x1="664.19" y1="32" x2="664.19" y2="438" stroke="#e2e8f0" stroke-width="0.9" stroke-dasharray="3,3"/>
+<text x="664.19" y="454" font-family="system-ui, -apple-system, sans-serif" font-size="10.5px" fill="#64748b" text-anchor="middle" font-weight="500">20%</text>
+<text x="378.5" y="474" font-family="system-ui, -apple-system, sans-serif" font-size="11.5px" fill="#334155" text-anchor="middle" font-weight="bold" data-zh="年化波动率 / 风险 (%)" data-en="Annualized Volatility / Risk (%)">年化波动率 / 风险 (%)</text>
+<text x="60" y="20" font-family="system-ui, -apple-system, sans-serif" font-size="11.5px" fill="#334155" text-anchor="start" font-weight="bold" data-zh="年化回报率 (%)" data-en="Annualized Return (%)">年化回报率 (%)</text>
+<rect x="62" y="38" width="275" height="24" rx="6" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+<text x="72" y="54" font-family="system-ui, sans-serif" font-size="9.5px" font-weight="bold" fill="#1e3a8a">● 1986-2020 凸前沿：加入债券有效减震（最低波动在25/75）</text>
+<rect x="62" y="66" width="275" height="24" rx="6" fill="#fef2f2" stroke="#fecaca" stroke-width="1"/>
+<text x="72" y="82" font-family="system-ui, sans-serif" font-size="9.5px" font-weight="bold" fill="#991b1b">● 2021-2025 平直前沿：配置债券降收益未降风险（纯债回报为负）</text>
+<path d="M 194.84 229.70 C 191.42 226.32, 164.81 207.82, 166.27 201.46 C 167.74 195.11, 196.31 180.56, 207.09 176.75 C 217.86 172.93, 241.37 171.59, 256.06 169.69 C 270.75 167.78, 313.85 162.98, 329.53 160.86 C 345.20 158.74, 368.05 155.42, 386.66 152.03 C 405.27 148.65, 472.86 134.95, 484.61 132.62" fill="none" stroke="#1e3a8a" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="194.84" cy="229.70" r="5" fill="#1e3a8a" stroke="#ffffff" stroke-width="1.8"/>
+<text x="185.84" y="226.70" font-family="system-ui, -apple-system, sans-serif" font-size="10px" font-weight="bold" fill="#1e3a8a" text-anchor="end" data-zh="100% 债券" data-en="100% Bonds">100% 债券</text>
+<circle cx="166.27" cy="201.46" r="5" fill="#1e3a8a" stroke="#ffffff" stroke-width="1.8"/>
+<text x="158.27" y="195.46" font-family="system-ui, -apple-system, sans-serif" font-size="10px" font-weight="bold" fill="#1e3a8a" text-anchor="end" data-zh="25/75" data-en="25/75">25/75</text>
+<circle cx="207.09" cy="176.75" r="5" fill="#1e3a8a" stroke="#ffffff" stroke-width="1.8"/>
+<text x="203.09" y="167.75" font-family="system-ui, -apple-system, sans-serif" font-size="10px" font-weight="bold" fill="#1e3a8a" text-anchor="end" data-zh="50/50" data-en="50/50">50/50</text>
+<circle cx="256.06" cy="169.69" r="5" fill="#1e3a8a" stroke="#ffffff" stroke-width="1.8"/>
+<text x="256.06" y="160.69" font-family="system-ui, -apple-system, sans-serif" font-size="10px" font-weight="bold" fill="#1e3a8a" text-anchor="middle" data-zh="60/40" data-en="60/40">60/40</text>
+<circle cx="329.53" cy="160.86" r="5" fill="#1e3a8a" stroke="#ffffff" stroke-width="1.8"/>
+<text x="337.53" y="153.86" font-family="system-ui, -apple-system, sans-serif" font-size="10px" font-weight="bold" fill="#1e3a8a" text-anchor="start" data-zh="70/30" data-en="70/30">70/30</text>
+<circle cx="386.66" cy="152.03" r="5" fill="#1e3a8a" stroke="#ffffff" stroke-width="1.8"/>
+<text x="394.66" y="145.03" font-family="system-ui, -apple-system, sans-serif" font-size="10px" font-weight="bold" fill="#1e3a8a" text-anchor="start" data-zh="80/20" data-en="80/20">80/20</text>
+<circle cx="484.61" cy="132.62" r="5" fill="#1e3a8a" stroke="#ffffff" stroke-width="1.8"/>
+<text x="492.61" y="124.62" font-family="system-ui, -apple-system, sans-serif" font-size="10px" font-weight="bold" fill="#1e3a8a" text-anchor="start" data-zh="100% 股票" data-en="100% Stocks">100% 股票</text>
+<path d="M 276.47 393.87 C 284.30 383.28, 325.12 325.31, 341.77 305.61 C 358.42 285.91, 400.05 243.26, 415.23 229.70 C 430.41 216.15, 458.00 200.26, 468.29 192.63 C 478.57 185.01, 490.65 172.93, 500.94 166.16 C 511.22 159.38, 537.83 147.59, 553.99 136.15 C 570.16 124.71, 625.82 78.67, 635.62 70.83" fill="none" stroke="#dc2626" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="276.47" cy="393.87" r="5" fill="#dc2626" stroke="#ffffff" stroke-width="1.8"/>
+<text x="267.47" y="397.87" font-family="system-ui, -apple-system, sans-serif" font-size="10px" font-weight="bold" fill="#dc2626" text-anchor="end" data-zh="100% 债券" data-en="100% Bonds">100% 债券</text>
+<circle cx="341.77" cy="305.61" r="5" fill="#dc2626" stroke="#ffffff" stroke-width="1.8"/>
+<text x="350.77" y="309.61" font-family="system-ui, -apple-system, sans-serif" font-size="10px" font-weight="bold" fill="#dc2626" text-anchor="start" data-zh="25/75" data-en="25/75">25/75</text>
+<circle cx="415.23" cy="229.70" r="5" fill="#dc2626" stroke="#ffffff" stroke-width="1.8"/>
+<text x="424.23" y="233.70" font-family="system-ui, -apple-system, sans-serif" font-size="10px" font-weight="bold" fill="#dc2626" text-anchor="start" data-zh="50/50" data-en="50/50">50/50</text>
+<circle cx="468.29" cy="192.63" r="5" fill="#dc2626" stroke="#ffffff" stroke-width="1.8"/>
+<text x="477.29" y="196.63" font-family="system-ui, -apple-system, sans-serif" font-size="10px" font-weight="bold" fill="#dc2626" text-anchor="start" data-zh="60/40" data-en="60/40">60/40</text>
+<circle cx="500.94" cy="166.16" r="5" fill="#dc2626" stroke="#ffffff" stroke-width="1.8"/>
+<text x="509.94" y="170.16" font-family="system-ui, -apple-system, sans-serif" font-size="10px" font-weight="bold" fill="#dc2626" text-anchor="start" data-zh="70/30" data-en="70/30">70/30</text>
+<circle cx="553.99" cy="136.15" r="5" fill="#dc2626" stroke="#ffffff" stroke-width="1.8"/>
+<text x="562.99" y="140.15" font-family="system-ui, -apple-system, sans-serif" font-size="10px" font-weight="bold" fill="#dc2626" text-anchor="start" data-zh="80/20" data-en="80/20">80/20</text>
+<circle cx="635.62" cy="70.83" r="5" fill="#dc2626" stroke="#ffffff" stroke-width="1.8"/>
+<text x="644.62" y="74.83" font-family="system-ui, -apple-system, sans-serif" font-size="10px" font-weight="bold" fill="#dc2626" text-anchor="start" data-zh="100% 股票" data-en="100% Stocks">100% 股票</text>
 </svg>
-                        </div>
-                        
-                        <div class="flex justify-center items-center gap-8 text-[11px] font-bold mt-1">
-                            <span class="flex items-center gap-1.5 text-rose-600">
-                                <span class="w-2.5 h-2.5 rounded-full bg-rose-600 inline-block"></span>
-                                <span data-i18n="s3_lg_2025">2021-2025年组合实际回报率</span>
-                            </span>
-                            <span class="flex items-center gap-1.5 text-blue-900">
-                                <span class="w-2.5 h-2.5 rounded-full bg-blue-900 inline-block"></span>
-                                <span data-i18n="s3_lg_2020">1986-2020年组合历史回报率</span>
-                            </span>
-                        </div>
+                    </div>
+
+                    <div class="p-3 bg-slate-50 border border-slate-200/90 rounded-xl text-[10px] text-slate-500 leading-relaxed mt-2 shrink-0 flex items-start gap-2">
+                        <span class="text-blue-600 font-bold text-xs mt-0.5">ℹ</span>
+                        <span data-i18n="s3_footer_source">
+                            数据来源：Aswath Damodaran / 纽约大学斯特恩商学院 (NYU Stern)、iFAST 整理。分析源自《金融时报》(Financial Times) 经典专题“每周图表：60/40组合已死？”。数据截至2026年8月31日。仅供投资咨询与学术探讨，历史业绩不预示未来回报。
+                        </span>
                     </div>
                 </div>
 
             </div>
 
             <!-- Slide Footer with Complete Reference Citation -->
-            <div class="bg-slate-100 px-8 py-2 border-t border-slate-200 flex justify-between items-center text-[10.5px] text-slate-500">
-                <span class="max-w-4xl truncate" data-i18n="s3_footer_source">
-                    数据来源：Aswath Damodaran / 纽约大学斯特恩商学院 (NYU Stern)、iFAST 整理。分析源自《金融时报》(Financial Times) 经典专题“每周图表：60/40组合已死？”。数据截至2026年8月31日。仅供投资咨询与学术探讨，历史业绩不预示未来回报。
-                </span>
-                <span class="font-mono text-slate-600 font-semibold" data-i18n="s3_foot_right">第 3 页 · 月度专题</span>
+            <div class="bg-slate-100 px-8 py-2 border-t border-slate-200 flex justify-between items-center text-[10px] text-slate-500 shrink-0">
+                <span data-i18n="s1_foot_left">财富管理与投资咨询备忘录</span>
+                <span class="font-semibold text-slate-700" data-i18n="s3_foot_right">第 3 页 · 月度专题</span>
             </div>
         </div>
 
@@ -1127,53 +1200,60 @@
                 <tbody class="divide-y divide-slate-200 bg-white text-[11.5px]">
 
                     <tr>
-                        <td class="py-2 pl-3 font-bold text-slate-900 truncate max-w-[210px]" data-i18n="c1_name">FULLERTON LUX - GLOBAL ABSOLUTE ALPHA</td>
-                        <td class="py-2 text-right font-mono text-emerald-600 font-bold">+0.21%</td>
-                        <td class="py-2 text-slate-600 text-[11px] leading-normal" data-i18n="c1_noise">多空对冲在强趋势成长单边行情中弹性较为温和。</td>
-                        <td class="py-2 text-slate-800 font-medium text-[11px] leading-normal" data-i18n="c1_fundam">恪守低贝塔多空选股原则，全月实现+0.21%绝对正收益，稳定发挥大额底仓减震压舱价值。</td>
-                        <td class="py-2 text-center pr-3 whitespace-nowrap"><span class="inline-block px-2.5 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold text-[10px] whitespace-nowrap" data-i18n="c1_act">持有</span></td>
+                        <td class="py-1.5 pl-3 font-bold text-slate-900 truncate max-w-[210px]" data-i18n="c1_name">FULLERTON LUX - GLOBAL ABSOLUTE ALPHA</td>
+                        <td class="py-1.5 text-right font-mono text-emerald-600 font-bold">+0.21%</td>
+                        <td class="py-1.5 text-slate-600 text-[10.5px] leading-snug" data-i18n="c1_noise">多空对冲在强趋势成长单边行情中弹性较为温和。</td>
+                        <td class="py-1.5 text-slate-800 font-medium text-[10.5px] leading-snug" data-i18n="c1_fundam">恪守低贝塔多空选股原则，全月实现+0.21%绝对正收益，稳定发挥大额底仓减震压舱价值。</td>
+                        <td class="py-1.5 text-center pr-3 whitespace-nowrap"><span class="inline-block px-2.5 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold text-[10px] whitespace-nowrap" data-i18n="c1_act">持有</span></td>
                     </tr>
                     <tr>
-                        <td class="py-2 pl-3 font-bold text-slate-900 truncate max-w-[210px]" data-i18n="c2_name">EASTSPRING - GLOBAL TECHNOLOGY SGD</td>
-                        <td class="py-2 text-right font-mono text-emerald-600 font-bold">+9.20%</td>
-                        <td class="py-2 text-slate-600 text-[11px] leading-normal" data-i18n="c2_noise">全球半导体短线震荡，美债收益率曲线陡峭化引发成长估值分歧。</td>
-                        <td class="py-2 text-slate-800 font-medium text-[11px] leading-normal" data-i18n="c2_fundam">北美头部云服务商基础设施资本开支坚挺，人工智能硬件真实业绩强劲，单月大涨+9.20%，贡献核心超额。</td>
-                        <td class="py-2 text-center pr-3 whitespace-nowrap"><span class="inline-block px-2.5 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold text-[10px] whitespace-nowrap" data-i18n="c2_act">持有</span></td>
+                        <td class="py-1.5 pl-3 font-bold text-slate-900 truncate max-w-[210px]" data-i18n="c2_name">EASTSPRING - GLOBAL TECHNOLOGY SGD</td>
+                        <td class="py-1.5 text-right font-mono text-emerald-600 font-bold">+9.20%</td>
+                        <td class="py-1.5 text-slate-600 text-[10.5px] leading-snug" data-i18n="c2_noise">全球半导体短线震荡，美债收益率曲线陡峭化引发成长估值分歧。</td>
+                        <td class="py-1.5 text-slate-800 font-medium text-[10.5px] leading-snug" data-i18n="c2_fundam">北美头部云服务商基础设施资本开支坚挺，人工智能硬件真实业绩强劲，单月大涨+9.20%，贡献核心超额。</td>
+                        <td class="py-1.5 text-center pr-3 whitespace-nowrap"><span class="inline-block px-2.5 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold text-[10px] whitespace-nowrap" data-i18n="c2_act">持有</span></td>
                     </tr>
                     <tr>
-                        <td class="py-2 pl-3 font-bold text-slate-900 truncate max-w-[210px]" data-i18n="c3_name">Janus Henderson Global Life Sciences</td>
-                        <td class="py-2 text-right font-mono text-rose-600 font-bold">-5.30%</td>
-                        <td class="py-2 text-slate-600 text-[11px] leading-normal" data-i18n="c3_noise">高利率尾声阶段生物医药并购节奏略有放缓，板块出现获利了结回吐。</td>
-                        <td class="py-2 text-slate-800 font-medium text-[11px] leading-normal" data-i18n="c3_fundam">大型跨国制药与重磅肿瘤药现金流充沛，防御价值突出，回调创造健康加仓布局窗口。</td>
-                        <td class="py-2 text-center pr-3 whitespace-nowrap"><span class="inline-block px-2.5 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold text-[10px] whitespace-nowrap" data-i18n="c3_act">持有</span></td>
+                        <td class="py-1.5 pl-3 font-bold text-slate-900 truncate max-w-[210px]" data-i18n="c3_name">Janus Henderson Global Life Sciences</td>
+                        <td class="py-1.5 text-right font-mono text-rose-600 font-bold">-5.30%</td>
+                        <td class="py-1.5 text-slate-600 text-[10.5px] leading-snug" data-i18n="c3_noise">高利率尾声阶段生物医药并购节奏略有放缓，板块出现获利了结回吐。</td>
+                        <td class="py-1.5 text-slate-800 font-medium text-[10.5px] leading-snug" data-i18n="c3_fundam">大型跨国制药与重磅肿瘤药现金流充沛，防御价值突出，回调创造健康加仓布局窗口。</td>
+                        <td class="py-1.5 text-center pr-3 whitespace-nowrap"><span class="inline-block px-2.5 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold text-[10px] whitespace-nowrap" data-i18n="c3_act">持有</span></td>
                     </tr>
                     <tr>
-                        <td class="py-2 pl-3 font-bold text-slate-900 truncate max-w-[210px]" data-i18n="c4_name">United Gold and General A Acc SGD</td>
-                        <td class="py-2 text-right font-mono text-rose-600 font-bold">-9.92%</td>
-                        <td class="py-2 text-slate-600 text-[11px] leading-normal" data-i18n="c4_noise">8月暴涨+24%后短线投机盘获利了结回吐-9.92%，美元汇率短线技术性反抽。</td>
-                        <td class="py-2 text-slate-800 font-medium text-[11px] leading-normal" data-i18n="c4_fundam">全球央行去美元化购金逻辑与长期地缘避险属性未变，前期大涨累积丰厚利润后正常整固，无需惊慌。</td>
-                        <td class="py-2 text-center pr-3 whitespace-nowrap"><span class="inline-block px-2.5 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold text-[10px] whitespace-nowrap" data-i18n="c4_act">持有</span></td>
+                        <td class="py-1.5 pl-3 font-bold text-slate-900 truncate max-w-[210px]" data-i18n="c4_name">United Gold and General A Acc SGD</td>
+                        <td class="py-1.5 text-right font-mono text-rose-600 font-bold">-9.92%</td>
+                        <td class="py-1.5 text-slate-600 text-[10.5px] leading-snug" data-i18n="c4_noise">8月暴涨+24%后短线投机盘获利了结回吐-9.92%，美元汇率短线技术性反抽。</td>
+                        <td class="py-1.5 text-slate-800 font-medium text-[10.5px] leading-snug" data-i18n="c4_fundam">全球央行去美元化购金逻辑与长期地缘避险属性未变，前期大涨累积丰厚利润后正常整固，无需惊慌。</td>
+                        <td class="py-1.5 text-center pr-3 whitespace-nowrap"><span class="inline-block px-2.5 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold text-[10px] whitespace-nowrap" data-i18n="c4_act">持有</span></td>
                     </tr>
                     <tr>
-                        <td class="py-2 pl-3 font-bold text-slate-900 truncate max-w-[210px]" data-i18n="c5_name">United China A Shares Innovation A Acc</td>
-                        <td class="py-2 text-right font-mono text-rose-600 font-bold">-3.87%</td>
-                        <td class="py-2 text-slate-600 text-[11px] leading-normal" data-i18n="c5_noise">短期宏观经济修复斜率较缓，房地产市场仍处于筑底期。</td>
-                        <td class="py-2 text-slate-800 font-medium text-[11px] leading-normal" data-i18n="c5_fundam">中国央行重磅金融支持与流动性释放，在岸创新龙头估值处于历史估值低分位，当前权重12.24%高于目标配比，无须减仓，坚守均值回归。</td>
-                        <td class="py-2 text-center pr-3 whitespace-nowrap"><span class="inline-block px-2.5 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold text-[10px] whitespace-nowrap" data-i18n="c5_act">持有</span></td>
+                        <td class="py-1.5 pl-3 font-bold text-slate-900 truncate max-w-[210px]" data-i18n="c5_name">United China A Shares Innovation A Acc</td>
+                        <td class="py-1.5 text-right font-mono text-rose-600 font-bold">-3.87%</td>
+                        <td class="py-1.5 text-slate-600 text-[10.5px] leading-snug" data-i18n="c5_noise">短期宏观经济修复斜率较缓，房地产市场仍处于筑底期。</td>
+                        <td class="py-1.5 text-slate-800 font-medium text-[10.5px] leading-snug" data-i18n="c5_fundam">中国央行重磅金融支持与流动性释放，在岸创新龙头估值处于历史估值低分位，当前权重12.24%高于目标配比，无须减仓，坚守均值回归。</td>
+                        <td class="py-1.5 text-center pr-3 whitespace-nowrap"><span class="inline-block px-2.5 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold text-[10px] whitespace-nowrap" data-i18n="c5_act">持有</span></td>
                     </tr>
                     <tr>
-                        <td class="py-2 pl-3 font-bold text-slate-900 truncate max-w-[210px]" data-i18n="c6_name">FSSA Asian Growth Fund (Class A)</td>
-                        <td class="py-2 text-right font-mono text-emerald-600 font-bold">+1.12%</td>
-                        <td class="py-2 text-slate-600 text-[11px] leading-normal" data-i18n="c6_noise">外围汇率预期交织，区域部分出口面临扰动。</td>
-                        <td class="py-2 text-slate-800 font-medium text-[11px] leading-normal" data-i18n="c6_fundam">聚焦印度消费蓝筹与泛亚高资本回报率龙头，在区域波动中稳健实现+1.12%正收益。</td>
-                        <td class="py-2 text-center pr-3 whitespace-nowrap"><span class="inline-block px-2.5 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold text-[10px] whitespace-nowrap" data-i18n="c6_act">持有</span></td>
+                        <td class="py-1.5 pl-3 font-bold text-slate-900 truncate max-w-[210px]" data-i18n="c6_name">FSSA Asian Growth Fund (Class A)</td>
+                        <td class="py-1.5 text-right font-mono text-emerald-600 font-bold">+1.12%</td>
+                        <td class="py-1.5 text-slate-600 text-[10.5px] leading-snug" data-i18n="c6_noise">外围汇率预期交织，区域部分出口面临扰动。</td>
+                        <td class="py-1.5 text-slate-800 font-medium text-[10.5px] leading-snug" data-i18n="c6_fundam">聚焦印度消费蓝筹与泛亚高资本回报率龙头，在区域波动中稳健实现+1.12%正收益。</td>
+                        <td class="py-1.5 text-center pr-3 whitespace-nowrap"><span class="inline-block px-2.5 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold text-[10px] whitespace-nowrap" data-i18n="c6_act">持有</span></td>
                     </tr>
                     <tr>
-                        <td class="py-2 pl-3 font-bold text-slate-900 truncate max-w-[210px]" data-i18n="c7_name">Nikko AM Japan Dividend</td>
-                        <td class="py-2 text-right font-mono text-rose-600 font-bold">-1.73%</td>
-                        <td class="py-2 text-slate-600 text-[11px] leading-normal" data-i18n="c7_noise">日元汇率与央行利率政策预期交锋，东证指数短期高位整固。</td>
-                        <td class="py-2 text-slate-800 font-medium text-[11px] leading-normal" data-i18n="c7_fundam">东京交易所市净率改革与企业股息回购持续推进，充沛现金流提供长期坚实托底。</td>
-                        <td class="py-2 text-center pr-3 whitespace-nowrap"><span class="inline-block px-2.5 py-0.5 rounded bg-rose-100 text-rose-800 border border-rose-300 font-bold text-[10px] whitespace-nowrap" data-i18n="c7_act">更换标的</span></td>
+                        <td class="py-1.5 pl-3 font-bold text-slate-900 truncate max-w-[210px]" data-i18n="c7_name">Nikko AM Japan Dividend</td>
+                        <td class="py-1.5 text-right font-mono text-rose-600 font-bold">-1.73%</td>
+                        <td class="py-1.5 text-slate-600 text-[10.5px] leading-snug" data-i18n="c7_noise">日元汇率与央行利率政策预期交锋，东证指数短期高位整固。</td>
+                        <td class="py-1.5 text-slate-800 font-medium text-[10.5px] leading-snug" data-i18n="c7_fundam">东京交易所市净率改革与企业股息回购持续推进，充沛现金流提供长期坚实托底。</td>
+                        <td class="py-1.5 text-center pr-3 whitespace-nowrap"><span class="inline-block px-2.5 py-0.5 rounded bg-rose-100 text-rose-800 border border-rose-300 font-bold text-[10px] whitespace-nowrap" data-i18n="c7_act">更换标的</span></td>
+                    </tr>
+                    <tr>
+                        <td class="py-1.5 pl-3 font-bold text-slate-900 truncate max-w-[210px]" data-i18n="c8_name">M&G (LUX) ASIAN A ACC USD</td>
+                        <td class="py-1.5 text-right font-mono text-rose-600 font-bold">-5.06%</td>
+                        <td class="py-1.5 text-slate-600 text-[10.5px] leading-snug" data-i18n="c8_noise"> 风险特征：超额收益主要来自选股，而非放大市场敞口</td>
+                        <td class="py-1.5 text-slate-800 font-medium text-[10.5px] leading-snug" data-i18n="c8_fundam">M&G 寻找长期前景被市场低估的公司，判断依据是资本回报、估值和公司治理三个要素。</td>
+                        <td class="py-1.5 text-center pr-3 whitespace-nowrap"><span class="inline-block px-2.5 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold text-[10px] whitespace-nowrap" data-i18n="c8_act">持有</span></td>
                     </tr>
                 </tbody>
             </table>
@@ -1188,6 +1268,11 @@
                 <span class="text-[11.5px] text-slate-700 truncate" data-i18n="s4_verdict_note">全员保持持有，各支柱运作良好，无须被动调仓</span>
             </div>
             
+            <a href="https://docs.google.com/document/d/1KI_t1-eodHpmd8sx7H2GGpEJDf5qbwi4/edit?usp=sharing&ouid=106447183490540600770&rtpof=true&sd=true" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 px-3 py-1 bg-blue-700 hover:bg-blue-800 text-white text-[11px] font-bold rounded-md shadow-xs transition hover:scale-[1.02] shrink-0" data-i18n="s4_memo_link_btn">
+                <svg class="w-3.5 h-3.5 text-amber-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                <span>查阅持仓变动详细说明备忘录 (Google Drive 附件) →</span>
+            </a>
+        
         </div>
     
 
@@ -1387,8 +1472,12 @@
                 c7_noise: "日元汇率与央行利率政策预期交锋，东证指数短期高位整固。",
                 c7_fundam: "东京交易所市净率改革与企业股息回购持续推进，充沛现金流提供长期坚实托底。",
                 c7_act: "更换标的",
-                s1_holdings_title: "底层 7 只优选基金构成与月度行情穿透",
-                s1_total_weight: "权重加总: 100.0%",
+                c8_name: "M&G (LUX) ASIAN A ACC USD",
+                c8_noise: " 风险特征：超额收益主要来自选股，而非放大市场敞口",
+                c8_fundam: "M&G 寻找长期前景被市场低估的公司，判断依据是资本回报、估值和公司治理三个要素。",
+                c8_act: "持有",
+                s1_holdings_title: "底层 8 只优选基金构成与月度行情穿透",
+                s1_total_weight: "权重加总: 104.0%",
                 s1_card_desc: "当月的组合回报不及基准指数，主要是黄金基金在8月24%单月暴涨之后的收益落袋。云巨头八千亿美元资本开支与存储芯片产能售罄印证亚洲算力高景气，叠加国内超常规政策刺激及股债正相关下“纯权益增长+35%富敦市场中性底仓+10.5%穿透纯金对冲”三支柱稳健协同，底层安全边际厚实。虽美联储加息推升十年期美债收益率破5.2%及中东油价破百带来短期分母端扰动。",
                 s1_verdict_badge: "持有",
                 s1_exec_directive_label: "月度执行指令：",
@@ -1632,8 +1721,12 @@
                 c7_noise: "Yen fluctuations and BOJ monetary policy debates led to short-term consolidation in TOPIX.",
                 c7_fundam: "TSE governance reforms, rising share buybacks and robust corporate cash flows provide reliable long-term support.",
                 c7_act: "Switch / Replace",
-                s1_holdings_title: "7 Underlying Core Funds & Monthly Attribution",
-                s1_total_weight: "Total Target Weight: 100.0%",
+                c8_name: "M&G (LUX) ASIAN A ACC USD",
+                c8_noise: "Normal short-term noise",
+                c8_fundam: "Solid secular fundamentals",
+                c8_act: "Hold",
+                s1_holdings_title: "8 Underlying Core Funds & Monthly Attribution",
+                s1_total_weight: "Total Target Weight: 104.0%",
                 s1_card_desc: "Monthly portfolio return trailed the benchmark index primarily due to profit-taking in the Gold fund following its 24% single-month surge in August. USD 800bn hyperscaler CapEx and sold-out memory chip capacity validate Asian compute momentum, reinforced by domestic stimulus and our three-pillar architecture (pure equity growth + 35% Fullerton market-neutral core + 10.5% look-through pure gold hedge) amid positive stock-bond correlations. Despite Fed rate hikes pushing 10Y Treasury yields above 5.2% and Middle East oil surpassing USD 100 causing short-term denominator headwinds, underlying safety margins remain solid.",
                 s1_verdict_badge: "HOLD",
                 s1_exec_directive_label: "Monthly Execution Directive: ",

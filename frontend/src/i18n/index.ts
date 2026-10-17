@@ -66,16 +66,26 @@ export interface I18nDictionary {
   s2_mkt_header: string;
   s2_mkt_sub: string;
   s2_chart1_title: string;
+  s2_chart1_val_header: string;
   s2_mkt_1m_tag: string;
   s2_chart2_title: string;
-  s2_eq_nasdaq: string;
-  s2_eq_nikkei: string;
-  s2_eq_spx: string;
-  s2_eq_em: string;
+  s2_lg_sgd: string;
+  s2_lg_local: string;
+  s2_eq_latam: string;
+  s2_eq_eemea: string;
   s2_eq_cn: string;
-  s2_bd_ahy: string;
+  s2_eq_asia_ex_jp: string;
+  s2_eq_em: string;
+  s2_eq_jp: string;
+  s2_eq_eu: string;
+  s2_eq_us: string;
+  s2_eq_global: string;
+  s2_bd_global: string;
   s2_bd_aig: string;
-  s2_bd_agg: string;
+  s2_bd_ghy: string;
+  s2_bd_ahy: string;
+  s2_bd_emd: string;
+  s2_mkt_footnote: string;
   us_name: string;
   us_rating: string;
   us_desc: string;
@@ -98,6 +108,11 @@ export interface I18nDictionary {
   st_tier_att: string;
   st_tier_neu: string;
   st_tier_not_att: string;
+  s2_star_guide_title: string;
+  s2_star_guide_t1: string;
+  s2_star_guide_t2: string;
+  s2_star_guide_t3: string;
+  s2_star_guide_compliance: string;
   s2_foot_left: string;
   s2_foot_right: string;
 
@@ -251,17 +266,27 @@ export const zhDict: I18nDictionary = {
   s2_rec_text: "<strong>战略持续看好亚洲：</strong>相较于欧美存在显著估值折价，紧握与人工智能基础设施深度绑定的韩国、中国台湾、日本、中国及新加坡；<strong>固定收益端：</strong>利率将长期维持高位，恪守短至中期久期与高等级投资级债。",
   s2_mkt_header: "重点资产月度回报",
   s2_mkt_sub: "彭博与投研综合数据",
-  s2_chart1_title: "股票指数 (原币种/新币)",
+  s2_chart1_title: "股票主要区域指数回报 (原币种 vs 新币)",
+  s2_chart1_val_header: "新币 / 原币",
   s2_mkt_1m_tag: "单月表现",
-  s2_chart2_title: "债券指数 (美元计价)",
-  s2_eq_nasdaq: "纳斯达克",
-  s2_eq_nikkei: "日经225",
-  s2_eq_spx: "标普500",
+  s2_chart2_title: "债券主要类别指数回报 (美元计价)",
+  s2_lg_sgd: "新币 (SGD)",
+  s2_lg_local: "原币种 (Local Currency)",
+  s2_eq_latam: "拉丁美洲",
+  s2_eq_eemea: "东欧中东非洲",
+  s2_eq_cn: "中国股市",
+  s2_eq_asia_ex_jp: "亚洲除日本",
   s2_eq_em: "新兴市场",
-  s2_eq_cn: "MSCI中国",
-  s2_bd_ahy: "亚洲高收益债",
+  s2_eq_jp: "日本股市",
+  s2_eq_eu: "欧洲股市",
+  s2_eq_us: "美股市场",
+  s2_eq_global: "全球股票",
+  s2_bd_global: "全球综合债",
   s2_bd_aig: "亚洲投资级债",
-  s2_bd_agg: "全球综合债",
+  s2_bd_ghy: "全球高收益债",
+  s2_bd_ahy: "亚洲高收益债",
+  s2_bd_emd: "新兴市场硬通货债",
+  s2_mkt_footnote: "来源：彭博资讯、iFAST 整理。数据截至2026年9月30日。股票指数按价格回报计（不含分红）；债券指数以美元计价。",
   us_name: "美股市场",
   us_rating: "配置建议: 审慎低配 ★★",
   us_desc: "9月美股走势分化，半导体反弹推升纳指，月末抛压致标普500小幅收跌。美联储全票通过加息25个基点至3.75%–4.00%（2023年7月以来首度加息），沃什主席直言通胀长期过高；10年期美债收益率升破5.2%（创2007年以来新高）。组合维持低配，仅精选高质量数字经济与芯片龙头。",
@@ -284,6 +309,11 @@ export const zhDict: I18nDictionary = {
   st_tier_att: "具备吸引力",
   st_tier_neu: "中性配置",
   st_tier_not_att: "不具吸引力 / 审慎低配",
+  s2_star_guide_title: "星级配置原则与组合校准",
+  s2_star_guide_t1: "★★★★ ~ ★★★★½ 极具吸引力：估值具备显著安全边际且盈利处于爆发期，确立为核心超配底仓。",
+  s2_star_guide_t2: "★★★ ~ ★★★½ 具备吸引力：具备周期向上潜力或稳健现金流护城河，维持战略性标准配置。",
+  s2_star_guide_t3: "★★ ~ ★★½ 审慎低配：估值透支或面临利率/地缘结构性逆风，组合严格予以低配或回避。",
+  s2_star_guide_compliance: "合规穿透核验：本组合前三大核心权益敞口（亚洲半导体、中国互联、数字经济）全部处于 3.5 星至 4.5 星高评级赛道，与投研定见保持 100% 战略协同。",
   s2_foot_left: "宏观环境与行业星级配置",
   s2_foot_right: "第 2 页 · 宏观展望与星级榜单",
 
@@ -437,17 +467,27 @@ export const enDict: I18nDictionary = {
   s2_rec_text: "<strong>Structurally Positive on Asia:</strong> Significant valuation discount vs West, anchored by AI infrastructure buildout in Korea, Taiwan (China), Japan, China, and Singapore. <strong>Fixed Income:</strong> With rates staying elevated, prioritize short-to-medium tenors and quality Investment Grade credit.",
   s2_mkt_header: "September Asset Performance Snapshot",
   s2_mkt_sub: "Bloomberg & Institutional Data",
-  s2_chart1_title: "Equity Indices (Local Currency / SGD)",
+  s2_chart1_title: "Equity Regional Indices Return (Local Currency vs SGD)",
+  s2_chart1_val_header: "SGD / Local",
   s2_mkt_1m_tag: "1M (Sep)",
-  s2_chart2_title: "Bond Indices (USD Terms)",
-  s2_eq_nasdaq: "Nasdaq",
-  s2_eq_nikkei: "Nikkei 225",
-  s2_eq_spx: "S&P 500",
+  s2_chart2_title: "Bond Indices Return (USD Terms)",
+  s2_lg_sgd: "SGD",
+  s2_lg_local: "Local Currency",
+  s2_eq_latam: "Latin America",
+  s2_eq_eemea: "EEMEA",
+  s2_eq_cn: "China Equities",
+  s2_eq_asia_ex_jp: "Asia ex Japan",
   s2_eq_em: "Emerging Markets",
-  s2_eq_cn: "MSCI China",
+  s2_eq_jp: "Japan Equities",
+  s2_eq_eu: "European Equities",
+  s2_eq_us: "US Equities",
+  s2_eq_global: "Global Equities",
+  s2_bd_global: "Global Aggregate",
+  s2_bd_aig: "Asian Investment Grade",
+  s2_bd_ghy: "Global High Yield",
   s2_bd_ahy: "Asian High Yield",
-  s2_bd_aig: "Asian USD IG",
-  s2_bd_agg: "Global Aggregate",
+  s2_bd_emd: "Emerging Market Debt",
+  s2_mkt_footnote: "Source: Bloomberg Finance L.P., iFAST Compilations. Data as of 30 September 2026. Equity returns are price index returns; bond returns in USD terms.",
   us_name: "US Equities",
   us_rating: "Rating: Underweight ★★",
   us_desc: "US equities ended slightly lower amidst heightened volatility. Stocks faced initial pressure from escalating Middle East tensions, but resilient economic data and upbeat tech earnings helped the market recoup most losses as oil retreated. The Fed delivered its first rate hike since July 2023 (+25 bps to 3.75%-4.00%), driving 10Y US Treasury yields above 5.2%. We remain cautious and underweight broader US benchmarks.",
@@ -470,6 +510,11 @@ export const enDict: I18nDictionary = {
   st_tier_att: "ATTRACTIVE",
   st_tier_neu: "NEUTRAL",
   st_tier_not_att: "NOT ATTRACTIVE",
+  s2_star_guide_title: "Rating Methodology & Portfolio Calibration",
+  s2_star_guide_t1: "★★★★ ~ ★★★★½ Very Attractive: Robust margin of safety and accelerating earnings; designated as core overweight anchors.",
+  s2_star_guide_t2: "★★★ ~ ★★★½ Attractive: Cyclical recovery or durable moat; maintained at strategic neutral-to-overweight weights.",
+  s2_star_guide_t3: "★★ ~ ★★½ Cautious / Underweight: Stretched valuations or macro/geopolitical headwinds; strictly underweight or avoided.",
+  s2_star_guide_compliance: "Look-Through Compliance: Top portfolio exposures (Asian Semis, China Internet, Digital Economy) are 100% aligned with 3.5★ to 4.5★ high-conviction mandates.",
   s2_foot_left: "Macro Environment & Sector Allocation",
   s2_foot_right: "Slide 2 · Macro & Star Ratings",
 

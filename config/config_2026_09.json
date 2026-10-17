@@ -30,7 +30,7 @@
     "rebalance_verdict": "持有",
     "rebalance_note": "全员保持持有，各支柱运作良好，无须被动调仓",
     "rebalance_note_en": "Core asset theses remain solid; weighting drifts sit comfortably within safety bands. Existing target allocations for all 7 funds remain unchanged for September.",
-    "rebalance_memo_link": "",
+    "rebalance_memo_link": "https://docs.google.com/document/d/1KI_t1-eodHpmd8sx7H2GGpEJDf5qbwi4/edit?usp=sharing&ouid=106447183490540600770&rtpof=true&sd=true",
     "show_rebalance_memo": false,
     "holdings_conviction": [
       {
@@ -151,6 +151,23 @@
         "fundamental_support": "东京交易所市净率改革与企业股息回购持续推进，充沛现金流提供长期坚实托底。",
         "fundamental_support_en": "TSE governance reforms, rising share buybacks and robust corporate cash flows provide reliable long-term support.",
         "advisory_recommendation": "更换标的"
+      },
+      {
+        "id": "fund-1792233148887",
+        "fund_name": "M&G (LUX) ASIAN A ACC USD",
+        "role": "卫星成长配置",
+        "role_en": "Satellite Growth Asset",
+        "target_weight": "4.00%",
+        "current_weight": "0.00%",
+        "nav": "—",
+        "return_1m": "-5.06%",
+        "contrib_1m": "+0.00%",
+        "active": true,
+        "market_noise": " 风险特征：超额收益主要来自选股，而非放大市场敞口",
+        "market_noise_en": "Normal short-term noise",
+        "fundamental_support": "M&G 寻找长期前景被市场低估的公司，判断依据是资本回报、估值和公司治理三个要素。",
+        "fundamental_support_en": "Solid secular fundamentals",
+        "advisory_recommendation": "持有"
       }
     ]
   },
@@ -169,6 +186,6 @@
   },
   "page_returns": 6,
   "page_stars": 7,
-  "rebalance_memo_link": "",
+  "rebalance_memo_link": "https://docs.google.com/document/d/1KI_t1-eodHpmd8sx7H2GGpEJDf5qbwi4/edit?usp=sharing&ouid=106447183490540600770&rtpof=true&sd=true",
   "show_rebalance_memo": false
 }
