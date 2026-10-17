@@ -77,6 +77,11 @@ function runBatchPriceUpdate() {
         var match = url.match(/\/funds\/factsheet\/([^\/\?#]+)/i);
         if (match && match[1]) {
           sedol = match[1].trim();
+        } else {
+          var qMatch = url.match(/[?&](?:id|sedolnumber|sedol)=([a-zA-Z0-9]+)/i);
+          if (qMatch && qMatch[1]) {
+            sedol = qMatch[1].trim();
+          }
         }
       }
       
@@ -174,8 +179,8 @@ function fetchAndSaveFundPrices(fundName, sedol, isin) {
   for (var i = 0; i < rawList.length; i++) {
     var item = rawList[i];
     var dateKey = toFundDateKey(item.dailyPricePk ? item.dailyPricePk.showDate : null);
-    var priceVal = (item.bidPrice !== null && item.bidPrice !== undefined) ? item.bidPrice :
-                   ((item.bidPriceSgd !== null && item.bidPriceSgd !== undefined) ? item.bidPriceSgd : item.navPrice);
+    var priceVal = (item.bidPriceSgd !== null && item.bidPriceSgd !== undefined) ? item.bidPriceSgd :
+                   ((item.bidPrice !== null && item.bidPrice !== undefined) ? item.bidPrice : item.navPrice);
 
     var price = parseFloat(priceVal);
     if (dateKey && !isNaN(price)) {
@@ -285,6 +290,14 @@ function updateFundSheet(fundName, newData) {
   if (lastRow > 1) {
     targetSheet.getRange(2, 1, lastRow - 1, 5).clearContent();
   }
+
+  // 确保工作表总行数足够容纳所有数据，防止 setValues 越界崩溃
+  var requiredRows = outputRows.length + 1;
+  var currentMaxRows = targetSheet.getMaxRows();
+  if (requiredRows > currentMaxRows) {
+    targetSheet.insertRowsAfter(currentMaxRows, requiredRows - currentMaxRows);
+  }
+
   targetSheet.getRange(2, 1, outputRows.length, 5).setValues(outputRows);
   formatFundSheetRanges(targetSheet, 2, outputRows.length);
   
@@ -308,8 +321,16 @@ function formatFundSheetRanges(sheet, startRow, numRows) {
  */
 function extractUrlFromCell(cell) {
   var richText = cell.getRichTextValue();
-  if (richText && richText.getLinkUrl()) {
-    return richText.getLinkUrl();
+  if (richText) {
+    var directUrl = richText.getLinkUrl();
+    if (directUrl) return directUrl;
+    var runs = richText.getRuns();
+    if (runs && runs.length > 0) {
+      for (var i = 0; i < runs.length; i++) {
+        var rUrl = runs[i].getLinkUrl();
+        if (rUrl) return rUrl;
+      }
+    }
   }
   
   var formula = cell.getFormula();
