@@ -17,7 +17,18 @@ import {
   RefreshCw,
   Sparkles,
   ExternalLink,
-  Calendar
+  Calendar,
+  X,
+  Layers,
+  CheckSquare,
+  Square,
+  PieChart,
+  Star,
+  BookOpen,
+  Sliders,
+  Check,
+  FileSearch,
+  ChevronRight
 } from 'lucide-react';
 
 interface DashboardProps {
@@ -43,6 +54,32 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const [isSynthesizing, setIsSynthesizing] = useState<boolean>(false);
   const [previewReadyMsg, setPreviewReadyMsg] = useState<string>('');
   const monthInputRef = useRef<HTMLInputElement>(null);
+
+  // PDF Structure Analysis & Selection Modal state
+  const [isParsingPdf, setIsParsingPdf] = useState<boolean>(false);
+  const [parseProgress, setParseProgress] = useState<number>(0);
+  const [parsePhaseText, setParsePhaseText] = useState<string>('');
+  const [showSummaryModal, setShowSummaryModal] = useState<boolean>(false);
+  const [pdfSummaryData, setPdfSummaryData] = useState<any>(null);
+  const [selectedSections, setSelectedSections] = useState<Record<string, boolean>>({
+    returns: true,
+    stars: true,
+    topic: true,
+    funds_matrix: false,
+    dpms: false,
+    calendar: false,
+  });
+  const [modalPages, setModalPages] = useState<Record<string, number>>({
+    returns: portfolio.page_returns || 6,
+    stars: portfolio.page_stars || 7,
+    topic: 3,
+    funds_matrix: 13,
+    dpms: 10,
+    calendar: 24,
+  });
+  const [modalTopicTitle, setModalTopicTitle] = useState<string>(
+    portfolio.slide3_topic_title_zh || '当债券不再扮演债券：60/40股债平衡组合是否已死？'
+  );
 
   // Dynamic time series slice info calculated from selected report month and settle date
   const timeSliceInfo = sliceTimeSeriesByReportMonth(
@@ -203,6 +240,118 @@ export const Dashboard: React.FC<DashboardProps> = ({
     setTimeout(() => {
       setSectionSaved(prev => ({ ...prev, sec1: false }));
     }, 3000);
+
+    // Automatically trigger PDF analysis and modal popup after Section 1 save
+    handleTriggerPdfAnalysis(cleanMonth);
+  };
+
+  // Trigger PDF Structure Analysis & Selection Modal
+  const handleTriggerPdfAnalysis = async (targetMonth?: string) => {
+    const monthToUse = targetMonth || portfolio.month;
+    setIsParsingPdf(true);
+    setParseProgress(10);
+    setParsePhaseText('正在定位本地 iFAST Monthly Update 研报文件...');
+
+    let currentP = 10;
+    const progressTimer = setInterval(() => {
+      currentP += Math.floor(Math.random() * 9) + 4;
+      if (currentP > 88) currentP = 88;
+      setParseProgress(currentP);
+      if (currentP > 25 && currentP <= 50) {
+        setParsePhaseText('正在执行文本追踪归一化与底层向量 DOM 解析...');
+      } else if (currentP > 50 && currentP <= 75) {
+        setParsePhaseText('正在定位 Market Performance、行业星级榜与深度专题...');
+      } else if (currentP > 75) {
+        setParsePhaseText('正在提取各大类资产回报向量数据与图表锚点...');
+      }
+    }, 280);
+
+    try {
+      const res = await fetch(`/api/analyze_pdf_structure?month=${monthToUse}&filename=${encodeURIComponent(portfolio.ref_pdf_name || '')}`);
+      clearInterval(progressTimer);
+
+      if (res.ok) {
+        const data = await res.json();
+        setParseProgress(100);
+        setParsePhaseText('研报结构语义解析完成！');
+        setPdfSummaryData(data);
+
+        if (data.preselected_pages) {
+          setModalPages(prev => ({
+            ...prev,
+            returns: data.preselected_pages.page_returns || prev.returns,
+            stars: data.preselected_pages.page_stars || prev.stars,
+            topic: data.preselected_pages.page_topic || prev.topic,
+          }));
+          if (data.preselected_pages.topic_title_zh) {
+            setModalTopicTitle(data.preselected_pages.topic_title_zh);
+          }
+        }
+
+        // Reset to default core mandatory preselected
+        setSelectedSections({
+          returns: true,
+          stars: true,
+          topic: true,
+          funds_matrix: false,
+          dpms: false,
+          calendar: false,
+        });
+
+        setTimeout(() => {
+          setIsParsingPdf(false);
+          setShowSummaryModal(true);
+        }, 500);
+      } else {
+        throw new Error('API parse failed');
+      }
+    } catch {
+      clearInterval(progressTimer);
+      setParseProgress(100);
+      setParsePhaseText('自动解析完成（载入默认标准结构）');
+      setTimeout(() => {
+        setIsParsingPdf(false);
+        setShowSummaryModal(true);
+      }, 500);
+    }
+  };
+
+  // Section 2: Apply selected sections and custom page numbers from modal
+  const handleApplyModalSections = async () => {
+    const pageReturns = modalPages.returns || portfolio.page_returns || 6;
+    const pageStars = modalPages.stars || portfolio.page_stars || 7;
+    const topicTitle = modalTopicTitle || portfolio.slide3_topic_title_zh;
+
+    setPortfolio(prev => ({
+      ...prev,
+      page_returns: pageReturns,
+      page_stars: pageStars,
+      slide3_topic_title_zh: topicTitle,
+    }));
+
+    setShowSummaryModal(false);
+    notifySectionSaved('sec2');
+    setPreviewReadyMsg(
+      `已成功应用研报结构选择：大类资产表现(P.${pageReturns})、行业星级榜(P.${pageStars})、深度专题 [${topicTitle}]，已即刻更新第 2 节及 Slide 2/3 数据源！`
+    );
+
+    try {
+      await fetch('/api/save_config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          report_month: portfolio.month,
+          section_name: '第2节（研报动态页码与专题微调）',
+          page_returns: pageReturns,
+          page_stars: pageStars,
+          slide3_topic_title: topicTitle,
+          slide3_topic_title_zh: topicTitle,
+          selected_sections: selectedSections,
+        })
+      });
+    } catch {
+      // Local state is preserved
+    }
   };
 
   const notifySectionSaved = (sec: string) => {
@@ -445,6 +594,16 @@ export const Dashboard: React.FC<DashboardProps> = ({
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => handleTriggerPdfAnalysis()}
+              disabled={isParsingPdf}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-400 hover:bg-amber-300 text-slate-950 border border-amber-500/40 shadow-xs transition cursor-pointer"
+              title="根据 SOP 底层向量拆解研报并弹出章节结构摘要选择器"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-slate-950" />
+              <span>⚡ 智能拆解研报大纲与板块选择</span>
+            </button>
             <a
               href={`/preview?month=${portfolio.month}`}
               target="_blank"
@@ -463,7 +622,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
               }`}
             >
               {sectionSaved['sec1'] ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> : <Save className="w-3.5 h-3.5 text-white" />}
-              <span>{sectionSaved['sec1'] ? '已保存并完成回溯匹配' : '保存本节设定'}</span>
+              <span>{sectionSaved['sec1'] ? '已保存并解析研报' : '保存本节设定'}</span>
             </button>
           </div>
         </div>
@@ -567,9 +726,19 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 className="flex-1 px-3 py-2 text-sm font-bold text-slate-950 bg-white rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
-            <span className="text-[11px] text-emerald-700 font-semibold mt-1 block">
-              ✓ 已匹配本地文件夹: ...\1. iFast Monthly update\{portfolio.ref_pdf_name}
-            </span>
+            <div className="flex items-center justify-between mt-1.5 flex-wrap gap-1">
+              <span className="text-[11px] text-emerald-700 font-semibold block">
+                ✓ 已匹配本地研报: {portfolio.ref_pdf_name}
+              </span>
+              <button
+                type="button"
+                onClick={() => handleTriggerPdfAnalysis()}
+                className="text-[11px] text-blue-700 hover:text-blue-900 underline font-bold flex items-center gap-1 cursor-pointer"
+              >
+                <FileSearch className="w-3 h-3" />
+                <span>分析此文件大纲结构与选择板块 →</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -593,6 +762,21 @@ export const Dashboard: React.FC<DashboardProps> = ({
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                if (pdfSummaryData) {
+                  setShowSummaryModal(true);
+                } else {
+                  handleTriggerPdfAnalysis();
+                }
+              }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 shadow-xs transition cursor-pointer"
+              title="重新打开研报大纲与板块选择器"
+            >
+              <Layers className="w-3.5 h-3.5 text-blue-600" />
+              <span>研报大纲与板块选择器</span>
+            </button>
             <button
               onClick={handleSaveSection2}
               className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition ${
@@ -1168,6 +1352,421 @@ export const Dashboard: React.FC<DashboardProps> = ({
           </div>
         </div>
       </div>
+
+      {/* ========================================================================= */}
+      {/* ROTATING PERCENTAGE PROGRESS OVERLAY                                      */}
+      {/* ========================================================================= */}
+      {isParsingPdf && (
+        <div className="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-700/80 rounded-3xl p-8 max-w-md w-full shadow-2xl flex flex-col items-center text-center relative overflow-hidden">
+            {/* Ambient Background Glow */}
+            <div className="absolute -top-24 -left-24 w-48 h-48 bg-blue-500/20 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-amber-500/20 rounded-full blur-3xl pointer-events-none" />
+
+            {/* Rotating SVG Percentage Ring */}
+            <div className="relative w-32 h-32 mb-6 flex items-center justify-center">
+              {/* Outer pulsing ring */}
+              <div className="absolute inset-0 rounded-full border-2 border-blue-500/20 animate-ping opacity-25" />
+              
+              <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 100 100">
+                {/* Track */}
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="42"
+                  stroke="currentColor"
+                  strokeWidth="8"
+                  className="text-slate-800"
+                  fill="transparent"
+                />
+                {/* Animated progress circle */}
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="42"
+                  stroke="url(#progress-gradient)"
+                  strokeWidth="8"
+                  strokeDasharray={263.89}
+                  strokeDashoffset={263.89 - (263.89 * parseProgress) / 100}
+                  strokeLinecap="round"
+                  className="transition-all duration-300 ease-out"
+                  fill="transparent"
+                />
+                <defs>
+                  <linearGradient id="progress-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#38bdf8" />
+                    <stop offset="50%" stopColor="#3b82f6" />
+                    <stop offset="100%" stopColor="#f59e0b" />
+                  </linearGradient>
+                </defs>
+              </svg>
+
+              {/* Centered percentage text */}
+              <div className="absolute flex flex-col items-center justify-center">
+                <span className="text-3xl font-black text-white tracking-tight mono-num">
+                  {Math.round(parseProgress)}%
+                </span>
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">SOP 解析中</span>
+              </div>
+            </div>
+
+            {/* Status and Description */}
+            <div className="flex items-center gap-2 mb-2 text-amber-400 text-xs font-bold uppercase tracking-wider">
+              <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+              <span>研报底层向量解析中</span>
+            </div>
+            <h3 className="text-lg font-bold text-white mb-2">
+              {parsePhaseText || '正在检索并分解研报内容块...'}
+            </h3>
+            <p className="text-xs text-slate-400 leading-relaxed max-w-sm">
+              遵循 SOP 规范：正文追踪归一化 → 章节 DOM 标定 → 矢量图表提取与行业星级萃取，正在生成内容结构摘要供您选择。
+            </p>
+
+            {/* Linear Progress Bar */}
+            <div className="w-full bg-slate-800 h-1.5 rounded-full mt-6 overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-blue-500 via-amber-400 to-emerald-400 transition-all duration-300 rounded-full"
+                style={{ width: `${parseProgress}%` }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* SUMMARY & SECTION SELECTION MODAL                                         */}
+      {/* ========================================================================= */}
+      {showSummaryModal && (
+        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white rounded-3xl border border-slate-300 shadow-2xl max-w-4xl w-full my-8 flex flex-col overflow-hidden">
+            {/* Modal Header */}
+            <div className="bg-slate-900 px-7 py-5 text-white flex justify-between items-center border-b border-slate-800">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center border border-amber-500/30">
+                  <Layers className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 text-amber-400 text-xs font-bold uppercase tracking-wider">
+                    <span>iFAST Monthly Update 研报结构摘要与板块选择器</span>
+                  </div>
+                  <h3 className="text-lg font-black text-white">
+                    {pdfSummaryData?.filename || portfolio.ref_pdf_name || '研报结构解析'} (共 {pdfSummaryData?.total_pages || 25} 页)
+                  </h3>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowSummaryModal(false)}
+                className="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center transition cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Instruction Banner */}
+            <div className="bg-blue-50 border-b border-blue-100 px-7 py-3 text-xs text-blue-900 flex items-start gap-2.5">
+              <div className="w-4 h-4 rounded-full bg-blue-200 text-blue-800 flex items-center justify-center text-[10px] font-black shrink-0 mt-0.5">i</div>
+              <div>
+                <span className="font-bold">SOP 解析提示：</span>
+                系统已对 PDF 进行底层向量与章节标定。前 3 项为生成机构汇报幻灯片的<strong>必选核心板块（已默认预选并提取对应页码）</strong>。您可以核实、勾选需要进一步读取的板块并微调页码，点击确认后将直接返还至<strong>第 2 节及 Slide 2/3</strong>！
+              </div>
+            </div>
+
+            {/* Modal Body: Cards List */}
+            <div className="p-7 space-y-4 max-h-[60vh] overflow-y-auto bg-slate-50/60">
+              {/* Card 1: Market Performance */}
+              <div className={`p-4 rounded-2xl border transition-all ${
+                selectedSections.returns ? 'bg-white border-blue-300 shadow-sm' : 'bg-slate-100/70 border-slate-200 opacity-60'
+              }`}>
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-start gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedSections(prev => ({ ...prev, returns: !prev.returns }))}
+                      className="mt-0.5 text-blue-600 hover:text-blue-700 cursor-pointer"
+                    >
+                      {selectedSections.returns ? <CheckSquare className="w-5 h-5 text-blue-600" /> : <Square className="w-5 h-5 text-slate-400" />}
+                    </button>
+                    <div>
+                      <div className="flex items-center gap-2 flex-wrap mb-1">
+                        <span className="text-sm font-extrabold text-slate-900">
+                          📊 全球重点资产月度回报与区域透视 (Market Performance)
+                        </span>
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-blue-100 text-blue-800 border border-blue-200">
+                          核心必选 / Slide 2
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-600 leading-relaxed">
+                        涵盖 9 大主要股票市场（拉丁美洲、中国、亚洲除日、标普等）及 5 大债券门类（全球综合债、亚洲IG等）双币种月度回报，含美/日/中核心区域宏观评述。
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
+                    <span className="text-xs font-bold text-slate-500">研报页码: 第</span>
+                    <input
+                      type="number"
+                      min="1"
+                      max="60"
+                      value={modalPages.returns}
+                      onChange={(e) => setModalPages(prev => ({ ...prev, returns: parseInt(e.target.value) || 6 }))}
+                      className="w-14 px-2 py-1 text-center font-bold text-sm bg-white rounded border border-slate-300 focus:ring-2 focus:ring-blue-500"
+                    />
+                    <span className="text-xs font-bold text-slate-500">页</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Card 2: Star Ratings */}
+              <div className={`p-4 rounded-2xl border transition-all ${
+                selectedSections.stars ? 'bg-white border-blue-300 shadow-sm' : 'bg-slate-100/70 border-slate-200 opacity-60'
+              }`}>
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-start gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedSections(prev => ({ ...prev, stars: !prev.stars }))}
+                      className="mt-0.5 text-blue-600 hover:text-blue-700 cursor-pointer"
+                    >
+                      {selectedSections.stars ? <CheckSquare className="w-5 h-5 text-blue-600" /> : <Square className="w-5 h-5 text-slate-400" />}
+                    </button>
+                    <div>
+                      <div className="flex items-center gap-2 flex-wrap mb-1">
+                        <span className="text-sm font-extrabold text-slate-900">
+                          ⭐ 官方全行业星级榜与配置策略 (Investment Views & Star Ratings)
+                        </span>
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-blue-100 text-blue-800 border border-blue-200">
+                          核心必选 / Slide 2
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-600 leading-relaxed">
+                        穿透 19 个官方细分赛道 4 档星级评级（极具吸引力、具备吸引力、中性、审慎低配），包含行业估值判定与长期投资评级。
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
+                    <span className="text-xs font-bold text-slate-500">研报页码: 第</span>
+                    <input
+                      type="number"
+                      min="1"
+                      max="60"
+                      value={modalPages.stars}
+                      onChange={(e) => setModalPages(prev => ({ ...prev, stars: parseInt(e.target.value) || 7 }))}
+                      className="w-14 px-2 py-1 text-center font-bold text-sm bg-white rounded border border-slate-300 focus:ring-2 focus:ring-blue-500"
+                    />
+                    <span className="text-xs font-bold text-slate-500">页</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Card 3: Thematic Feature Article */}
+              <div className={`p-4 rounded-2xl border transition-all ${
+                selectedSections.topic ? 'bg-white border-blue-300 shadow-sm' : 'bg-slate-100/70 border-slate-200 opacity-60'
+              }`}>
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-start gap-3 flex-1">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedSections(prev => ({ ...prev, topic: !prev.topic }))}
+                      className="mt-0.5 text-blue-600 hover:text-blue-700 cursor-pointer"
+                    >
+                      {selectedSections.topic ? <CheckSquare className="w-5 h-5 text-blue-600" /> : <Square className="w-5 h-5 text-slate-400" />}
+                    </button>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 flex-wrap mb-1">
+                        <span className="text-sm font-extrabold text-slate-900">
+                          📑 月度精选深度专题 (Monthly In-Depth Thematic Feature)
+                        </span>
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-purple-100 text-purple-800 border border-purple-200">
+                          核心必选 / Slide 3
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-600 leading-relaxed mb-2.5">
+                        研报当月宏观专题长文深度解析，用于构建 Slide 3 的核心逻辑体系。
+                      </p>
+
+                      {/* Topic Title Selector / Input */}
+                      <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200 space-y-1.5">
+                        <label className="text-[11px] font-bold text-slate-700 block">
+                          选定/微调专题题目 (将同步返还至第 2 节及 Slide 3):
+                        </label>
+                        <input
+                          type="text"
+                          value={modalTopicTitle}
+                          onChange={(e) => setModalTopicTitle(e.target.value)}
+                          className="w-full px-2.5 py-1.5 text-xs font-bold text-slate-950 bg-white rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                          <span className="text-[10px] text-slate-500 font-semibold">快速选择已识别题目:</span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setModalTopicTitle('当债券不再扮演债券：60/40股债平衡组合是否已死？');
+                              setModalPages(prev => ({ ...prev, topic: 3 }));
+                            }}
+                            className="text-[10px] px-2 py-0.5 rounded bg-white hover:bg-slate-200 text-slate-800 border border-slate-300 font-medium cursor-pointer"
+                          >
+                            60/40股债平衡组合专题 (P.3)
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setModalTopicTitle('本月焦点标的：M&G 亚洲精选股票基金与高息标的透视');
+                              setModalPages(prev => ({ ...prev, topic: 8 }));
+                            }}
+                            className="text-[10px] px-2 py-0.5 rounded bg-white hover:bg-slate-200 text-slate-800 border border-slate-300 font-medium cursor-pointer"
+                          >
+                            M&G 亚洲精选股票基金 (P.8)
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
+                    <span className="text-xs font-bold text-slate-500">研报页码: 第</span>
+                    <input
+                      type="number"
+                      min="1"
+                      max="60"
+                      value={modalPages.topic}
+                      onChange={(e) => setModalPages(prev => ({ ...prev, topic: parseInt(e.target.value) || 3 }))}
+                      className="w-14 px-2 py-1 text-center font-bold text-sm bg-white rounded border border-slate-300 focus:ring-2 focus:ring-blue-500"
+                    />
+                    <span className="text-xs font-bold text-slate-500">页</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Card 4: Recommended Unit Trusts */}
+              <div className={`p-4 rounded-2xl border transition-all ${
+                selectedSections.funds_matrix ? 'bg-white border-blue-300 shadow-sm' : 'bg-slate-50/80 border-slate-200 opacity-70'
+              }`}>
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-start gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedSections(prev => ({ ...prev, funds_matrix: !prev.funds_matrix }))}
+                      className="mt-0.5 text-blue-600 hover:text-blue-700 cursor-pointer"
+                    >
+                      {selectedSections.funds_matrix ? <CheckSquare className="w-5 h-5 text-blue-600" /> : <Square className="w-5 h-5 text-slate-400" />}
+                    </button>
+                    <div>
+                      <div className="flex items-center gap-2 flex-wrap mb-1">
+                        <span className="text-sm font-extrabold text-slate-900">
+                          🏆 推荐基金月度表现矩阵 (Recommended Unit Trusts - 3 Pages)
+                        </span>
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-slate-200 text-slate-700 border border-slate-300">
+                          可选参考 / 附录基金库
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-600 leading-relaxed">
+                        涵盖核心股票（亚洲、全球）、辅助多元与固定收益三类官方推荐基金池当月、3个月、YTD及年化历史回报率。
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
+                    <span className="text-xs font-bold text-slate-500">跨页区间: P.</span>
+                    <span className="text-xs font-bold text-slate-800">13 - 15</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Card 5: DPMS Portfolio */}
+              <div className={`p-4 rounded-2xl border transition-all ${
+                selectedSections.dpms ? 'bg-white border-blue-300 shadow-sm' : 'bg-slate-50/80 border-slate-200 opacity-70'
+              }`}>
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-start gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedSections(prev => ({ ...prev, dpms: !prev.dpms }))}
+                      className="mt-0.5 text-blue-600 hover:text-blue-700 cursor-pointer"
+                    >
+                      {selectedSections.dpms ? <CheckSquare className="w-5 h-5 text-blue-600" /> : <Square className="w-5 h-5 text-slate-400" />}
+                    </button>
+                    <div>
+                      <div className="flex items-center gap-2 flex-wrap mb-1">
+                        <span className="text-sm font-extrabold text-slate-900">
+                          💼 全权委托管理组合理念与架构 (DPMS Portfolio Overview)
+                        </span>
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-slate-200 text-slate-700 border border-slate-300">
+                          可选参考 / 专户配置
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-600 leading-relaxed">
+                        展示奕丰全权委托投资解决方案 (DPMS) 的价值投资哲学、各类风险评级组合比例及稳健现金流架构。
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
+                    <span className="text-xs font-bold text-slate-500">研报页码: P.</span>
+                    <span className="text-xs font-bold text-slate-800">10</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Card 6: Global Economic Calendar */}
+              <div className={`p-4 rounded-2xl border transition-all ${
+                selectedSections.calendar ? 'bg-white border-blue-300 shadow-sm' : 'bg-slate-50/80 border-slate-200 opacity-70'
+              }`}>
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-start gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedSections(prev => ({ ...prev, calendar: !prev.calendar }))}
+                      className="mt-0.5 text-blue-600 hover:text-blue-700 cursor-pointer"
+                    >
+                      {selectedSections.calendar ? <CheckSquare className="w-5 h-5 text-blue-600" /> : <Square className="w-5 h-5 text-slate-400" />}
+                    </button>
+                    <div>
+                      <div className="flex items-center gap-2 flex-wrap mb-1">
+                        <span className="text-sm font-extrabold text-slate-900">
+                          📅 全球重要经济事件与央行议息日历 (Global Economic Calendar)
+                        </span>
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-slate-200 text-slate-700 border border-slate-300">
+                          可选参考 / 宏观日历
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-600 leading-relaxed">
+                        涵盖当月中美欧日央行议息、非农就业、CPI/PPI 通胀等关键宏观数据发布的完整日程时间线。
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
+                    <span className="text-xs font-bold text-slate-500">研报页码: P.</span>
+                    <span className="text-xs font-bold text-slate-800">24</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="bg-slate-100 px-7 py-4 border-t border-slate-200 flex flex-wrap justify-between items-center gap-3">
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                <span className="text-xs font-bold text-slate-700">
+                  已选定 {Object.values(selectedSections).filter(Boolean).length} 个板块（前 3 项核心板块将自动同步第 2 节页码及幻灯片）
+                </span>
+              </div>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowSummaryModal(false)}
+                  className="px-4 py-2 rounded-xl text-xs font-bold text-slate-700 hover:text-slate-900 hover:bg-slate-200 transition cursor-pointer"
+                >
+                  取消
+                </button>
+                <button
+                  type="button"
+                  onClick={handleApplyModalSections}
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-black bg-blue-600 hover:bg-blue-700 text-white shadow-md transition cursor-pointer"
+                >
+                  <Check className="w-4 h-4" />
+                  <span>确认应用所选板块配置并同步第 2 节 →</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

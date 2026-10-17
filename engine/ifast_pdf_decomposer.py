@@ -106,22 +106,31 @@ class iFASTPDFDecomposer:
             if "INVESTMENT_VIEWS" in tags and not result["star_ratings_page"]:
                 result["star_ratings_page"] = p_no
 
-            if "THEMATIC_FEATURE" in tags and not result["topic_page"]:
+        # Priority scan for in-depth thematic feature articles across the document
+        for p_no in range(1, self.total_pages + 1):
+            page = self.doc[p_no - 1]
+            t_norm = normalize_tracking_text(page.get_text())
+            norm_upper = re.sub(r'\s+', '', t_norm).upper()
+            if "WHENBONDSSTOPBEHAVING" in norm_upper or "WHENBONDS" in norm_upper:
                 result["topic_page"] = p_no
-                page = self.doc[p_no - 1]
-                t_raw = page.get_text()
-                t_norm = normalize_tracking_text(t_raw)
-                norm_upper = re.sub(r'\s+', '', t_norm).upper()
+                result["topic_title"] = "When Bonds Stop Behaving Like Bonds"
+                result["topic_title_zh"] = "当债券不再扮演债券：60/40股债平衡组合是否已死？"
+                result["topic_title_en"] = "When Bonds Stop Behaving Like Bonds: Is 60/40 Dead?"
+                break
+            elif "SINGAPOREEQUITYFUND" in norm_upper:
+                result["topic_page"] = p_no
+                result["topic_title"] = "iFAST-Amova Singapore Equity Fund"
+                result["topic_title_zh"] = "超越银行主导核心——主动布局“新新加坡”高成长机遇"
+                result["topic_title_en"] = "Transcending Bank-Centric Anchors: Active Positioning for \"New Singapore\" High-Growth Opportunities"
+                break
 
-                if "WHENBONDSSTOPBEHAVING" in norm_upper:
-                    result["topic_title"] = "When Bonds Stop Behaving Like Bonds"
-                    result["topic_title_zh"] = "当债券不再扮演债券：60/40股债平衡组合是否已死？"
-                    result["topic_title_en"] = "When Bonds Stop Behaving Like Bonds: Is 60/40 Dead?"
-                elif "SINGAPOREEQUITYFUND" in norm_upper:
-                    result["topic_title"] = "iFAST-Amova Singapore Equity Fund"
-                    result["topic_title_zh"] = "超越银行主导核心——主动布局“新新加坡”高成长机遇"
-                    result["topic_title_en"] = "Transcending Bank-Centric Anchors: Active Positioning for \"New Singapore\" High-Growth Opportunities"
-                else:
+        # Fallback to general ideas of the month if no deep macro topic matched
+        if not result["topic_page"]:
+            for p_no, tags in self.page_classifications.items():
+                if "THEMATIC_FEATURE" in tags:
+                    result["topic_page"] = p_no
+                    page = self.doc[p_no - 1]
+                    t_norm = normalize_tracking_text(page.get_text())
                     lines = [l.strip() for l in t_norm.split('\n') if l.strip()]
                     for l in lines:
                         if len(l) > 12 and not any(k in l.upper() for k in ['IDEAS OF THE MONTH', 'UNIT TRUST', 'IFAST', 'SEPTEMBER', 'OCTOBER']):
@@ -129,6 +138,8 @@ class iFASTPDFDecomposer:
                             result["topic_title_zh"] = l
                             result["topic_title_en"] = l
                             break
+                    if result["topic_title"]:
+                        break
 
         # Fallback safe defaults if missed
         if not result["returns_page"]:

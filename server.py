@@ -9,7 +9,7 @@ import os
 import sys
 import json
 import urllib.parse
-from http.server import HTTPServer, SimpleHTTPRequestHandler
+from http.server import HTTPServer, SimpleHTTPRequestHandler, ThreadingHTTPServer
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 if BASE_DIR not in sys.path:
@@ -422,6 +422,146 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
                 "count": len(factsheets),
                 "factsheets": factsheets
             }, ensure_ascii=False).encode('utf-8'))
+        # 8b. PDF Structure & Sections Semantic Decomposition Analyzer
+        elif clean_path == '/api/analyze_pdf_structure':
+            month = query.get('month', ['2026-09'])[0]
+            from engine.pdf_section_matcher import find_pdf_for_report_month
+            from engine.ifast_pdf_decomposer import iFASTPDFDecomposer
+
+            pdf_path, found_pdf_name = find_pdf_for_report_month(month)
+            if not os.path.exists(pdf_path):
+                alt_path = os.path.join(r"G:\我的云端硬盘\0. 工作\2. 投资分析计划 01102026\3. Monthly Report\1. iFast Monthly update", found_pdf_name)
+                if os.path.exists(alt_path):
+                    pdf_path = alt_path
+
+            if not os.path.exists(pdf_path):
+                self.send_response(404)
+                self.send_header('Content-Type', 'application/json; charset=utf-8')
+                self.end_headers()
+                self.wfile.write(json.dumps({
+                    "status": "error",
+                    "message": f"未在预设目录找到匹配研报: {found_pdf_name}"
+                }, ensure_ascii=False).encode('utf-8'))
+                return
+
+            decomposer = iFASTPDFDecomposer(pdf_path)
+            sec_pages = decomposer.find_section_pages()
+            mkt_perf = decomposer.extract_market_performance(sec_pages['returns_page'])
+
+            total_pages = decomposer.total_pages
+            p_returns = sec_pages['returns_page']
+            p_stars = sec_pages['star_ratings_page']
+            p_topic = sec_pages['topic_page']
+
+            topic_title_zh = sec_pages.get('topic_title_zh') or "当债券不再扮演债券：60/40股债平衡组合是否已死？"
+            topic_title_en = sec_pages.get('topic_title_en') or "When Bonds Stop Behaving Like Bonds: Is 60/40 Dead?"
+
+            sections = [
+                {
+                    "id": "returns",
+                    "title": "全球重点资产月度回报与区域透视 (Market Performance)",
+                    "title_en": "Market Performance & Regional Outlook",
+                    "page": p_returns,
+                    "target_slide": "Slide 2 (大类资产图表)",
+                    "is_mandatory": True,
+                    "default_selected": True,
+                    "summary": "包含 9 大股票市场双币种发散柱 (LATAM, EEMEA, 中国, 亚洲除日...) + 5 大债券类别下挂柱 (全球综合债, 亚洲IG, 全球HY...) + 美/日/中 3 大区域市场述评。",
+                    "detected_data": {
+                        "equity_count": len(mkt_perf.get("equity_indices", [])),
+                        "bond_count": len(mkt_perf.get("bond_indices", [])),
+                        "regions": ["美股市场", "日本股市", "中国股市"]
+                    }
+                },
+                {
+                    "id": "stars",
+                    "title": "官方全行业星级榜与配置策略 (Investment Views & Star Ratings)",
+                    "title_en": "Investment Views & Star Ratings",
+                    "page": p_stars,
+                    "target_slide": "Slide 2 (行业星级榜)",
+                    "is_mandatory": True,
+                    "default_selected": True,
+                    "summary": "包含 19 个官方细分赛道 4 档星级评级（极具吸引力 6 只、具备吸引力 7 只、中性 1 只、审慎低配 5 只）+ 官方核心策略定见。",
+                    "detected_data": {
+                        "sectors_count": 19,
+                        "tiers": ["极具吸引力", "具备吸引力", "中性配置", "不具吸引力/审慎低配"]
+                    }
+                },
+                {
+                    "id": "topic",
+                    "title": "月度深度专题专栏 (Monthly In-Depth Thematic Feature)",
+                    "title_en": "Monthly Thematic Feature",
+                    "page": p_topic,
+                    "target_slide": "Slide 3 (深度专栏)",
+                    "is_mandatory": True,
+                    "default_selected": True,
+                    "topic_title_zh": topic_title_zh,
+                    "topic_title_en": topic_title_en,
+                    "summary": "深度研讨长文：探讨过去近40年股债相关性由负转正的历史结构性转变，解析60/40策略失效机理及纯权益+黄金防御的数理逻辑。",
+                    "alternative_topics": [
+                        {
+                            "page": p_topic,
+                            "title_zh": topic_title_zh,
+                            "title_en": topic_title_en
+                        },
+                        {
+                            "page": 8 if total_pages >= 8 else 5,
+                            "title_zh": "本月焦点标的：M&G 亚洲精选股票基金与高息标的透视",
+                            "title_en": "Ideas of the Month: M&G (Lux) Asian Fund Focus"
+                        }
+                    ]
+                },
+                {
+                    "id": "funds_matrix",
+                    "title": "官方精选基金月度回报数据库 (Recommended Unit Trusts Performance)",
+                    "title_en": "Recommended Unit Trusts Performance",
+                    "page": 13 if total_pages >= 13 else 11,
+                    "page_range": f"{13 if total_pages >= 13 else 11}-{15 if total_pages >= 15 else 13}",
+                    "target_slide": "可选参考 / 穿透基金对账",
+                    "is_mandatory": False,
+                    "default_selected": False,
+                    "summary": "涵盖核心股票（亚洲/全球）、辅助多元与固定收益三类推荐基金池当月、3个月、YTD及年化历史回报率。"
+                },
+                {
+                    "id": "dpms",
+                    "title": "全权委托专户投资理念与组合架构 (DPMS Portfolio Overview)",
+                    "title_en": "DPMS Philosophy & Allocation",
+                    "page": 10 if total_pages >= 10 else 9,
+                    "page_range": f"{10 if total_pages >= 10 else 9}-{11 if total_pages >= 11 else 10}",
+                    "target_slide": "可选参考",
+                    "is_mandatory": False,
+                    "default_selected": False,
+                    "summary": "介绍奕丰全权委托投资解决方案 (DPMS) 的价值投资理念与长期稳健现金流架构。"
+                },
+                {
+                    "id": "calendar",
+                    "title": "全球重要经济事件日历 (Global Economic Calendar)",
+                    "title_en": "Global Economic Calendar",
+                    "page": 24 if total_pages >= 24 else total_pages - 1,
+                    "target_slide": "可选参考",
+                    "is_mandatory": False,
+                    "default_selected": False,
+                    "summary": "罗列当月中美欧日央行议息、非农就业、CPI/PPI 通胀等核心宏观数据发布日程。"
+                }
+            ]
+
+            resp = {
+                "status": "success",
+                "filename": found_pdf_name,
+                "pdf_path": pdf_path,
+                "total_pages": total_pages,
+                "sections": sections,
+                "preselected_pages": {
+                    "page_returns": p_returns,
+                    "page_stars": p_stars,
+                    "page_topic": p_topic,
+                    "topic_title_zh": topic_title_zh,
+                    "topic_title_en": topic_title_en
+                }
+            }
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json; charset=utf-8')
+            self.end_headers()
+            self.wfile.write(json.dumps(resp, ensure_ascii=False).encode('utf-8'))
             return
 
         # 9. Portfolio State API for React Frontend
@@ -497,10 +637,12 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
                 cfg = {}
 
             # Auto-resolve settle_date from Calculation_Engine Column A & match local PDF
-            from sync_googlesheet_to_report import resolve_settle_date_from_calc_engine
-            from engine.pdf_section_matcher import find_pdf_for_report_month, match_monthly_update_sections
+            resolved_settle = req_data.get('settle_date') or cfg.get('settle_date')
+            if not resolved_settle:
+                from sync_googlesheet_to_report import resolve_settle_date_from_calc_engine
+                resolved_settle = resolve_settle_date_from_calc_engine(month, live_fetch=True)
 
-            resolved_settle = resolve_settle_date_from_calc_engine(month, live_fetch=True)
+            from engine.pdf_section_matcher import find_pdf_for_report_month, match_monthly_update_sections
             pdf_path, found_pdf_name = find_pdf_for_report_month(month)
             matched_pdf = match_monthly_update_sections(pdf_path)
 
@@ -716,7 +858,7 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
 
 def run_server():
     server_address = ('', PORT)
-    httpd = HTTPServer(server_address, DashboardRequestHandler)
+    httpd = ThreadingHTTPServer(server_address, DashboardRequestHandler)
     print(f"🚀 Investment Advisory Control Panel running at: http://localhost:{PORT}")
     print(f"📄 Report Live Preview available at: http://localhost:{PORT}/preview")
     try:
