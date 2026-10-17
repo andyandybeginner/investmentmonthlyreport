@@ -170,36 +170,39 @@ export const Slide1: React.FC<Slide1Props> = ({ state, lang }) => {
           </div>
 
           {/* Drawer 2: 7 Underlying Funds Table (Objective Weights, NAV, 1M Return & Contribution) */}
-          <div className="bg-white border border-slate-200 rounded-xl p-3.5 shadow-xs flex-1 min-h-0 flex flex-col justify-between">
-            <div className="flex justify-between items-center mb-2 shrink-0">
-              <h3 className="text-sm font-extrabold uppercase tracking-tight text-[#0f2347]">
-                {isEn
-                  ? `${state.holdings.length} Underlying Core Funds: Monthly Performance & Alpha Contribution`
-                  : `底层 ${state.holdings.length} 只优选基金构成与月度行情穿透`}
-              </h3>
-              <span className="text-xs font-bold text-slate-700 bg-slate-100 px-2.5 py-0.5 rounded border border-slate-200">
-                {isEn
-                  ? `Total Target Weight: ${state.holdings.reduce((sum, h) => sum + (h.target_weight || 0), 0).toFixed(1)}%`
-                  : `权重加总: ${state.holdings.reduce((sum, h) => sum + (h.target_weight || 0), 0).toFixed(1)}%`}
-              </span>
-            </div>
-            <div className="overflow-hidden border border-slate-200 rounded-lg flex-1 min-h-0 flex flex-col">
-              <table className="w-full h-full text-left text-xs border-collapse">
-                <thead className="bg-slate-100 text-slate-700 text-[11px] uppercase font-bold border-b border-slate-200 shrink-0">
-                  <tr>
-                    <th className="py-2.5 px-2 pl-2.5">{t.s1_th_role}</th>
-                    <th className="py-2.5 px-2">{t.s1_th_fund}</th>
-                    <th className="py-2.5 px-2 text-right font-bold text-slate-600">{t.s1_th_target_w}</th>
-                    <th className="py-2.5 px-2 text-right font-extrabold text-[#0f2347] bg-amber-100/60 border-l border-r border-amber-200">
-                      {t.s1_th_actual_w}
-                    </th>
-                    <th className="py-2.5 px-2 text-right">{isEn ? 'Latest NAV' : '最新净值'}</th>
-                    <th className="py-2.5 px-2 text-right">{t.s1_th_ret_1m}</th>
-                    <th className="py-2.5 px-2 text-right pr-2.5">{t.s1_th_contrib}</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 bg-white text-[11.5px]">
-                  {state.holdings.map((h) => {
+          {(() => {
+            const activeHoldings = state.holdings.filter((h: any) => h.active !== false && !h.is_candidate);
+            return (
+              <div className="bg-white border border-slate-200 rounded-xl p-3.5 shadow-xs flex-1 min-h-0 flex flex-col justify-between">
+                <div className="flex justify-between items-center mb-2 shrink-0">
+                  <h3 className="text-sm font-extrabold uppercase tracking-tight text-[#0f2347]">
+                    {isEn
+                      ? `${activeHoldings.length} Underlying Core Funds: Monthly Performance & Alpha Contribution`
+                      : `底层 ${activeHoldings.length} 只优选基金构成与月度行情穿透`}
+                  </h3>
+                  <span className="text-xs font-bold text-slate-700 bg-slate-100 px-2.5 py-0.5 rounded border border-slate-200">
+                    {isEn
+                      ? `Total Target Weight: ${activeHoldings.reduce((sum: number, h: any) => sum + (h.target_weight || 0), 0).toFixed(1)}%`
+                      : `权重加总: ${activeHoldings.reduce((sum: number, h: any) => sum + (h.target_weight || 0), 0).toFixed(1)}%`}
+                  </span>
+                </div>
+                <div className="overflow-hidden border border-slate-200 rounded-lg flex-1 min-h-0 flex flex-col">
+                  <table className="w-full h-full text-left text-xs border-collapse">
+                    <thead className="bg-slate-100 text-slate-700 text-[11px] uppercase font-bold border-b border-slate-200 shrink-0">
+                      <tr>
+                        <th className="py-2.5 px-2 pl-2.5">{t.s1_th_role}</th>
+                        <th className="py-2.5 px-2">{t.s1_th_fund}</th>
+                        <th className="py-2.5 px-2 text-right font-bold text-slate-600">{t.s1_th_target_w}</th>
+                        <th className="py-2.5 px-2 text-right font-extrabold text-[#0f2347] bg-amber-100/60 border-l border-r border-amber-200">
+                          {t.s1_th_actual_w}
+                        </th>
+                        <th className="py-2.5 px-2 text-right">{isEn ? 'Latest NAV' : '最新净值'}</th>
+                        <th className="py-2.5 px-2 text-right">{t.s1_th_ret_1m}</th>
+                        <th className="py-2.5 px-2 text-right pr-2.5">{t.s1_th_contrib}</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 bg-white text-[11.5px]">
+                      {activeHoldings.map((h: any) => {
                     const fallback = presetHoldings[h.id];
                     const tgtW = h.target_weight ?? fallback?.target_weight ?? 0;
                     const curW = h.current_weight ?? fallback?.current_weight ?? tgtW;
@@ -238,8 +241,10 @@ export const Slide1: React.FC<Slide1Props> = ({ state, lang }) => {
                   })}
                 </tbody>
               </table>
-            </div>
-          </div>
+                </div>
+              </div>
+            );
+          })()}
         </div>
 
         {/* Right Column (5 Cols): Drawer 3 (Real NAV Vector Chart) + Drawer 4 (Monthly Verdict & Qualitative View) */}

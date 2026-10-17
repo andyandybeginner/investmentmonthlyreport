@@ -575,9 +575,9 @@ export const MONTH_PRESETS: { [month: string]: MonthPreset } = {
         contrib_1m: 0.04,
         market_noise: "外围汇率预期交织，区域部分出口面临扰动。",
         market_noise_en: "Currency volatility and selective regional export softness.",
-        fundamental_support: "聚焦印度消费蓝筹与泛亚高资本回报率龙头，在区域波动中稳健实现+1.12%正收益。",
-        fundamental_support_en: "Concentrated in high-quality Indian consumer leaders and pan-Asia high-ROE compounders, generating steady +1.12% return.",
-        recommendation: "持有"
+        fundamental_support: "聚焦印度消费蓝筹与泛亚高资本回报率龙头，在区域波动中稳健实现+1.12%正收益。【调仓建议参考】：建议择机替换为 M&G (Lux) Asian Fund（估值驱动、超额收益源自选股阿尔法，月度调仓透明，与组合风格互补）。",
+        fundamental_support_en: "Concentrated in high-quality Indian consumer leaders and pan-Asia high-ROE compounders (+1.12%). [Candidate Reference]: Consider replacing with M&G (Lux) Asian Fund (valuation-driven, bottom-up alpha, transparent execution).",
+        recommendation: "更换标的"
       },
       "fund-nikko": {
         target_weight: 4.0,

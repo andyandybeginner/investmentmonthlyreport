@@ -533,9 +533,12 @@ OBJECTIVE_HOLDINGS_BY_MONTH = {
             "active": True,
             "market_noise": "外围汇率预期交织，区域部分出口面临扰动。",
             "market_noise_en": "Currency volatility and selective regional export softness.",
-            "fundamental_support": "聚焦印度消费蓝筹与泛亚高资本回报率龙头，在区域波动中稳健实现+1.12%正收益。",
-            "fundamental_support_en": "Concentrated in high-quality Indian consumer leaders and pan-Asia high-ROE compounders, generating steady +1.12% return.",
-            "advisory_recommendation": "持有"
+            "fundamental_support": "聚焦印度消费蓝筹与泛亚高资本回报率龙头，在区域波动中稳健实现+1.12%正收益。<span class='text-amber-800 font-semibold bg-amber-50 px-1 py-0.5 rounded border border-amber-200 ml-1'>【建议参考标的】</span>：建议择机替换为 M&G (Lux) Asian Fund（估值驱动、超额收益源自选股阿尔法，月度调仓透明，与组合风格互补）。",
+            "fundamental_support_en": "Concentrated in high-quality Indian consumer leaders and pan-Asia high-ROE compounders (+1.12%). [Candidate Reference]: Consider replacing with M&G (Lux) Asian Fund (valuation-driven, bottom-up alpha, transparent execution).",
+            "advisory_recommendation": "更换标的",
+            "replacement_reference": "M&G (Lux) Asian Fund",
+            "replacement_reference_badge": "参考: M&G亚洲",
+            "replacement_reference_badge_en": "Ref: M&G Asian"
         },
         {
             "id": "fund-nikko",
@@ -690,7 +693,8 @@ def generate_report(month="2026-09"):
     conflict_note = cfg.get("monthly_conflict_calibration", "")
 
     all_holdings = normalize_and_enrich_holdings(mgr_input.get("holdings_conviction", []), report_month)
-    active_funds = [h for h in all_holdings if h.get("active") is not False]
+    # Strictly exclude candidate or unexecuted replacement funds from active portfolio
+    active_funds = [h for h in all_holdings if h.get("active") is not False and not h.get("is_candidate")]
     if not active_funds:
         active_funds = all_holdings
 
@@ -699,7 +703,7 @@ def generate_report(month="2026-09"):
     if n_funds > 10:
         py_class = "py-1"
         txt_class = "text-[10px] leading-tight"
-    elif n_funds > 7:
+    elif n_funds >= 7:
         py_class = "py-1.5"
         txt_class = "text-[10.5px] leading-snug"
     else:
@@ -750,24 +754,31 @@ def generate_report(month="2026-09"):
         noise_en = h.get("market_noise_en", noise)
         fundam_en = h.get("fundamental_support_en", fundam)
         dir_text = h.get("advisory_recommendation") or h.get("advisory_directive", "持有")
+        c_key = f"c{idx+1}"
         if dir_text in ["坚持持有", "持有"]:
             dir_text = "持有"
             dir_text_en = "Hold"
-            badge_bg = "bg-emerald-100 text-emerald-800 border border-emerald-300"
+            badge_html = f'<span class="inline-block px-2.5 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold text-[10px] whitespace-nowrap" data-i18n="{c_key}_act">{dir_text}</span>'
         elif dir_text in ["调仓", "主动调仓", "审慎削减"]:
             dir_text = "调仓"
             dir_text_en = "Rebalance"
-            badge_bg = "bg-amber-100 text-amber-800 border border-amber-300"
+            badge_html = f'<span class="inline-block px-2.5 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-300 font-bold text-[10px] whitespace-nowrap" data-i18n="{c_key}_act">{dir_text}</span>'
         elif dir_text in ["更换标的", "更换"]:
             dir_text = "更换标的"
             dir_text_en = "Switch / Replace"
-            badge_bg = "bg-rose-100 text-rose-800 border border-rose-300"
+            ref_badge = h.get("replacement_reference_badge", "参考: M&G亚洲")
+            ref_badge_en = h.get("replacement_reference_badge_en", "Ref: M&G Asian")
+            dyn_i18n_zh[f"{c_key}_ref"] = ref_badge
+            dyn_i18n_en[f"{c_key}_ref"] = ref_badge_en
+            badge_html = f'''<div class="flex flex-col items-center">
+                <span class="inline-block px-2.5 py-0.5 rounded bg-rose-100 text-rose-800 border border-rose-300 font-bold text-[10px] whitespace-nowrap" data-i18n="{c_key}_act">{dir_text}</span>
+                <span class="text-[9px] text-slate-500 font-medium mt-0.5 whitespace-nowrap" data-i18n="{c_key}_ref">{ref_badge}</span>
+            </div>'''
         else:
             dir_text = "持有"
             dir_text_en = "Hold"
-            badge_bg = "bg-slate-100 text-slate-800"
+            badge_html = f'<span class="inline-block px-2.5 py-0.5 rounded bg-slate-100 text-slate-800 font-bold text-[10px] whitespace-nowrap" data-i18n="{c_key}_act">{dir_text}</span>'
 
-        c_key = f"c{idx+1}"
         dyn_i18n_zh[f"{c_key}_name"] = fname
         dyn_i18n_zh[f"{c_key}_noise"] = noise
         dyn_i18n_zh[f"{c_key}_fundam"] = fundam
@@ -784,7 +795,7 @@ def generate_report(month="2026-09"):
                         <td class="{py_class} text-right font-mono {ret_color} font-bold">{ret}</td>
                         <td class="{py_class} text-slate-600 {txt_class}" data-i18n="{c_key}_noise">{noise}</td>
                         <td class="{py_class} text-slate-800 font-medium {txt_class}" data-i18n="{c_key}_fundam">{fundam}</td>
-                        <td class="{py_class} text-center pr-3 whitespace-nowrap"><span class="inline-block px-2.5 py-0.5 rounded {badge_bg} font-bold text-[10px] whitespace-nowrap" data-i18n="{c_key}_act">{dir_text}</span></td>
+                        <td class="{py_class} text-center pr-3 whitespace-nowrap">{badge_html}</td>
                     </tr>"""
 
     # 4. Read Base Template and Clean Slide Components

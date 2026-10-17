@@ -28,10 +28,10 @@
     "qualitative_view": "当月的组合回报不及基准指数，主要是黄金基金在8月24%单月暴涨之后的收益落袋。云巨头八千亿美元资本开支与存储芯片产能售罄印证亚洲算力高景气，叠加国内超常规政策刺激及股债正相关下“纯权益增长+35%富敦市场中性底仓+10.5%穿透纯金对冲”三支柱稳健协同，底层安全边际厚实。虽美联储加息推升十年期美债收益率破5.2%及中东油价破百带来短期分母端扰动。",
     "qualitative_view_en": "Monthly portfolio return trailed the benchmark index primarily due to profit-taking in the Gold fund following its 24% single-month surge in August. USD 800bn hyperscaler CapEx and sold-out memory chip capacity validate Asian compute momentum, reinforced by domestic stimulus and our three-pillar architecture (pure equity growth + 35% Fullerton market-neutral core + 10.5% look-through pure gold hedge) amid positive stock-bond correlations. Despite Fed rate hikes pushing 10Y Treasury yields above 5.2% and Middle East oil surpassing USD 100 causing short-term denominator headwinds, underlying safety margins remain solid.",
     "rebalance_verdict": "持有",
-    "rebalance_note": "坚守三支柱战略配置，维持板块分配。建议亚洲除日本板块更换标的。",
-    "rebalance_note_en": "Core asset theses remain solid; weighting drifts sit comfortably within safety bands. Existing target allocations for all 7 funds remain unchanged for September.",
+    "rebalance_note": "坚守三支柱战略配置，维持板块分配。建议亚洲除日本板块更换标的（候选参考标的：M&G (Lux) Asian Fund，详见调仓说明备忘录）。",
+    "rebalance_note_en": "Maintain 3-pillar strategy and asset allocation. Suggest replacing Asia ex-Japan holding (Candidate Reference: M&G (Lux) Asian Fund; see Alteration Memo).",
     "rebalance_memo_link": "https://docs.google.com/document/d/1KI_t1-eodHpmd8sx7H2GGpEJDf5qbwi4/edit?usp=sharing&ouid=106447183490540600770&rtpof=true&sd=true",
-    "show_rebalance_memo": false,
+    "show_rebalance_memo": true,
     "holdings_conviction": [
       {
         "id": "fund-fullerton",
@@ -131,9 +131,10 @@
         "active": true,
         "market_noise": "外围汇率预期交织，区域部分出口面临扰动。",
         "market_noise_en": "Currency volatility and selective regional export softness.",
-        "fundamental_support": "聚焦印度消费蓝筹与泛亚高资本回报率龙头，在区域波动中稳健实现+1.12%正收益。",
-        "fundamental_support_en": "Concentrated in high-quality Indian consumer leaders and pan-Asia high-ROE compounders, generating steady +1.12% return.",
-        "advisory_recommendation": "更换标的"
+        "fundamental_support": "聚焦印度消费蓝筹与泛亚高资本回报率龙头，在区域波动中稳健实现+1.12%正收益。<span class='text-amber-800 font-semibold bg-amber-50 px-1 py-0.5 rounded border border-amber-200 ml-1'>【建议参考标的】</span>：建议择机替换为 M&G (Lux) Asian Fund（估值驱动、超额收益源自选股阿尔法，月度调仓透明，与组合风格互补）。",
+        "fundamental_support_en": "Concentrated in high-quality Indian consumer leaders and pan-Asia high-ROE compounders (+1.12%). [Candidate Reference]: Consider replacing with M&G (Lux) Asian Fund (valuation-driven, bottom-up alpha, transparent execution).",
+        "advisory_recommendation": "更换标的",
+        "replacement_reference": "M&G (Lux) Asian Fund"
       },
       {
         "id": "fund-nikko",
@@ -163,6 +164,8 @@
         "return_1m": "-2.00%",
         "contrib_1m": "+0.00%",
         "active": false,
+        "is_candidate": true,
+        "candidate_for": "fund-fssa",
         "market_noise": "短期波动正常",
         "market_noise_en": "Normal short-term noise",
         "fundamental_support": " M&G 寻找长期前景被市场低估的公司，判断依据是资本回报、估值和公司治理三个要素。这与 FSSA 偏重高质量、高定价成长股的方法形成互补。M&G 月报逐月披露业绩归因及新建仓、清仓标的（例如 8 月新建仓韩国 KCC，清仓 ICICI Bank 与 BlueScope Steel），便于我们持续检验管理人的执行纪律。\n",

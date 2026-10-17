@@ -99,9 +99,14 @@ export const Slide4: React.FC<Slide4Props> = ({ state, lang }) => {
         );
       case '更换标的':
         return (
-          <span className="px-2.5 py-0.5 rounded font-bold text-[10px] bg-rose-100 text-rose-800 border border-rose-300 whitespace-nowrap">
-            {isEn ? 'REPLACE' : '更换标的'}
-          </span>
+          <div className="flex flex-col items-center">
+            <span className="px-2.5 py-0.5 rounded font-bold text-[10px] bg-rose-100 text-rose-800 border border-rose-300 whitespace-nowrap">
+              {isEn ? 'REPLACE' : '更换标的'}
+            </span>
+            <span className="text-[9px] text-slate-500 font-medium mt-0.5 whitespace-nowrap">
+              {isEn ? 'Ref: M&G Asian' : '参考: M&G亚洲'}
+            </span>
+          </div>
         );
       default:
         return (
