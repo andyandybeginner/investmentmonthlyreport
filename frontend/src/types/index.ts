@@ -125,7 +125,76 @@ export interface PortfolioState {
   time_series: TimeSeriesPoint[];
   events: PerformanceEvent[];
   lookthrough: LookThroughData;
+
+  // Real-Time Dynamic Synthesized Supplementary Slides (Slide 6, 7...)
+  dynamic_slides?: DynamicSlideData[];
+}
+
+export type DynamicSlideLayout = 'table_matrix' | 'cards_briefing' | 'timeline_calendar' | 'vector_visual';
+
+export interface FundMatrixRow {
+  name: string;
+  category: string;
+  m1: string;
+  m3: string;
+  ytd: string;
+  y1: string;
+  y3: string;
+  y5: string;
+}
+
+export interface FundMatrixData {
+  columns: string[];
+  rows: FundMatrixRow[];
+  category_groups: string[];
+  count: number;
+}
+
+export interface CalendarEvent {
+  date: string;
+  day?: string;
+  region: string;
+  event_zh: string;
+  event_en: string;
+  importance: 'high' | 'medium' | 'low';
+}
+
+export interface CalendarData {
+  events: CalendarEvent[];
+  high_impact_count: number;
+  total_count: number;
+}
+
+export interface PillarCard {
+  title: string;
+  title_en?: string;
+  desc: string;
+  desc_en?: string;
+  tag?: string;
+  stat?: string;
+}
+
+export interface CardsBriefingData {
+  summary: string;
+  summary_en?: string;
+  pillars: PillarCard[];
+  adviser_takeaway?: string;
+}
+
+export interface DynamicSlideData {
+  id: string; // 'funds_matrix', 'dpms', 'calendar', or 'custom_page_X'
+  title_zh: string;
+  title_en: string;
+  category_badge_zh: string;
+  category_badge_en: string;
+  source_page: number | string;
+  source_pdf: string;
+  layout: DynamicSlideLayout;
+  table_data?: FundMatrixData;
+  calendar_data?: CalendarData;
+  cards_data?: CardsBriefingData;
 }
 
 export type Language = 'zh' | 'en';
 export type ViewMode = 'dashboard' | 'presentation' | 'split' | 'factsheet';
+

@@ -73,10 +73,11 @@ export const Dashboard: React.FC<DashboardProps> = ({
     returns: portfolio.page_returns || 6,
     stars: portfolio.page_stars || 7,
     topic: 3,
-    funds_matrix: 13,
-    dpms: 10,
+    funds_matrix: 20,
+    dpms: 14,
     calendar: 24,
   });
+  const [customExtraPage, setCustomExtraPage] = useState<string>('');
   const [modalTopicTitle, setModalTopicTitle] = useState<string>(
     portfolio.slide3_topic_title_zh || '当债券不再扮演债券：60/40股债平衡组合是否已死？'
   );
@@ -282,6 +283,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
             returns: data.preselected_pages.page_returns || prev.returns,
             stars: data.preselected_pages.page_stars || prev.stars,
             topic: data.preselected_pages.page_topic || prev.topic,
+            funds_matrix: data.preselected_pages.page_funds || prev.funds_matrix,
+            dpms: data.preselected_pages.page_dpms || prev.dpms,
+            calendar: data.preselected_pages.page_calendar || prev.calendar,
           }));
           if (data.preselected_pages.topic_title_zh) {
             setModalTopicTitle(data.preselected_pages.topic_title_zh);
@@ -322,21 +326,19 @@ export const Dashboard: React.FC<DashboardProps> = ({
     const pageStars = modalPages.stars || portfolio.page_stars || 7;
     const topicTitle = modalTopicTitle || portfolio.slide3_topic_title_zh;
 
-    setPortfolio(prev => ({
-      ...prev,
-      page_returns: pageReturns,
-      page_stars: pageStars,
-      slide3_topic_title_zh: topicTitle,
-    }));
-
     setShowSummaryModal(false);
-    notifySectionSaved('sec2');
-    setPreviewReadyMsg(
-      `已成功应用研报结构选择：大类资产表现(P.${pageReturns})、行业星级榜(P.${pageStars})、深度专题 [${topicTitle}]，已即刻更新第 2 节及 Slide 2/3 数据源！`
-    );
+
+    const customPagesList: number[] = [];
+    if (customExtraPage.trim()) {
+      const parts = customExtraPage.split(/[,，\s]+/);
+      for (const p of parts) {
+        const num = parseInt(p.trim());
+        if (num && num > 0) customPagesList.push(num);
+      }
+    }
 
     try {
-      await fetch('/api/save_config', {
+      const res = await fetch('/api/save_config', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -347,11 +349,45 @@ export const Dashboard: React.FC<DashboardProps> = ({
           slide3_topic_title: topicTitle,
           slide3_topic_title_zh: topicTitle,
           selected_sections: selectedSections,
+          modal_pages: modalPages,
+          custom_pages: customPagesList,
         })
       });
+
+      if (res.ok) {
+        const data = await res.json();
+        const dynSlides = data.dynamic_slides || [];
+        setPortfolio(prev => ({
+          ...prev,
+          page_returns: pageReturns,
+          page_stars: pageStars,
+          slide3_topic_title_zh: topicTitle,
+          dynamic_slides: dynSlides
+        }));
+
+        const count = dynSlides.length;
+        const extraMsg = count > 0 ? ` 并已实时设计生成 ${count} 个扩充附录幻灯片 (Slide 6+)！` : '';
+        setPreviewReadyMsg(
+          `已成功应用研报结构选择：大类资产表现(P.${pageReturns})、行业星级榜(P.${pageStars})、深度专题 [${topicTitle}]${extraMsg}`
+        );
+      } else {
+        setPortfolio(prev => ({
+          ...prev,
+          page_returns: pageReturns,
+          page_stars: pageStars,
+          slide3_topic_title_zh: topicTitle,
+        }));
+      }
     } catch {
-      // Local state is preserved
+      setPortfolio(prev => ({
+        ...prev,
+        page_returns: pageReturns,
+        page_stars: pageStars,
+        slide3_topic_title_zh: topicTitle,
+      }));
     }
+
+    notifySectionSaved('sec2');
   };
 
   const notifySectionSaved = (sec: string) => {
@@ -1636,8 +1672,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
               </div>
 
               {/* Card 4: Recommended Unit Trusts */}
+              {/* Card 4: Recommended Unit Trusts */}
               <div className={`p-4 rounded-2xl border transition-all ${
-                selectedSections.funds_matrix ? 'bg-white border-blue-300 shadow-sm' : 'bg-slate-50/80 border-slate-200 opacity-70'
+                selectedSections.funds_matrix ? 'bg-white border-blue-400 shadow-sm' : 'bg-slate-50/80 border-slate-200 opacity-70'
               }`}>
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-start gap-3">
@@ -1651,10 +1688,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
                     <div>
                       <div className="flex items-center gap-2 flex-wrap mb-1">
                         <span className="text-sm font-extrabold text-slate-900">
-                          🏆 推荐基金月度表现矩阵 (Recommended Unit Trusts - 3 Pages)
+                          🏆 推荐基金月度表现矩阵 (Recommended Unit Trusts)
                         </span>
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-slate-200 text-slate-700 border border-slate-300">
-                          可选参考 / 附录基金库
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-100 text-amber-900 border border-amber-300">
+                          ✨ 实时生成 Slide 6+ / 附录基金池
                         </span>
                       </div>
                       <p className="text-xs text-slate-600 leading-relaxed">
@@ -1663,15 +1700,23 @@ export const Dashboard: React.FC<DashboardProps> = ({
                     </div>
                   </div>
                   <div className="flex items-center gap-2 shrink-0 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
-                    <span className="text-xs font-bold text-slate-500">跨页区间: P.</span>
-                    <span className="text-xs font-bold text-slate-800">13 - 15</span>
+                    <span className="text-xs font-bold text-slate-500">起始页: 第</span>
+                    <input
+                      type="number"
+                      min="1"
+                      max="60"
+                      value={modalPages.funds_matrix || 20}
+                      onChange={(e) => setModalPages(prev => ({ ...prev, funds_matrix: parseInt(e.target.value) || 20 }))}
+                      className="w-14 px-2 py-1 text-center font-bold text-sm bg-white rounded border border-slate-300 focus:ring-2 focus:ring-blue-500"
+                    />
+                    <span className="text-xs font-bold text-slate-500">页</span>
                   </div>
                 </div>
               </div>
 
               {/* Card 5: DPMS Portfolio */}
               <div className={`p-4 rounded-2xl border transition-all ${
-                selectedSections.dpms ? 'bg-white border-blue-300 shadow-sm' : 'bg-slate-50/80 border-slate-200 opacity-70'
+                selectedSections.dpms ? 'bg-white border-blue-400 shadow-sm' : 'bg-slate-50/80 border-slate-200 opacity-70'
               }`}>
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-start gap-3">
@@ -1687,8 +1732,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
                         <span className="text-sm font-extrabold text-slate-900">
                           💼 全权委托管理组合理念与架构 (DPMS Portfolio Overview)
                         </span>
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-slate-200 text-slate-700 border border-slate-300">
-                          可选参考 / 专户配置
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-100 text-amber-900 border border-amber-300">
+                          ✨ 实时生成 Slide 6+ / 专户配置
                         </span>
                       </div>
                       <p className="text-xs text-slate-600 leading-relaxed">
@@ -1697,15 +1742,23 @@ export const Dashboard: React.FC<DashboardProps> = ({
                     </div>
                   </div>
                   <div className="flex items-center gap-2 shrink-0 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
-                    <span className="text-xs font-bold text-slate-500">研报页码: P.</span>
-                    <span className="text-xs font-bold text-slate-800">10</span>
+                    <span className="text-xs font-bold text-slate-500">研报页码: 第</span>
+                    <input
+                      type="number"
+                      min="1"
+                      max="60"
+                      value={modalPages.dpms || 14}
+                      onChange={(e) => setModalPages(prev => ({ ...prev, dpms: parseInt(e.target.value) || 14 }))}
+                      className="w-14 px-2 py-1 text-center font-bold text-sm bg-white rounded border border-slate-300 focus:ring-2 focus:ring-blue-500"
+                    />
+                    <span className="text-xs font-bold text-slate-500">页</span>
                   </div>
                 </div>
               </div>
 
               {/* Card 6: Global Economic Calendar */}
               <div className={`p-4 rounded-2xl border transition-all ${
-                selectedSections.calendar ? 'bg-white border-blue-300 shadow-sm' : 'bg-slate-50/80 border-slate-200 opacity-70'
+                selectedSections.calendar ? 'bg-white border-blue-400 shadow-sm' : 'bg-slate-50/80 border-slate-200 opacity-70'
               }`}>
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-start gap-3">
@@ -1721,8 +1774,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
                         <span className="text-sm font-extrabold text-slate-900">
                           📅 全球重要经济事件与央行议息日历 (Global Economic Calendar)
                         </span>
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-slate-200 text-slate-700 border border-slate-300">
-                          可选参考 / 宏观日历
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-100 text-amber-900 border border-amber-300">
+                          ✨ 实时生成 Slide 6+ / 宏观日历
                         </span>
                       </div>
                       <p className="text-xs text-slate-600 leading-relaxed">
@@ -1731,8 +1784,51 @@ export const Dashboard: React.FC<DashboardProps> = ({
                     </div>
                   </div>
                   <div className="flex items-center gap-2 shrink-0 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
-                    <span className="text-xs font-bold text-slate-500">研报页码: P.</span>
-                    <span className="text-xs font-bold text-slate-800">24</span>
+                    <span className="text-xs font-bold text-slate-500">研报页码: 第</span>
+                    <input
+                      type="number"
+                      min="1"
+                      max="60"
+                      value={modalPages.calendar || 24}
+                      onChange={(e) => setModalPages(prev => ({ ...prev, calendar: parseInt(e.target.value) || 24 }))}
+                      className="w-14 px-2 py-1 text-center font-bold text-sm bg-white rounded border border-slate-300 focus:ring-2 focus:ring-blue-500"
+                    />
+                    <span className="text-xs font-bold text-slate-500">页</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Card 7: Arbitrary Custom Extra Page Synthesis */}
+              <div className="p-4 rounded-2xl border bg-gradient-to-r from-amber-50/50 to-orange-50/30 border-amber-200/90 shadow-2xs">
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-800 flex items-center justify-center font-bold shrink-0">
+                      <Sparkles className="w-4 h-4 text-amber-600" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2 flex-wrap mb-1">
+                        <span className="text-sm font-extrabold text-slate-900">
+                          ✨ 自定义追加任意研报单页为独立专栏幻灯片 (Custom Deep Dive Page)
+                        </span>
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-200/80 text-amber-950 border border-amber-300">
+                          自由扩充 / 适用任何研报
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-600 leading-relaxed">
+                        输入研报中您感兴趣的任意页码，系统将自动向量解析提取论点与核心指标，实时设计为 Slide 6+ 卡片汇报页。
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0 bg-white px-3 py-1.5 rounded-xl border border-amber-200 shadow-2xs">
+                    <span className="text-xs font-bold text-slate-600">指定页码: 第</span>
+                    <input
+                      type="text"
+                      placeholder="例: 12"
+                      value={customExtraPage}
+                      onChange={(e) => setCustomExtraPage(e.target.value)}
+                      className="w-16 px-2 py-1 text-center font-bold text-sm bg-white rounded border border-slate-300 focus:ring-2 focus:ring-amber-500 text-slate-900"
+                    />
+                    <span className="text-xs font-bold text-slate-600">页</span>
                   </div>
                 </div>
               </div>

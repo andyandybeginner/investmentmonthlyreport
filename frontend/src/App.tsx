@@ -7,6 +7,7 @@ import { Slide2 } from './components/slides/Slide2';
 import { Slide3 } from './components/slides/Slide3';
 import { Slide4 } from './components/slides/Slide4';
 import { Slide5 } from './components/slides/Slide5';
+import { DynamicSlide } from './components/slides/DynamicSlide';
 import { Factsheet } from './components/slides/Factsheet';
 import { MASTER_TIME_SERIES } from './utils/performance';
 
@@ -329,7 +330,8 @@ export const App: React.FC = () => {
             show_rebalance_memo: data.show_rebalance_memo !== undefined ? data.show_rebalance_memo : (data.manager_input.show_rebalance_memo !== undefined ? data.manager_input.show_rebalance_memo : prev.show_rebalance_memo),
             ref_pdf_name: data.reference_monthly_update || prev.ref_pdf_name,
             page_returns: data.pdf_pages?.returns_page || prev.page_returns,
-            page_stars: data.pdf_pages?.star_ratings_page || prev.page_stars
+            page_stars: data.pdf_pages?.star_ratings_page || prev.page_stars,
+            dynamic_slides: data.dynamic_slides || prev.dynamic_slides || []
           }));
         }
       })
@@ -346,6 +348,7 @@ export const App: React.FC = () => {
         reference_monthly_update: portfolio.ref_pdf_name,
         rebalance_memo_link: portfolio.rebalance_memo_link || "",
         show_rebalance_memo: !!portfolio.show_rebalance_memo,
+        dynamic_slides: portfolio.dynamic_slides || [],
         manager_input: {
           qualitative_view: portfolio.qualitative_view,
           qualitative_view_en: portfolio.qualitative_view_en,
@@ -428,6 +431,7 @@ export const App: React.FC = () => {
         isExporting={isExporting}
         isSyncing={isSyncing}
         isSaved={isSaved}
+        dynamicSlides={portfolio.dynamic_slides}
       />
 
       {/* Main Content Area */}
@@ -445,7 +449,7 @@ export const App: React.FC = () => {
           />
         )}
 
-        {/* MODE 2: Presentation Slides 1 - 5 */}
+        {/* MODE 2: Presentation Slides 1 - 5 + Dynamic Slides (6+) */}
         {viewMode === 'presentation' && (
           <div className="presentation-container py-6 space-y-12">
             <Slide1 state={portfolio} lang={lang} />
@@ -453,6 +457,15 @@ export const App: React.FC = () => {
             <Slide3 state={portfolio} lang={lang} />
             <Slide4 state={portfolio} lang={lang} />
             <Slide5 state={portfolio} lang={lang} />
+            {portfolio.dynamic_slides && portfolio.dynamic_slides.map((ds, idx) => (
+              <DynamicSlide
+                key={ds.id || idx}
+                slide={ds}
+                state={portfolio}
+                lang={lang}
+                slideNumber={5 + idx + 1}
+              />
+            ))}
           </div>
         )}
 
@@ -502,6 +515,16 @@ export const App: React.FC = () => {
                 <A4ProportionalSlide>
                   <Slide5 state={portfolio} lang={lang} />
                 </A4ProportionalSlide>
+                {portfolio.dynamic_slides && portfolio.dynamic_slides.map((ds, idx) => (
+                  <A4ProportionalSlide key={ds.id || idx}>
+                    <DynamicSlide
+                      slide={ds}
+                      state={portfolio}
+                      lang={lang}
+                      slideNumber={5 + idx + 1}
+                    />
+                  </A4ProportionalSlide>
+                ))}
               </div>
             </div>
           </div>

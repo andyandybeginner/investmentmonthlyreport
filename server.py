@@ -556,6 +556,32 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
             topic_title_zh = sec_pages.get('topic_title_zh') or "当债券不再扮演债券：60/40股债平衡组合是否已死？"
             topic_title_en = sec_pages.get('topic_title_en') or "When Bonds Stop Behaving Like Bonds: Is 60/40 Dead?"
 
+            # Generalized dynamic scanning for optional sections (Recommended Funds, DPMS, Economic Calendar)
+            import fitz
+            import re
+            def norm_text(t):
+                return re.sub(r'(?<=\b[A-Za-z])\s+(?=[A-Za-z]\b)', '', t).upper()
+
+            doc_scan = fitz.open(pdf_path)
+            p_funds = None
+            p_dpms = None
+            p_calendar = None
+            for p_idx in range(len(doc_scan)):
+                if p_idx < 2:
+                    continue
+                txt = norm_text(doc_scan[p_idx].get_text())
+                if not p_funds and ('1M %' in txt or '1M%' in txt) and ('RECOMMENDED' in txt or 'CORE EQUITY' in txt) and ('PERFORMANCE' in txt or 'UNIT TRUSTS' in txt):
+                    p_funds = p_idx + 1
+                if not p_dpms and 'DISCRETIONARY PORTFOLIO' in txt:
+                    p_dpms = p_idx + 1
+                if not p_calendar and ('ECONOMICCALENDAR' in txt or 'ECONOMIC CALENDAR' in txt or ('CALENDAR' in txt and any(c in txt for c in ["FOMC", "CPI", "PMI", "TANKAN", "CN DENOTES"]))):
+                    p_calendar = p_idx + 1
+            doc_scan.close()
+
+            p_funds = p_funds or (20 if total_pages >= 20 else 11)
+            p_dpms = p_dpms or (14 if total_pages >= 14 else 9)
+            p_calendar = p_calendar or (24 if total_pages >= 24 else total_pages)
+
             sections = [
                 {
                     "id": "returns",
@@ -614,9 +640,9 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
                     "id": "funds_matrix",
                     "title": "官方精选基金月度回报数据库 (Recommended Unit Trusts Performance)",
                     "title_en": "Recommended Unit Trusts Performance",
-                    "page": 13 if total_pages >= 13 else 11,
-                    "page_range": f"{13 if total_pages >= 13 else 11}-{15 if total_pages >= 15 else 13}",
-                    "target_slide": "可选参考 / 穿透基金对账",
+                    "page": p_funds,
+                    "page_range": f"{p_funds}-{min(p_funds + 2, total_pages)}",
+                    "target_slide": "附录扩充 · 推荐基金全景 (Slide 6+)",
                     "is_mandatory": False,
                     "default_selected": False,
                     "summary": "涵盖核心股票（亚洲/全球）、辅助多元与固定收益三类推荐基金池当月、3个月、YTD及年化历史回报率。"
@@ -625,9 +651,9 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
                     "id": "dpms",
                     "title": "全权委托专户投资理念与组合架构 (DPMS Portfolio Overview)",
                     "title_en": "DPMS Philosophy & Allocation",
-                    "page": 10 if total_pages >= 10 else 9,
-                    "page_range": f"{10 if total_pages >= 10 else 9}-{11 if total_pages >= 11 else 10}",
-                    "target_slide": "可选参考",
+                    "page": p_dpms,
+                    "page_range": f"{p_dpms}",
+                    "target_slide": "附录扩充 · 专户方案架构 (Slide 6+)",
                     "is_mandatory": False,
                     "default_selected": False,
                     "summary": "介绍奕丰全权委托投资解决方案 (DPMS) 的价值投资理念与长期稳健现金流架构。"
@@ -636,8 +662,8 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
                     "id": "calendar",
                     "title": "全球重要经济事件日历 (Global Economic Calendar)",
                     "title_en": "Global Economic Calendar",
-                    "page": 24 if total_pages >= 24 else total_pages - 1,
-                    "target_slide": "可选参考",
+                    "page": p_calendar,
+                    "target_slide": "附录扩充 · 宏观日程时间线 (Slide 6+)",
                     "is_mandatory": False,
                     "default_selected": False,
                     "summary": "罗列当月中美欧日央行议息、非农就业、CPI/PPI 通胀等核心宏观数据发布日程。"
@@ -654,6 +680,9 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
                     "page_returns": p_returns,
                     "page_stars": p_stars,
                     "page_topic": p_topic,
+                    "page_funds": p_funds,
+                    "page_dpms": p_dpms,
+                    "page_calendar": p_calendar,
                     "topic_title_zh": topic_title_zh,
                     "topic_title_en": topic_title_en
                 }
@@ -662,6 +691,24 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
             self.send_header('Content-Type', 'application/json; charset=utf-8')
             self.end_headers()
             self.wfile.write(json.dumps(resp, ensure_ascii=False).encode('utf-8'))
+            return
+
+        # 8c. Dynamic Synthesized Slides Getter API
+        elif clean_path == '/api/get_dynamic_slides':
+            month = query.get('month', ['2026-09'])[0]
+            cfg_file = os.path.join(BASE_DIR, 'config', f'config_{month.replace("-", "_")}.json')
+            ds = []
+            if os.path.exists(cfg_file):
+                try:
+                    with open(cfg_file, 'r', encoding='utf-8') as cf:
+                        c = json.load(cf)
+                        ds = c.get('dynamic_slides', [])
+                except Exception:
+                    pass
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json; charset=utf-8')
+            self.end_headers()
+            self.wfile.write(json.dumps({"status": "success", "dynamic_slides": ds}, ensure_ascii=False).encode('utf-8'))
             return
 
         # 9. Portfolio State API for React Frontend
@@ -695,7 +742,8 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
                 "status": "success",
                 "performance": perf_data,
                 "lookthrough": look_data,
-                "config": cfg_data
+                "config": cfg_data,
+                "dynamic_slides": cfg_data.get("dynamic_slides", [])
             }, ensure_ascii=False).encode('utf-8'))
             return
 
@@ -819,6 +867,50 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
 
             mgr['holdings_conviction'] = normalize_and_enrich_holdings(mgr.get('holdings_conviction', []), month)
 
+            # Dynamic slide synthesis if optional sections or custom pages are specified
+            selected_sections = req_data.get('selected_sections')
+            modal_pages = req_data.get('modal_pages', {})
+            custom_pages = req_data.get('custom_pages', [])
+            
+            if selected_sections is not None:
+                from engine.dynamic_slide_extractor import extract_dynamic_slide_data
+                dynamic_slides = []
+                if selected_sections.get('funds_matrix') and os.path.exists(pdf_path):
+                    p_f = modal_pages.get('funds_matrix') or req_data.get('page_funds')
+                    try:
+                        p_f_int = int(p_f) if p_f else None
+                        dynamic_slides.append(extract_dynamic_slide_data(pdf_path, 'funds_matrix', p_f_int))
+                    except Exception as ex:
+                        print(f"Error extracting funds_matrix: {ex}")
+
+                if selected_sections.get('dpms') and os.path.exists(pdf_path):
+                    p_d = modal_pages.get('dpms') or req_data.get('page_dpms')
+                    try:
+                        p_d_int = int(p_d) if p_d else None
+                        dynamic_slides.append(extract_dynamic_slide_data(pdf_path, 'dpms', p_d_int))
+                    except Exception as ex:
+                        print(f"Error extracting dpms: {ex}")
+
+                if selected_sections.get('calendar') and os.path.exists(pdf_path):
+                    p_c = modal_pages.get('calendar') or req_data.get('page_calendar')
+                    try:
+                        p_c_int = int(p_c) if p_c else None
+                        dynamic_slides.append(extract_dynamic_slide_data(pdf_path, 'calendar', p_c_int))
+                    except Exception as ex:
+                        print(f"Error extracting calendar: {ex}")
+
+                for cp in custom_pages:
+                    try:
+                        cp_num = int(cp)
+                        dynamic_slides.append(extract_dynamic_slide_data(pdf_path, 'custom', cp_num))
+                    except Exception as ex:
+                        print(f"Error extracting custom page {cp}: {ex}")
+
+                cfg['dynamic_slides'] = dynamic_slides
+                cfg['selected_sections'] = selected_sections
+            elif 'dynamic_slides' in req_data:
+                cfg['dynamic_slides'] = req_data['dynamic_slides']
+
             with open(cfg_path, 'w', encoding='utf-8') as f:
                 json.dump(cfg, f, ensure_ascii=False, indent=2)
 
@@ -851,6 +943,7 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
                 "show_rebalance_memo": bool(cfg.get('show_rebalance_memo', False)),
                 "holdings_conviction": mgr['holdings_conviction'],
                 "fund_count": len(mgr['holdings_conviction']),
+                "dynamic_slides": cfg.get('dynamic_slides', []),
                 "preview_file": preview_file,
                 "message": f"{month} {sec_name}已保存，并已从 Calculation_Engine A列匹配结算日 {cfg['settle_date']}、底层 {len(mgr['holdings_conviction'])} 只基金客观回报比重及本地研报页码！"
             }, ensure_ascii=False).encode('utf-8'))

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ViewMode, Language } from '../../types';
+import { ViewMode, Language, DynamicSlideData } from '../../types';
 import { getDictionary } from '../../i18n';
 import { 
   LayoutDashboard, 
@@ -10,7 +10,8 @@ import {
   RefreshCw, 
   Check, 
   Globe,
-  SlidersHorizontal
+  SlidersHorizontal,
+  Sparkles
 } from 'lucide-react';
 
 interface TopNavProps {
@@ -24,6 +25,7 @@ interface TopNavProps {
   isExporting: boolean;
   isSyncing: boolean;
   isSaved: boolean;
+  dynamicSlides?: DynamicSlideData[];
 }
 
 export const TopNav: React.FC<TopNavProps> = ({
@@ -36,7 +38,8 @@ export const TopNav: React.FC<TopNavProps> = ({
   onSaveConfig,
   isExporting,
   isSyncing,
-  isSaved
+  isSaved,
+  dynamicSlides = []
 }) => {
   const t = getDictionary(lang);
 
@@ -126,22 +129,40 @@ export const TopNav: React.FC<TopNavProps> = ({
 
         {/* Slide Anchors (visible in presentation or split mode) */}
         {(viewMode === 'presentation' || viewMode === 'split') && (
-          <div className="hidden xl:flex items-center gap-1 bg-slate-900/60 p-1 rounded-lg border border-slate-800 text-[11px]">
-            <button onClick={() => scrollToSlide('slide1')} className="px-2 py-1 rounded hover:bg-slate-800 text-slate-300">
+          <div className="hidden xl:flex items-center gap-1 bg-slate-900/60 p-1 rounded-lg border border-slate-800 text-[11px] overflow-x-auto max-w-[520px]">
+            <button onClick={() => scrollToSlide('slide1')} className="px-2 py-1 rounded hover:bg-slate-800 text-slate-300 shrink-0">
               {lang === 'en' ? 'S1 Memo' : '第1页 总览'}
             </button>
-            <button onClick={() => scrollToSlide('slide2')} className="px-2 py-1 rounded hover:bg-slate-800 text-slate-300">
+            <button onClick={() => scrollToSlide('slide2')} className="px-2 py-1 rounded hover:bg-slate-800 text-slate-300 shrink-0">
               {lang === 'en' ? 'S2 Macro' : '第2页 宏观'}
             </button>
-            <button onClick={() => scrollToSlide('slide3')} className="px-2 py-1 rounded hover:bg-slate-800 text-slate-300">
+            <button onClick={() => scrollToSlide('slide3')} className="px-2 py-1 rounded hover:bg-slate-800 text-slate-300 shrink-0">
               {lang === 'en' ? 'S3 60/40' : '第3页 专题'}
             </button>
-            <button onClick={() => scrollToSlide('slide4')} className="px-2 py-1 rounded hover:bg-slate-800 text-slate-300">
+            <button onClick={() => scrollToSlide('slide4')} className="px-2 py-1 rounded hover:bg-slate-800 text-slate-300 shrink-0">
               {lang === 'en' ? 'S4 Conviction' : '第4页 信念'}
             </button>
-            <button onClick={() => scrollToSlide('slide5')} className="px-2 py-1 rounded hover:bg-slate-800 text-slate-300">
+            <button onClick={() => scrollToSlide('slide5')} className="px-2 py-1 rounded hover:bg-slate-800 text-slate-300 shrink-0">
               {lang === 'en' ? 'S5 Legal' : '第5页 合规'}
             </button>
+            {dynamicSlides && dynamicSlides.map((ds, idx) => {
+              const slideNum = 5 + idx + 1;
+              const shortTitle = ds.id === 'funds_matrix' ? (lang === 'en' ? 'Funds' : '基金库') :
+                                 ds.id === 'dpms' ? 'DPMS' :
+                                 ds.id === 'calendar' ? (lang === 'en' ? 'Calendar' : '日历') :
+                                 (lang === 'en' ? `P.${ds.source_page}` : `第${ds.source_page}页`);
+              return (
+                <button
+                  key={ds.id || idx}
+                  onClick={() => scrollToSlide(`slide${slideNum}`)}
+                  className="px-2 py-1 rounded hover:bg-amber-950/40 text-amber-300 font-bold shrink-0 border border-amber-500/40 bg-amber-500/10 flex items-center gap-1"
+                  title={lang === 'en' ? (ds.title_en || ds.title_zh) : (ds.title_zh || ds.title_en)}
+                >
+                  <Sparkles className="w-2.5 h-2.5 text-amber-400" />
+                  <span>{lang === 'en' ? `S${slideNum} ${shortTitle}` : `第${slideNum}页 ${shortTitle}`}</span>
+                </button>
+              );
+            })}
           </div>
         )}
 
