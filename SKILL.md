@@ -144,6 +144,17 @@ Whenever referring to **Taiwan** or **Hong Kong** in ANY part of the report (inc
   - 点击按钮以新窗口打开 (`target="_blank" rel="noopener noreferrer"`)。
   - React 前端与导出生成引擎 `engine/report_generator.py` 同步原生支持该条件渲染与数据持久化，全文严守中英文纯洁性。
 
+### 2.9 “当期真实在册组合”与“建议调仓候选池”严格物理隔离红线 (Quarantine of Unexecuted Rebalancing Candidates)
+- **第一页（Slide 1 备忘录与底层持仓穿透）绝对隔离红线：**
+  - 严格且仅展示当月真实在册的活跃持仓资产（当前为 7 只优选基金，目标权重加总恒为 100.0%）。
+  - 凡处于“建议更换”、“待调仓”或“候选替换”阶段、尚未正式交割生效的标的，**绝对严禁**计入或展示在第一页的资产列表、净值走势和底层穿透中。
+- **第四页（Slide 4 投资哲学、信念审查与调仓结论）专属呈现：**
+  - 未执行的拟更换标的（如建议将 FSSA 更换为 M&G (Lux) Asian Fund）**仅作为顾问建议参考（Advisory Reference）**出现在第四页。
+  - 呈现位置严格限定在：
+    a) 被建议替换基金行的“顾问建议”徽章及微型标注（如 `更换标的` 下方标注 `参考: M&G亚洲` / `REPLACE` 标注 `Ref: M&G Asian`）；
+    b) 底层基本面与支撑说明栏末尾（标注 `【建议参考标的】：...`）；
+    c) 底部“月度调仓结论”指示栏（标注 `（候选参考标的：...，详见调仓说明备忘录）` 并附带可跳转的附件链接）。
+
 ---
 
 ## 3. Architecture of the 5-Slide Presentation Suite
